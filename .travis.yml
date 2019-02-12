@@ -1,0 +1,26 @@
+sudo: false
+language: ruby
+cache:
+- bundler
+rvm:
+  - 2.3
+  - 2.4
+  - 2.5
+  - 2.6
+  - ruby-head
+gemfile:
+  - gemfiles/rails_5_2.gemfile
+  - gemfiles/railsmaster.gemfile
+
+notifications:
+  email: false
+
+matrix:
+  fast_finish: true
+  exclude:
+    - rvm: 2.3
+      gemfile: gemfiles/railsmaster.gemfile
+    - rvm: 2.4
+      gemfile: gemfiles/railsmaster.gemfile
+  allow_failures:
+    - rvm: ruby-head

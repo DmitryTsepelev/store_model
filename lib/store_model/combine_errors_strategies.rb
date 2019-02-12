@@ -1,0 +1,25 @@
+# frozen_string_literal: true
+
+require "store_model/combine_errors_strategies/mark_invalid_error_strategy"
+require "store_model/combine_errors_strategies/merge_error_strategy"
+
+module StoreModel
+  module CombileErrorsStrategies
+    module_function
+
+    # Finds a strategy based on options and global config
+    def configure(options)
+      configured_strategy = options[:merge_errors] || StoreModel.config.merge_errors
+
+      if configured_strategy.respond_to?(:call)
+        configured_strategy
+      elsif configured_strategy == true
+        StoreModel::CombileErrorsStrategies::MergeErrorStrategy.new
+      elsif configured_strategy.nil?
+        StoreModel::CombileErrorsStrategies::MarkInvalidErrorStrategy.new
+      else
+        const_get(configured_strategy.to_s.camelize).new
+      end
+    end
+  end
+end
