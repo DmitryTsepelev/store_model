@@ -1,7 +1,3 @@
-# Disclaimer
-
-**This gem hasn't been released yet! I'm going to force push a lot, be careful**
-
 [![Gem Version](https://badge.fury.io/rb/store_model.svg)](https://rubygems.org/gems/store_model)
 [![Build Status](https://travis-ci.org/DmitryTsepelev/store_model.svg?branch=master)](https://travis-ci.org/DmitryTsepelev/store_model)
 [![Coverage Status](https://coveralls.io/repos/github/DmitryTsepelev/store_model/badge.svg?branch=master)](https://coveralls.io/github/DmitryTsepelev/store_model?branch=master)
