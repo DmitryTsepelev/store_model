@@ -9,7 +9,7 @@ module ActiveModel
       def validate(record)
         options[:attributes].each do |attribute|
           attribute_value = record.send(attribute)
-          combine_errors(record, attribute) unless attribute_value.validate
+          combine_errors(record, attribute) if attribute_value&.invalid?
         end
       end
 
