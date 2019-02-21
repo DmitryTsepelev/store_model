@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.1.1 (2019-02-21)
+
 - Fix crash in presence validator ([@DmitryTsepelev][])
 
 ## 0.1.0 (2019-02-20)
