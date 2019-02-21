@@ -5,24 +5,19 @@ require "store_model/combine_errors_strategies"
 
 module ActiveModel
   module Validations
-    class StoreModelValidator < ActiveModel::Validator
-      def validate(record)
-        options[:attributes].each do |attribute|
-          attribute_value = record.send(attribute)
-          combine_errors(record, attribute) if attribute_value&.invalid?
+    class StoreModelValidator < ActiveModel::EachValidator
+      def validate_each(record, attribute, value)
+        if value.nil?
+          record.errors.add(attribute, :blank)
+        elsif value.invalid?
+          strategy.call(attribute, record.errors, value.errors)
         end
       end
 
       private
 
-      def combine_errors(record, attribute)
-        base_errors = record.errors
-        store_model_errors = record.send(attribute).errors
-
-        base_errors.delete(attribute)
-
-        strategy = StoreModel::CombileErrorsStrategies.configure(options)
-        strategy.call(attribute, base_errors, store_model_errors)
+      def strategy
+        StoreModel::CombileErrorsStrategies.configure(options)
       end
     end
   end

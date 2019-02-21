@@ -172,6 +172,16 @@ class Product < ApplicationRecord
 end
 ```
 
+**Note**: `:store_model` validator does not allow nils by default, if you want to change this behavior - configure the validation with `allow_nil: true`:
+
+```ruby
+class Product < ApplicationRecord
+  attribute :configuration, Configuration.to_type
+
+  validates :configuration, store_model: true, allow_nil: true
+end
+```
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

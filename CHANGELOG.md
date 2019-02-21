@@ -2,6 +2,8 @@
 
 ## master
 
+- `:store_model` validation should not allow nil by default
+
 ## 0.1.1 (2019-02-21)
 
 - Fix crash in presence validator ([@DmitryTsepelev][])

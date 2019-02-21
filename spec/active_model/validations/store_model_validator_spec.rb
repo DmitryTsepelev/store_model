@@ -3,10 +3,13 @@
 require "spec_helper"
 
 RSpec.describe ActiveModel::Validations::StoreModelValidator do
-  let(:custom_product_class) do
-    build_custom_product_class do
-      attribute :configuration, Configuration.to_type
-      validates :configuration, presence: true, store_model: true
+  shared_examples "check store model is invalid" do
+    it "is invalid because configuration is invalid" do
+      expect(subject.errors.messages).to eq(configuration: ["is invalid"])
+      expect(subject.errors.full_messages).to eq(["Configuration is invalid"])
+
+      expect(subject.configuration.errors.messages).to eq(color: ["can't be blank"])
+      expect(subject.configuration.errors.full_messages).to eq(["Color can't be blank"])
     end
   end
 
@@ -18,22 +21,50 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
     product
   end
 
-  it { is_expected.not_to be_valid }
+  context "with store_model validator" do
+    let(:custom_product_class) do
+      build_custom_product_class do
+        attribute :configuration, Configuration.to_type
+        validates :configuration, store_model: true
+      end
+    end
 
-  it "returns errors inside nested object" do
-    expect(subject.errors.messages).to eq(configuration: ["is invalid"])
-    expect(subject.errors.full_messages).to eq(["Configuration is invalid"])
+    context "when store_model value is not nil" do
+      it { is_expected.to be_invalid }
 
-    expect(subject.configuration.errors.messages).to eq(color: ["can't be blank"])
-    expect(subject.configuration.errors.full_messages).to eq(["Color can't be blank"])
+      include_examples "check store model is invalid"
+    end
+
+    context "when store_model value is nil" do
+      let(:attributes) { { configuration: nil } }
+
+      it { is_expected.to be_invalid }
+
+      it "is invalid because configuration is blank" do
+        expect(subject.errors.messages).to eq(configuration: ["can't be blank"])
+        expect(subject.errors.full_messages).to eq(["Configuration can't be blank"])
+      end
+    end
   end
 
-  context "when store_model value is nil" do
-    let(:attributes) { { configuration: nil } }
+  context "with allow_nil: true" do
+    let(:custom_product_class) do
+      build_custom_product_class do
+        attribute :configuration, Configuration.to_type
+        validates :configuration, allow_nil: true, store_model: true
+      end
+    end
 
-    it "validates presence" do
-      expect(subject.errors.messages).to eq(configuration: ["can't be blank"])
-      expect(subject.errors.full_messages).to eq(["Configuration can't be blank"])
+    context "when store_model value is not nil" do
+      it { is_expected.to be_invalid }
+
+      include_examples "check store model is invalid"
+    end
+
+    context "when store_model value is nil" do
+      let(:attributes) { { configuration: nil } }
+
+      it { is_expected.to be_valid }
     end
   end
 end
