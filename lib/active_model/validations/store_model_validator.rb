@@ -17,7 +17,7 @@ module ActiveModel
       private
 
       def strategy
-        StoreModel::CombileErrorsStrategies.configure(options)
+        StoreModel::CombineErrorsStrategies.configure(options)
       end
     end
   end

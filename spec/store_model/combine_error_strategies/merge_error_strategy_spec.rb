@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe StoreModel::CombileErrorsStrategies::MergeErrorStrategy do
+RSpec.describe StoreModel::CombineErrorsStrategies::MergeErrorStrategy do
   let(:custom_product_class) do
     build_custom_product_class do
       attribute :configuration, Configuration.to_type
