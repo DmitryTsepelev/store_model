@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module StoreModel
-  module CombileErrorsStrategies
+  module CombineErrorsStrategies
     class MergeErrorStrategy
       def call(_attribute, base_errors, store_model_errors)
         base_errors.copy!(store_model_errors)

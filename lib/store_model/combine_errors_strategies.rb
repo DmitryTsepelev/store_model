@@ -4,7 +4,7 @@ require "store_model/combine_errors_strategies/mark_invalid_error_strategy"
 require "store_model/combine_errors_strategies/merge_error_strategy"
 
 module StoreModel
-  module CombileErrorsStrategies
+  module CombineErrorsStrategies
     module_function
 
     # Finds a strategy based on options and global config
@@ -14,9 +14,9 @@ module StoreModel
       if configured_strategy.respond_to?(:call)
         configured_strategy
       elsif configured_strategy == true
-        StoreModel::CombileErrorsStrategies::MergeErrorStrategy.new
+        StoreModel::CombineErrorsStrategies::MergeErrorStrategy.new
       elsif configured_strategy.nil?
-        StoreModel::CombileErrorsStrategies::MarkInvalidErrorStrategy.new
+        StoreModel::CombineErrorsStrategies::MarkInvalidErrorStrategy.new
       else
         const_get(configured_strategy.to_s.camelize).new
       end

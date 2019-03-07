@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe StoreModel::CombileErrorsStrategies do
+RSpec.describe StoreModel::CombineErrorsStrategies do
   describe ".configure" do
     LAMBDA_FHTAGN_STRATEGY =
       lambda do |attribute, base_errors, _store_model_errors|
@@ -14,13 +14,13 @@ RSpec.describe StoreModel::CombileErrorsStrategies do
     context "when empty hash is passed" do
       let(:options) { {} }
 
-      it { is_expected.to be_a(StoreModel::CombileErrorsStrategies::MarkInvalidErrorStrategy) }
+      it { is_expected.to be_a(StoreModel::CombineErrorsStrategies::MarkInvalidErrorStrategy) }
     end
 
     context "when true is passed" do
       let(:options) { { merge_errors: true } }
 
-      it { is_expected.to be_a(StoreModel::CombileErrorsStrategies::MergeErrorStrategy) }
+      it { is_expected.to be_a(StoreModel::CombineErrorsStrategies::MergeErrorStrategy) }
     end
 
     context "when custom strategy class name is passed" do
