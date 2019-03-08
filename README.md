@@ -13,7 +13,7 @@ For instance, imagine that you have a model `Product` with a `jsonb` column call
 
 ```ruby
 product = Product.find(params[:id])
-if product.configuration["model"] = "spaceship"
+if product.configuration["model"] == "spaceship"
   product.configuration["color"] = "red"
 end
 product.save
@@ -23,7 +23,7 @@ This approach works fine when you don't have a lot of keys with logic around the
 
 ```ruby
 product = Product.find(params[:id])
-if product.configuration.model = "spaceship"
+if product.configuration.model == "spaceship"
   product.configuration.color = "red"
 end
 product.save
