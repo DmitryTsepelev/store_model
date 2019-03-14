@@ -60,7 +60,7 @@ class Configuration
 end
 ```
 
-Attributes shoould be defined using [Rails Attributes API](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html). There is a number of types available out of the box, and you can always extend the type system with your own ones.
+Attributes should be defined using [Rails Attributes API](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html). There is a number of types available out of the box, and you can always extend the type system with your own ones.
 
 Register the field in the ActiveRecord model class:
 
