@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.2.0 (2019-04-30)
+
 - [PR #5](https://github.com/DmitryTsepelev/store_model/pull/5) Raise error when `#cast` cannot handle the passed instance ([@DmitryTsepelev][])
 - [PR #5](https://github.com/DmitryTsepelev/store_model/pull/5) Add array type generation via Model#to_array_type ([@DmitryTsepelev][])
 
