@@ -69,7 +69,7 @@ RSpec.describe StoreModel::Model do
     end
   end
 
-  describe ".as_type" do
+  describe ".to_type" do
     subject { custom_product_class.new }
 
     let(:custom_product_class) do
@@ -80,6 +80,20 @@ RSpec.describe StoreModel::Model do
 
     it "configures type using field name" do
       expect(subject.configuration).to be_a_kind_of(Configuration)
+    end
+  end
+
+  describe ".to_array_type" do
+    subject { custom_product_class.new }
+
+    let(:custom_product_class) do
+      build_custom_product_class do
+        attribute :configuration, Configuration.to_array_type
+      end
+    end
+
+    it "configures type using field name" do
+      expect(subject.configuration).to be_a_kind_of(Array)
     end
   end
 end

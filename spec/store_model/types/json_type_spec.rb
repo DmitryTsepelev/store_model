@@ -2,7 +2,9 @@
 
 require "spec_helper"
 
-RSpec.describe StoreModel::JsonModelType do
+RSpec.describe StoreModel::Types::JsonType do
+  let(:type) { described_class.new(Configuration) }
+
   let(:attributes) do
     {
       color: "red",
@@ -10,12 +12,16 @@ RSpec.describe StoreModel::JsonModelType do
     }
   end
 
-  let(:type) { StoreModel::JsonModelType.new(Configuration) }
-
   describe "#type" do
     subject { type.type }
 
     it { is_expected.to eq(:json) }
+  end
+
+  describe "#changed_in_place?" do
+    it "marks object as changed" do
+      expect(type.changed_in_place?({}, Configuration.new(attributes))).to be_truthy
+    end
   end
 
   describe "#cast_value" do
@@ -27,7 +33,7 @@ RSpec.describe StoreModel::JsonModelType do
     end
 
     context "when String is passed" do
-      let(:value) { attributes.as_json }
+      let(:value) { ActiveSupport::JSON.encode(attributes) }
       include_examples "cast examples"
     end
 
@@ -56,19 +62,13 @@ RSpec.describe StoreModel::JsonModelType do
     end
 
     context "when String is passed" do
-      let(:value) { attributes.as_json }
+      let(:value) { ActiveSupport::JSON.encode(attributes) }
       include_examples "serialize examples"
     end
 
     context "when Configuration instance is passed" do
       let(:value) { Configuration.new(attributes) }
       include_examples "serialize examples"
-    end
-  end
-
-  describe "#changed_in_place?" do
-    it "marks object as changed" do
-      expect(type.changed_in_place?({}, Configuration.new(color: "green"))).to be_truthy
     end
   end
 end

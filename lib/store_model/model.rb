@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require "store_model/json_model_type"
+require "store_model/types/json_type"
+require "store_model/types/array_type"
 
 module StoreModel
   module Model
@@ -10,7 +11,11 @@ module StoreModel
 
       base.extend(Module.new do
         def to_type
-          JsonModelType.new(self)
+          Types::JsonType.new(self)
+        end
+
+        def to_array_type
+          Types::ArrayType.new(self)
         end
       end)
     end

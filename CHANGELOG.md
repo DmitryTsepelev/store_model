@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #5](https://github.com/DmitryTsepelev/store_model/pull/5) Add array type generation via Model#to_array_type ([@DmitryTsepelev][])
+
 ## 0.1.2 (2019-03-14)
 
 - `:store_model` validation should not allow nil by default
