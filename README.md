@@ -70,6 +70,18 @@ class Product < ApplicationRecord
 end
 ```
 
+## Handling arrays
+
+Should you store an array of models, you can use `#to_array_type` method:
+
+```ruby
+class Product < ApplicationRecord
+  attribute :configurations, Configuration.to_array_type
+end
+```
+
+After that, your attribute will return array of `Configuration` instances.
+
 ## Validations
 
 `StoreModel` supports all the validations shipped with `ActiveModel`. Start with defining validation for the store model:

@@ -10,6 +10,7 @@ rvm:
   - ruby-head
 gemfile:
   - gemfiles/rails_5_2.gemfile
+  - gemfiles/rails_6_0.gemfile
   - gemfiles/railsmaster.gemfile
 
 notifications:
@@ -19,8 +20,13 @@ matrix:
   fast_finish: true
   exclude:
     - rvm: 2.3
+      gemfile: gemfiles/rails_6_0.gemfile
+    - rvm: 2.3
       gemfile: gemfiles/railsmaster.gemfile
+    - rvm: 2.4
+      gemfile: gemfiles/rails_6_0.gemfile
     - rvm: 2.4
       gemfile: gemfiles/railsmaster.gemfile
   allow_failures:
     - rvm: ruby-head
+    - gemfile: gemfiles/railsmaster.gemfile
