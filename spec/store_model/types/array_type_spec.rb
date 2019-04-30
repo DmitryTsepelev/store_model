@@ -60,6 +60,17 @@ RSpec.describe StoreModel::Types::ArrayType do
       let(:value) { attributes_array.map { |attrs| Configuration.new(attrs) } }
       include_examples "cast examples"
     end
+
+    context "when instance of illegal class is passed" do
+      let(:value) { {} }
+
+      it "raises exception" do
+        expect { type.cast_value(value) }.to raise_error(
+          StoreModel::Types::CastError,
+          "failed casting {}, only String or Array instances are allowed"
+        )
+      end
+    end
   end
 
   describe "#serialize" do

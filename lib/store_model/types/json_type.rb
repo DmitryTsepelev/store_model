@@ -13,19 +13,17 @@ module StoreModel
         :json
       end
 
-      # rubocop:disable Style/RescueModifier
       def cast_value(value)
         case value
-        when String
-          decoded = ActiveSupport::JSON.decode(value) rescue nil
-          @model_klass.new(decoded) unless decoded.nil?
-        when Hash
-          @model_klass.new(value)
-        when @model_klass
-          value
+        when String then decode_and_initialize(value)
+        when Hash then @model_klass.new(value)
+        when @model_klass then value
+        else
+          raise StoreModel::Types::CastError,
+                "failed casting #{value.inspect}, only String, " \
+                "Hash or #{@model_klass.name} instances are allowed"
         end
       end
-      # rubocop:enable Style/RescueModifier
 
       def serialize(value)
         case value
@@ -39,6 +37,15 @@ module StoreModel
       def changed_in_place?(raw_old_value, new_value)
         cast_value(raw_old_value) != new_value
       end
+
+      private
+
+      # rubocop:disable Style/RescueModifier
+      def decode_and_initialize(value)
+        decoded = ActiveSupport::JSON.decode(value) rescue nil
+        @model_klass.new(decoded) unless decoded.nil?
+      end
+      # rubocop:enable Style/RescueModifier
     end
   end
 end

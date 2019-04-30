@@ -13,19 +13,15 @@ module StoreModel
         :array
       end
 
-      # rubocop:disable Style/RescueModifier
-      def cast_value(array_value)
-        case array_value
-        when String
-          decoded = ActiveSupport::JSON.decode(array_value) rescue []
-          decoded.map { |attributes| @model_klass.new(attributes) }
-        when Array
-          array_value.map do |object|
-            object.is_a?(@model_klass) ? object : @model_klass.new(object)
-          end
+      def cast_value(value)
+        case value
+        when String then decode_and_initialize(value)
+        when Array then ensure_model_class(value)
+        else
+          raise StoreModel::Types::CastError,
+                "failed casting #{value.inspect}, only String or Array instances are allowed"
         end
       end
-      # rubocop:enable Style/RescueModifier
 
       def serialize(value)
         case value
@@ -38,6 +34,21 @@ module StoreModel
 
       def changed_in_place?(raw_old_value, new_value)
         cast_value(raw_old_value) != new_value
+      end
+
+      private
+
+      # rubocop:disable Style/RescueModifier
+      def decode_and_initialize(array_value)
+        decoded = ActiveSupport::JSON.decode(array_value) rescue []
+        decoded.map { |attributes| @model_klass.new(attributes) }
+      end
+      # rubocop:enable Style/RescueModifier
+
+      def ensure_model_class(array)
+        array.map do |object|
+          object.is_a?(@model_klass) ? object : @model_klass.new(object)
+        end
       end
     end
   end

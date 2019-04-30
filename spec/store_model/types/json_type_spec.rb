@@ -46,6 +46,17 @@ RSpec.describe StoreModel::Types::JsonType do
       let(:value) { Configuration.new(attributes) }
       include_examples "cast examples"
     end
+
+    context "when instance of illegal class is passed" do
+      let(:value) { [] }
+
+      it "raises exception" do
+        expect { type.cast_value(value) }.to raise_error(
+          StoreModel::Types::CastError,
+          "failed casting [], only String, Hash or Configuration instances are allowed"
+        )
+      end
+    end
   end
 
   describe "#serialize" do
