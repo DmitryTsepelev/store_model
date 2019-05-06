@@ -140,6 +140,8 @@ You can change the global behavior using `StoreModel.config`:
 StoreModel.config.merge_errors = true
 ```
 
+> Heads up! Due to the [changes](https://github.com/rails/rails/pull/32313) of error internals in Rails >= 6.1 it's impossible to add an error with a key that does not have a corresponding attribute with the same name. Because of that, behavior of `merge_error` strategy will be different - all errors are going to be placed under the attribute name (`{ configuration: ["Color can't be blank"] }` instead of `{ color: ["can't be blank"] }`).
+
 You can also add your own custom strategies to handle errors. All you need to do is to provide a callable object to `StoreModel.config.merge_errors` or as value of `:merge_errors`. It should accept three arguments - _attribute_, _base_errors_ and _store_model_errors_:
 
 ```ruby
