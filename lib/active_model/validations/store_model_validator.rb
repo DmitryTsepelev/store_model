@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "active_record"
 require "store_model/combine_errors_strategies"
 
 module ActiveModel
