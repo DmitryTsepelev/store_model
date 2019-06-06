@@ -82,6 +82,8 @@ end
 
 After that, your attribute will return array of `Configuration` instances.
 
+> Heads up! Attribute is not the same as association, in this case - it's just a hash. `assign_attributes` (and similar) is going to _override_ the whole hash, not merge it with a previous value
+
 ## Validations
 
 `StoreModel` supports all the validations shipped with `ActiveModel`. Start with defining validation for the store model:
