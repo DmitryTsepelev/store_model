@@ -17,6 +17,7 @@ module StoreModel
         case value
         when String then decode_and_initialize(value)
         when Array then ensure_model_class(value)
+        when nil then value
         else
           raise StoreModel::Types::CastError,
                 "failed casting #{value.inspect}, only String or Array instances are allowed"

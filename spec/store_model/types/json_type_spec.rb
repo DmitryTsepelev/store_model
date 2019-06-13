@@ -25,9 +25,9 @@ RSpec.describe StoreModel::Types::JsonType do
   end
 
   describe "#cast_value" do
-    shared_examples "cast examples" do
-      subject { type.cast_value(value) }
+    subject { type.cast_value(value) }
 
+    shared_examples "cast examples" do
       it { is_expected.to be_a(Configuration) }
       it("assigns attributes") { is_expected.to have_attributes(attributes) }
     end
@@ -45,6 +45,12 @@ RSpec.describe StoreModel::Types::JsonType do
     context "when Configuration instance is passed" do
       let(:value) { Configuration.new(attributes) }
       include_examples "cast examples"
+    end
+
+    context "when nil is passed" do
+      let(:value) { nil }
+
+      it { is_expected.to be_nil }
     end
 
     context "when instance of illegal class is passed" do
