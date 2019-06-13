@@ -9,8 +9,14 @@ module ActiveModel
       def validate_each(record, attribute, value)
         if value.nil?
           record.errors.add(attribute, :blank)
-        elsif value.invalid?
-          strategy.call(attribute, record.errors, value.errors)
+          return
+        end
+
+        case record.type_for_attribute(attribute).type
+        when :json
+          strategy.call(attribute, record.errors, value.errors) if value.invalid?
+        when :array
+          record.errors.add(attribute, :invalid) if value.any?(&:invalid?)
         end
       end
 
