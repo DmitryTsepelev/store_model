@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.3.2 (2019-06-13)
+
 - [PR #12](https://github.com/DmitryTsepelev/store_model/pull/12) Fixes [Issue #11](https://github.com/DmitryTsepelev/store_model/pull/11)
 
 ## 0.3.1 (2019-06-13)
