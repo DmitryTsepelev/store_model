@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #10](https://github.com/DmitryTsepelev/store_model/pull/6) Fixes [Issue #9](https://github.com/DmitryTsepelev/store_model/pull/9)
+
 ## 0.3.0 (2019-05-06)
 
 - [PR #6](https://github.com/DmitryTsepelev/store_model/pull/6) Rewrite MergeErrorStrategy to work with Rails 6.1 ([@DmitryTsepelev][])

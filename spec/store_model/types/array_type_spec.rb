@@ -35,10 +35,11 @@ RSpec.describe StoreModel::Types::ArrayType do
   end
 
   describe "#cast_value" do
-    shared_examples "cast examples" do
-      subject { type.cast_value(value) }
+    subject { type.cast_value(value) }
 
+    shared_examples "cast examples" do
       it { is_expected.to be_a(Array) }
+
       it "assigns attributes" do
         subject.zip(attributes_array).each do |config, config_attributes|
           expect(config).to have_attributes(config_attributes)
@@ -59,6 +60,12 @@ RSpec.describe StoreModel::Types::ArrayType do
     context "when Array of instances is passed" do
       let(:value) { attributes_array.map { |attrs| Configuration.new(attrs) } }
       include_examples "cast examples"
+    end
+
+    context "when nil is passed" do
+      let(:value) { nil }
+
+      it { is_expected.to be_nil }
     end
 
     context "when instance of illegal class is passed" do

@@ -17,7 +17,7 @@ module StoreModel
         case value
         when String then decode_and_initialize(value)
         when Hash then @model_klass.new(value)
-        when @model_klass then value
+        when @model_klass, nil then value
         else
           raise StoreModel::Types::CastError,
                 "failed casting #{value.inspect}, only String, " \
