@@ -19,7 +19,7 @@ end
 product.save
 ```
 
-This approach works fine when you don't have a lot of keys with logic around them and just read the data. However, when you start working with that data more intensively (for instance, adding some validations around it) - you may find the code a bit verbose and error-prone. With this gem, the snipped above could be rewritten this way:
+This approach works fine when you don't have a lot of keys with logic around them and just read the data. However, when you start working with that data more intensively (for instance, adding some validations around it)–you may find the code a bit verbose and error-prone. With this gem, the snipped above could be rewritten this way:
 
 ```ruby
 product = Product.find(params[:id])
@@ -82,7 +82,7 @@ end
 
 After that, your attribute will return array of `Configuration` instances.
 
-> Heads up! Attribute is not the same as association, in this case - it's just a hash. `assign_attributes` (and similar) is going to _override_ the whole hash, not merge it with a previous value
+> **Heads up!** Attribute is not the same as association, in this case–it's just a hash. `assign_attributes` (and similar) is going to _override_ the whole hash, not merge it with a previous value
 
 ## Validations
 
@@ -142,9 +142,9 @@ You can change the global behavior using `StoreModel.config`:
 StoreModel.config.merge_errors = true
 ```
 
-> Heads up! Due to the [changes](https://github.com/rails/rails/pull/32313) of error internals in Rails >= 6.1 it's impossible to add an error with a key that does not have a corresponding attribute with the same name. Because of that, behavior of `merge_error` strategy will be different - all errors are going to be placed under the attribute name (`{ configuration: ["Color can't be blank"] }` instead of `{ color: ["can't be blank"] }`).
+> **Heads up!** Due to the [changes](https://github.com/rails/rails/pull/32313) of error internals in Rails >= 6.1 it's impossible to add an error with a key that does not have a corresponding attribute with the same name. Because of that, behavior of `merge_error` strategy will be different–all errors are going to be placed under the attribute name (`{ configuration: ["Color can't be blank"] }` instead of `{ color: ["can't be blank"] }`).
 
-You can also add your own custom strategies to handle errors. All you need to do is to provide a callable object to `StoreModel.config.merge_errors` or as value of `:merge_errors`. It should accept three arguments - _attribute_, _base_errors_ and _store_model_errors_:
+You can also add your own custom strategies to handle errors. All you need to do is to provide a callable object to `StoreModel.config.merge_errors` or as value of `:merge_errors`. It should accept three arguments–_attribute_, _base_errors_ and _store_model_errors_:
 
 ```ruby
 StoreModel.config.merge_errors = lambda do |attribute, base_errors, _store_model_errors| do
@@ -152,7 +152,7 @@ StoreModel.config.merge_errors = lambda do |attribute, base_errors, _store_model
 end
 ```
 
-If the logic is complex enough - it worth defining a separate class with a `#call` method:
+If the logic is complex enough–it worth defining a separate class with a `#call` method:
 
 ```ruby
 class FhtagnErrorStrategy
@@ -186,7 +186,7 @@ class Product < ApplicationRecord
 end
 ```
 
-**Note**: `:store_model` validator does not allow nils by default, if you want to change this behavior - configure the validation with `allow_nil: true`:
+> **Heads up!** `:store_model` validator does not allow nils by default, if you want to change this behavior–configure the validation with `allow_nil: true`:
 
 ```ruby
 class Product < ApplicationRecord
@@ -196,11 +196,49 @@ class Product < ApplicationRecord
 end
 ```
 
+## Enums
+
+If you worked with [Rails Enums](https://api.rubyonrails.org/v5.2.3/classes/ActiveRecord/Enum.html) or [enumerize](https://github.com/brainspec/enumerize)–built-in enums should look familiar to you:
+
+```ruby
+class Configuration
+  include StoreModel::Model
+
+  enum :status, %i[active archived], default: :active
+end
+
+config = Configuration.new
+config.status => # active
+
+config.status = :archived
+config.archived? # => true
+config.active? # => false
+config.status_value # => 0
+
+config.status_values # => { :active => 0, :archived => 1 }
+```
+
+Under the hood values are stored as integers, according to the index of the element in the array:
+
+```ruby
+Configuration.new.inspect # => #<Configuration status: 0>
+```
+
+You can specify values explicitly using the `:in` kwarg:
+
+```ruby
+class Review
+  include StoreModel::Model
+
+  enum :rating, in: { excellent: 100, okay: 50, bad: 25, awful: 10 }, default: :okay
+end
+```
+
 ## Alternatives
 
-- [store_attribute](https://github.com/palkan/store_attribute) - work with JSON fields as an attributes, defined on the ActiveRecord model (not in the separate class)
-- [jsonb_accessor](https://github.com/devmynd/jsonb_accessor) - same thing, but with built-in queries
-- [attr_json](https://github.com/jrochkind/attr_json) - works like previous one, but using `ActiveModel::Type`
+- [store_attribute](https://github.com/palkan/store_attribute)–work with JSON fields as an attributes, defined on the ActiveRecord model (not in the separate class)
+- [jsonb_accessor](https://github.com/devmynd/jsonb_accessor)–same thing, but with built-in queries
+- [attr_json](https://github.com/jrochkind/attr_json)–works like previous one, but using `ActiveModel::Type`
 
 ## License
 
