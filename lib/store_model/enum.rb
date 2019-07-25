@@ -8,6 +8,7 @@ module StoreModel
       ensure_hash(values).tap do |mapping|
         define_attribute(name, mapping, kwargs[:default])
         define_reader(name, mapping)
+        define_writer(name, mapping)
         define_method("#{name}_value") { attributes[name.to_s] }
         define_method("#{name}_values") { mapping }
         define_predicate_methods(name, mapping)
@@ -17,17 +18,26 @@ module StoreModel
     private
 
     def define_attribute(name, mapping, default)
-      attribute name, StoreModel::Types::EnumType.new(mapping), default: default
+      attribute name, cast_type(mapping), default: default
     end
 
     def define_reader(name, mapping)
       define_method(name) { mapping.key(send("#{name}_value")).to_s }
     end
 
+    def define_writer(name, mapping)
+      type = cast_type(mapping)
+      define_method("#{name}=") { |value| super type.cast_value(value) }
+    end
+
     def define_predicate_methods(name, mapping)
       mapping.each do |label, value|
         define_method("#{label}?") { send(name) == mapping.key(value).to_s }
       end
+    end
+
+    def cast_type(mapping)
+      StoreModel::Types::EnumType.new(mapping)
     end
 
     def ensure_hash(values)

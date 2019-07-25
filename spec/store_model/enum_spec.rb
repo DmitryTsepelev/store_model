@@ -35,6 +35,17 @@ RSpec.describe StoreModel::Model do
     expect(subject.status_values).to eq(active: 1, archived: 0)
   end
 
+  context "when value is not in the list" do
+    let(:value) { "undefined" }
+
+    it "raises exception" do
+      expect { subject.status = value }.to raise_error(
+        ArgumentError,
+        "invalid value '#{value}' is assigned"
+      )
+    end
+  end
+
   context "when hash is passed without :in" do
     let(:config_class) do
       Class.new do
