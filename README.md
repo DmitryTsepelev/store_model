@@ -234,6 +234,26 @@ class Review
 end
 ```
 
+## Nested Models
+
+In some cases you might need to have a stored model as an attribute of another one:
+
+```ruby
+class Supplier
+  include StoreModel::Model
+
+  attribute :title, :string
+end
+
+class Configuration
+  include StoreModel::Model
+
+  attribute :supplier, Supplier.to_type
+end
+```
+
+In order to make it work with nested Rails forms (i.e. define a method called `#{attribute_name}_attributes=`) you should add `accepts_nested_attributes_for :supplier`, which works in the exact same way as the [built-in Rails method](https://api.rubyonrails.org/classes/ActiveRecord/NestedAttributes/ClassMethods.html), to the parent model.
+
 ## Alternatives
 
 - [store_attribute](https://github.com/palkan/store_attribute)–work with JSON fields as an attributes, defined on the ActiveRecord model (not in the separate class)

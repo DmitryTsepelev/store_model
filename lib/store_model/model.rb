@@ -3,6 +3,7 @@
 require "store_model/types"
 require "store_model/enum"
 require "store_model/type_builders"
+require "store_model/nested_attributes"
 
 module StoreModel
   module Model
@@ -12,6 +13,7 @@ module StoreModel
 
       base.extend StoreModel::Enum
       base.extend StoreModel::TypeBuilders
+      base.extend StoreModel::NestedAttributes
     end
 
     def as_json(options = {})
