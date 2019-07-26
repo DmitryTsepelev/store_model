@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.4.0 (2019-08-26)
+
 - [PR #17](https://github.com/DmitryTsepelev/store_model/pull/17) Update nested store models with `#accepts_nested_attributes_for` ([@DmitryTsepelev][])
 - [PR #16](https://github.com/DmitryTsepelev/store_model/pull/16) Add support for enums ([@DmitryTsepelev][])
 
