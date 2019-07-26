@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "store_model/types"
+require "store_model/enum"
+require "store_model/type_builders"
 
 module StoreModel
   module Model
@@ -8,15 +10,8 @@ module StoreModel
       base.include ActiveModel::Model
       base.include ActiveModel::Attributes
 
-      base.extend(Module.new do
-        def to_type
-          Types::JsonType.new(self)
-        end
-
-        def to_array_type
-          Types::ArrayType.new(self)
-        end
-      end)
+      base.extend StoreModel::Enum
+      base.extend StoreModel::TypeBuilders
     end
 
     def as_json(options = {})

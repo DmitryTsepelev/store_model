@@ -2,6 +2,7 @@
 
 require "store_model/types/json_type"
 require "store_model/types/array_type"
+require "store_model/types/enum_type"
 
 module StoreModel
   module Types

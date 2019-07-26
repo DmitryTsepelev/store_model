@@ -2,13 +2,15 @@
 
 ## master
 
+- [PR #16](https://github.com/DmitryTsepelev/store_model/pull/16) Add support for enums ([@DmitryTsepelev][])
+
 ## 0.3.2 (2019-06-13)
 
-- [PR #12](https://github.com/DmitryTsepelev/store_model/pull/12) Fixes [Issue #11](https://github.com/DmitryTsepelev/store_model/pull/11)
+- [PR #12](https://github.com/DmitryTsepelev/store_model/pull/12) Fixes [Issue #11](https://github.com/DmitryTsepelev/store_model/pull/11) ([@DmitryTsepelev][])
 
 ## 0.3.1 (2019-06-13)
 
-- [PR #10](https://github.com/DmitryTsepelev/store_model/pull/10) Fixes [Issue #9](https://github.com/DmitryTsepelev/store_model/pull/9)
+- [PR #10](https://github.com/DmitryTsepelev/store_model/pull/10) Fixes [Issue #9](https://github.com/DmitryTsepelev/store_model/pull/9) ([@DmitryTsepelev][])
 
 ## 0.3.0 (2019-05-06)
 
