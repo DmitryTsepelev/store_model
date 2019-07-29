@@ -10,10 +10,10 @@ module StoreModel
     def self.included(base)
       base.include ActiveModel::Model
       base.include ActiveModel::Attributes
+      base.include StoreModel::NestedAttributes
 
       base.extend StoreModel::Enum
       base.extend StoreModel::TypeBuilders
-      base.extend StoreModel::NestedAttributes
     end
 
     def as_json(options = {})
@@ -34,6 +34,10 @@ module StoreModel
     def inspect
       attribute_string = attributes.map { |name, value| "#{name}: #{value || 'nil'}" }.join(", ")
       "#<#{self.class.name} #{attribute_string}>"
+    end
+
+    def type_for_attribute(attribute)
+      self.class.attribute_types[attribute.to_s]
     end
   end
 end

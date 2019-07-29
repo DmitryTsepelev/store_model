@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #21](https://github.com/DmitryTsepelev/store_model/pull/21) Properly validate and handle nested models ([@DmitryTsepelev][])
+
 ## 0.4.0 (2019-08-26)
 
 - [PR #17](https://github.com/DmitryTsepelev/store_model/pull/17) Update nested store models with `#accepts_nested_attributes_for` ([@DmitryTsepelev][])

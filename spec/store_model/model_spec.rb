@@ -11,13 +11,13 @@ RSpec.describe StoreModel::Model do
     context "when symbolized hash is passed" do
       subject { Configuration.new(attributes) }
 
-      it("assigns attrbutes") { is_expected.to have_attributes(attributes) }
+      it("assigns attributes") { is_expected.to have_attributes(attributes) }
     end
 
     context "when stringified hash is passed" do
       subject { Configuration.new(attributes.stringify_keys) }
 
-      it("assigns attrbutes") { is_expected.to have_attributes(attributes) }
+      it("assigns attributes") { is_expected.to have_attributes(attributes) }
     end
   end
 
