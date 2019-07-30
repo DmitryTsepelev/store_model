@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.4.1 (2019-08-31)
+
 - [PR #21](https://github.com/DmitryTsepelev/store_model/pull/21) Properly validate and handle nested models ([@DmitryTsepelev][])
 
 ## 0.4.0 (2019-08-26)
