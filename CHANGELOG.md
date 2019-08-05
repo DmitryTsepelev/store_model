@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.5.0 (2019-09-05)
+
 - [PR #22](https://github.com/DmitryTsepelev/store_model/pull/22) Store unknown attributes in `#unknown_attributes` ([@DmitryTsepelev][])
 
 ## 0.4.1 (2019-08-31)
