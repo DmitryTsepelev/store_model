@@ -39,5 +39,9 @@ module StoreModel
     def type_for_attribute(attribute)
       self.class.attribute_types[attribute.to_s]
     end
+
+    def unknown_attributes
+      @unknown_attributes ||= {}
+    end
   end
 end
