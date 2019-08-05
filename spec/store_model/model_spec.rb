@@ -96,4 +96,23 @@ RSpec.describe StoreModel::Model do
       expect(subject.configuration).to be_a_kind_of(Array)
     end
   end
+
+  describe "#has_attribute?" do
+    let(:attribute) { :color }
+    subject { Configuration.new.has_attribute?(attribute) }
+
+    it { is_expected.to be_truthy }
+
+    context "when string value is passed" do
+      let(:attribute) { "color" }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "when not defined attribute is passed" do
+      let(:attribute) { :tone }
+
+      it { is_expected.to be_falsey }
+    end
+  end
 end
