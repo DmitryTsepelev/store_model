@@ -36,9 +36,18 @@ module StoreModel
       "#<#{self.class.name} #{attribute_string}>"
     end
 
-    def type_for_attribute(attribute)
-      self.class.attribute_types[attribute.to_s]
+    delegate :attribute_types, to: :class
+
+    def type_for_attribute(attr_name)
+      attr_name = attr_name.to_s
+      attribute_types[attr_name]
     end
+
+    # rubocop:disable Naming/PredicateName
+    def has_attribute?(attr_name)
+      attribute_types.key?(attr_name.to_s)
+    end
+    # rubocop:enable Naming/PredicateName
 
     def unknown_attributes
       @unknown_attributes ||= {}
