@@ -4,10 +4,15 @@ require "store_model/combine_errors_strategies/mark_invalid_error_strategy"
 require "store_model/combine_errors_strategies/merge_error_strategy"
 
 module StoreModel
+  # Module with built-in strategies for combining errors.
   module CombineErrorsStrategies
     module_function
 
-    # Finds a strategy based on options and global config
+    # Finds a strategy based on +options+ and global config.
+    #
+    # @param options [Hash]
+    #
+    # @return [Object] strategy
     def configure(options)
       configured_strategy = options[:merge_errors] || StoreModel.config.merge_errors
 

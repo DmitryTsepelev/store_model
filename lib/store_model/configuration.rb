@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 module StoreModel
-  # StoreModel configuration:
-  #
-  # - `merge_errors` - set up to `true` to merge errors or specify your
-  #                    own strategy
-  #
+  # StoreModel configuration.
   class Configuration
+    # Controls usage of MergeErrorStrategy
+    # @return [Boolean]
     attr_accessor :merge_errors
   end
 end

@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
 module StoreModel
+  # Contains methods for working with nested StoreModel::Model attributes.
   module NestedAttributes
-    def self.included(base)
+    def self.included(base) # :nodoc:
       base.extend ClassMethods
     end
 
-    module ClassMethods
+    module ClassMethods # :nodoc:
+      # Enables handling of nested StoreModel::Model attributes
+      #
+      # @param associations [Array] list of associations to define attributes
       def accepts_nested_attributes_for(*associations)
         associations.each do |association|
           case attribute_types[association.to_s]

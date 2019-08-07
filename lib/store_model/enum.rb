@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 module StoreModel
+  # Allows defining Rails-like enums
   module Enum
+    # Defines new enum
+    #
+    # @param name [String] name of the enum to define
+    # @param values [Object]
+    # @param kwargs [Object]
     def enum(name, values = nil, **kwargs)
       values ||= kwargs[:in] || kwargs
 

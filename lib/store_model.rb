@@ -4,7 +4,7 @@ require "store_model/model"
 require "store_model/configuration"
 require "active_model/validations/store_model_validator"
 
-module StoreModel
+module StoreModel # :nodoc:
   class << self
     def config
       @config ||= Configuration.new

@@ -8,3 +8,7 @@ test/dummy/tmp/
 Gemfile.lock
 Gemfile.local
 coverage/
+.DS_Store
+
+doc/
+.yardoc/
