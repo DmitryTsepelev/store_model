@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #26](https://github.com/DmitryTsepelev/store_model/pull/26) Add YARD docs ([@DmitryTsepelev][])
+
 ## 0.5.1 (2019-09-06)
 
 - [PR #25](https://github.com/DmitryTsepelev/store_model/pull/25) Add `#has_attribute?` method to keep `simple_form` compatibility ([@DmitryTsepelev][])

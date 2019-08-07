@@ -8,3 +8,6 @@ test/dummy/tmp/
 Gemfile.lock
 Gemfile.local
 coverage/
+
+doc/
+.yardoc/

@@ -12,9 +12,6 @@ AllCops:
     - 'Gemfile'
     - '*.gemspec'
 
-Documentation:
-  Enabled: false
-
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 

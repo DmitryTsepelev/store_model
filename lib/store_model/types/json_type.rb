@@ -4,15 +4,29 @@ require "active_model"
 
 module StoreModel
   module Types
+    # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
     class JsonType < ActiveModel::Type::Value
+      # Initializes type for model class
+      #
+      # @param model_klass [StoreModel::Model] model class to handle
+      #
+      # @return [StoreModel::Types::JsonType]
       def initialize(model_klass)
         @model_klass = model_klass
       end
 
+      # Returns type
+      #
+      # @return [Symbol]
       def type
         :json
       end
 
+      # Casts +value+ from DB or user to StoreModel::Model instance
+      #
+      # @param value [Object] a value to cast
+      #
+      # @return StoreModel::Model
       def cast_value(value)
         case value
         when String then decode_and_initialize(value)
@@ -24,6 +38,12 @@ module StoreModel
         handle_unknown_attribute(value, e)
       end
 
+      # Casts a value from the ruby type to a type that the database knows how
+      # to understand.
+      #
+      # @param value [Object] value to serialize
+      #
+      # @return [String] serialized value
       def serialize(value)
         case value
         when Hash, @model_klass
@@ -33,6 +53,12 @@ module StoreModel
         end
       end
 
+      # Determines whether the mutable value has been modified since it was read
+      #
+      # @param raw_old_value [Object] old value
+      # @param new_value [Object] new value
+      #
+      # @return [Boolean]
       def changed_in_place?(raw_old_value, new_value)
         cast_value(raw_old_value) != new_value
       end
