@@ -2,6 +2,7 @@
 
 ## master
 
+- [PR #29](https://github.com/DmitryTsepelev/store_model/pull/29) Properly compare enum attributes in `Model#==` ([@DmitryTsepelev][])
 - [PR #26](https://github.com/DmitryTsepelev/store_model/pull/26) Add YARD docs ([@DmitryTsepelev][])
 
 ## 0.5.1 (2019-09-06)

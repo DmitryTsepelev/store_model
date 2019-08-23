@@ -35,7 +35,7 @@ module StoreModel
     def ==(other)
       return super unless other.is_a?(self.class)
 
-      attributes.all? { |name, value| value == other.send(name) }
+      attributes.all? { |name, value| value == other.attributes[name] }
     end
 
     # Allows to call :presence validation on the association itself.
