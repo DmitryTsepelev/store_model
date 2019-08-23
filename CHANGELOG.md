@@ -2,22 +2,24 @@
 
 ## master
 
+## 0.5.2 (2019-08-23)
+
 - [PR #29](https://github.com/DmitryTsepelev/store_model/pull/29) Properly compare enum attributes in `Model#==` ([@DmitryTsepelev][])
 - [PR #26](https://github.com/DmitryTsepelev/store_model/pull/26) Add YARD docs ([@DmitryTsepelev][])
 
-## 0.5.1 (2019-09-06)
+## 0.5.1 (2019-08-06)
 
 - [PR #25](https://github.com/DmitryTsepelev/store_model/pull/25) Add `#has_attribute?` method to keep `simple_form` compatibility ([@DmitryTsepelev][])
 
-## 0.5.0 (2019-09-05)
+## 0.5.0 (2019-08-05)
 
 - [PR #22](https://github.com/DmitryTsepelev/store_model/pull/22) Store unknown attributes in `#unknown_attributes` ([@DmitryTsepelev][])
 
-## 0.4.1 (2019-08-31)
+## 0.4.1 (2019-07-31)
 
 - [PR #21](https://github.com/DmitryTsepelev/store_model/pull/21) Properly validate and handle nested models ([@DmitryTsepelev][])
 
-## 0.4.0 (2019-08-26)
+## 0.4.0 (2019-07-26)
 
 - [PR #17](https://github.com/DmitryTsepelev/store_model/pull/17) Update nested store models with `#accepts_nested_attributes_for` ([@DmitryTsepelev][])
 - [PR #16](https://github.com/DmitryTsepelev/store_model/pull/16) Add support for enums ([@DmitryTsepelev][])
