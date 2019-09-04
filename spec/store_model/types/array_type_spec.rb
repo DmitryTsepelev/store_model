@@ -78,6 +78,51 @@ RSpec.describe StoreModel::Types::ArrayType do
         )
       end
     end
+
+    context "when some keys are not defined as attributes" do
+      shared_examples "for unknown attributes" do
+        it { is_expected.to be_a(Array) }
+
+        it "assigns attributes" do
+          expect(subject.first).to have_attributes(color: "red")
+          expect(subject.second).to have_attributes(color: "green")
+        end
+
+        it "assigns unknown_attributes" do
+          expect(subject.first.unknown_attributes).to eq(
+            "unknown_attribute" => "something", "one_more" => "anything"
+          )
+          expect(subject.second.unknown_attributes).to eq(
+            "unknown_attribute" => "something greeny", "one_more" => "anything greeny"
+          )
+        end
+      end
+
+      let(:attributes_array) do
+        [
+          {
+            color: "red",
+            unknown_attribute: "something",
+            one_more: "anything"
+          },
+          {
+            color: "green",
+            unknown_attribute: "something greeny",
+            one_more: "anything greeny"
+          }
+        ]
+      end
+
+      context "when Hash is passed" do
+        let(:value) { attributes_array }
+        include_examples "for unknown attributes"
+      end
+
+      context "when String is passed" do
+        let(:value) { ActiveSupport::JSON.encode(attributes_array) }
+        include_examples "for unknown attributes"
+      end
+    end
   end
 
   describe "#serialize" do
