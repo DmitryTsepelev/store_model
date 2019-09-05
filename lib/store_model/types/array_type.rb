@@ -14,7 +14,6 @@ module StoreModel
       # @return [StoreModel::Types::ArrayType]
       def initialize(model_klass)
         @model_klass = model_klass
-        @model_klass_type = model_klass.to_type
       end
 
       # Returns type
@@ -81,7 +80,11 @@ module StoreModel
       end
 
       def cast_model_type_value(value)
-        @model_klass_type.cast_value(value)
+        model_klass_type.cast_value(value)
+      end
+
+      def model_klass_type
+        @model_klass_type ||= @model_klass.to_type
       end
     end
   end

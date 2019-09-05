@@ -1,7 +1,7 @@
 # Change log
 
 ## master
-- [PR #34](https://github.com/DmitryTsepelev/store_model/pull/34) Fix `#unknown_attributes` assignment for `ArrayType`
+- [PR #34](https://github.com/DmitryTsepelev/store_model/pull/34) Fix `#unknown_attributes` assignment for `ArrayType` ([@iarie][])
 
 ## 0.5.2 (2019-08-23)
 
@@ -55,3 +55,4 @@
 - Initial version ([@DmitryTsepelev][])
 
 [@DmitryTsepelev]: https://github.com/DmitryTsepelev
+[@iarie]: https://github.com/iarie
