@@ -95,6 +95,20 @@ RSpec.describe StoreModel::Model do
     end
   end
 
+  describe ".parent" do
+    subject { custom_product_class.new }
+
+    let(:custom_product_class) do
+      build_custom_product_class do
+        attribute :configuration, Configuration.to_type
+      end
+    end
+
+    it "returns parent instance" do
+      expect(subject.configuration.parent).to eq(subject)
+    end
+  end
+
   describe ".to_type" do
     subject { custom_product_class.new }
 
