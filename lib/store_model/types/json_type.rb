@@ -22,23 +22,15 @@ module StoreModel
         :json
       end
 
-      def deserialize(value, parent: nil)
-        cast(value, parent: parent)
-      end
-
-      def cast(value, parent: nil)
-        cast_value(value, parent: parent) unless value.nil?
-      end
-
       # Casts +value+ from DB or user to StoreModel::Model instance
       #
       # @param value [Object] a value to cast
       #
       # @return StoreModel::Model
-      def cast_value(value, parent: nil)
+      def cast_value(value)
         case value
-        when String then decode_and_initialize(value, parent: parent)
-        when Hash then @model_klass.new(value.merge(parent: parent))
+        when String then decode_and_initialize(value)
+        when Hash then @model_klass.new(value)
         when @model_klass, nil then value
         else raise_cast_error(value)
         end
@@ -74,9 +66,9 @@ module StoreModel
       private
 
       # rubocop:disable Style/RescueModifier
-      def decode_and_initialize(value, parent: nil)
+      def decode_and_initialize(value)
         decoded = ActiveSupport::JSON.decode(value) rescue nil
-        @model_klass.new(decoded.merge(parent: parent)) unless decoded.nil?
+        @model_klass.new(decoded) unless decoded.nil?
       rescue ActiveModel::UnknownAttributeError => e
         handle_unknown_attribute(decoded, e)
       end

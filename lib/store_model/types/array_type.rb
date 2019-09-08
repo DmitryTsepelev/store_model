@@ -23,23 +23,15 @@ module StoreModel
         :array
       end
 
-      def deserialize(value, parent: nil)
-        cast(value, parent: parent)
-      end
-
-      def cast(value, parent: nil)
-        cast_value(value, parent: parent) unless value.nil?
-      end
-
       # Casts +value+ from DB or user to StoreModel::Model instance
       #
       # @param value [Object] a value to cast
       #
       # @return StoreModel::Model
-      def cast_value(value, parent: nil)
+      def cast_value(value)
         case value
-        when String then decode_and_initialize(value, parent: parent)
-        when Array then ensure_model_class(value, parent: parent)
+        when String then decode_and_initialize(value)
+        when Array then ensure_model_class(value)
         when nil then value
         else
           raise StoreModel::Types::CastError,
@@ -75,13 +67,13 @@ module StoreModel
       private
 
       # rubocop:disable Style/RescueModifier
-      def decode_and_initialize(array_value, parent: nil)
+      def decode_and_initialize(array_value)
         decoded = ActiveSupport::JSON.decode(array_value) rescue []
         decoded.map { |attributes| cast_model_type_value(attributes) }
       end
       # rubocop:enable Style/RescueModifier
 
-      def ensure_model_class(array, parent: nil)
+      def ensure_model_class(array)
         array.map do |object|
           object.is_a?(@model_klass) ? object : cast_model_type_value(object)
         end

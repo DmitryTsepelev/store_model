@@ -96,16 +96,46 @@ RSpec.describe StoreModel::Model do
   end
 
   describe ".parent" do
-    subject { custom_product_class.new }
+    context "json" do
+      subject { custom_product_class.new }
 
-    let(:custom_product_class) do
-      build_custom_product_class do
-        attribute :configuration, Configuration.to_type
+      let(:custom_product_class) do
+        build_custom_product_class do
+          attribute :configuration, Configuration.to_type
+        end
+      end
+
+      let(:configuration) { Configuration.new }
+
+      it "returns parent instance" do
+        expect(subject.configuration.parent).to eq(subject)
+      end
+
+      it "updates parent after assignment" do
+        subject.configuration = configuration
+        expect(configuration.parent).to eq(subject)
       end
     end
 
-    it "returns parent instance" do
-      expect(subject.configuration.parent).to eq(subject)
+    context "array" do
+      subject { custom_product_class.new(configuration: [configuration]) }
+
+      let(:custom_product_class) do
+        build_custom_product_class do
+          attribute :configuration, Configuration.to_array_type
+        end
+      end
+
+      let(:configuration) { Configuration.new(color: "red") }
+
+      it "returns parent instance" do
+        expect(subject.configuration[0].parent).to eq(subject)
+      end
+
+      it "updates parent after assignment" do
+        subject.configuration << configuration
+        expect(configuration.parent).to eq(subject)
+      end
     end
   end
 
