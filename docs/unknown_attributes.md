@@ -9,6 +9,12 @@ class Configuration
   attribute :color, :string
 end
 
-configuration = Configuration.new(color: "red", archived: true)
+configuration = Configuration.to_type.cast_value(color: "red", archived: true)
 configuration.unknown_attributes # => { "archived" => true }
+
+# OR
+
+configurations = Configuration.to_array_type.cast_value( [{ color: "red", archived: true }, [{ color: "blue", archived: false }])
+configurations.map { |config| config.unknown_attributes } # => [{ "archived" => true }, { "archived" => false }]
+
 ```
