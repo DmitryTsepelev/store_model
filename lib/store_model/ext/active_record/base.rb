@@ -1,28 +1,21 @@
 # frozen_string_literal: true
 
+require "store_model/ext/parent_assignment"
+
 module StoreModel
-  # ActiveRecord::Base patch with context tracking support
+  # ActiveRecord::Base patch with parent tracking support
   module Base
+    include ParentAssignment
+
     def _read_attribute(*)
       super.tap do |attribute|
-        assign_parent_to(attribute)
+        assign_parent_to_store_model_relation(attribute)
       end
     end
 
     def _write_attribute(*)
       super.tap do |attribute|
-        assign_parent_to(attribute)
-      end
-    end
-
-    private
-
-    def assign_parent_to(attribute)
-      attribute.parent = self if attribute.is_a?(StoreModel::Model)
-      return unless attribute.is_a?(Array)
-
-      attribute.each do |item|
-        item.parent = self if item.is_a?(StoreModel::Model)
+        assign_parent_to_store_model_relation(attribute)
       end
     end
   end

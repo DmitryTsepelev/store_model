@@ -51,6 +51,86 @@ RSpec.describe StoreModel::Model do
     end
   end
 
+  describe "#parent" do
+    let(:configuration) { Configuration.new }
+
+    shared_examples "for singular type" do
+      it "returns parent instance" do
+        expect(subject.configuration.parent).to eq(subject)
+      end
+
+      it "updates parent after assignment" do
+        subject.configuration = configuration
+        expect(configuration.parent).to eq(subject)
+      end
+    end
+
+    shared_examples "for array type" do
+      it "returns parent instance" do
+        expect(subject.configuration[0].parent).to eq(subject)
+      end
+
+      it "updates parent after assignment" do
+        subject.configuration = [configuration]
+        expect(configuration.parent).to eq(subject)
+      end
+    end
+
+    context "json" do
+      subject { custom_parent_class.new }
+
+      context "activerecord model parent" do
+        let(:custom_parent_class) do
+          build_custom_product_class do
+            attribute :configuration, Configuration.to_type
+          end
+        end
+
+        include_examples "for singular type"
+      end
+
+      context "store model parent" do
+        subject { custom_parent_class.new(configuration: Configuration.new) }
+
+        let(:custom_parent_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :configuration, Configuration.to_type
+          end
+        end
+
+        include_examples "for singular type"
+      end
+    end
+
+    context "array" do
+      subject { custom_parent_class.new(configuration: [Configuration.new]) }
+
+      context "activerecord model parent" do
+        let(:custom_parent_class) do
+          build_custom_product_class do
+            attribute :configuration, Configuration.to_array_type
+          end
+        end
+
+        include_examples "for array type"
+      end
+
+      context "store model parent" do
+        let(:custom_parent_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :configuration, Configuration.to_array_type
+          end
+        end
+
+        include_examples "for array type"
+      end
+    end
+  end
+
   describe "==" do
     let(:first_setting) { Configuration.new(color: "red") }
 
@@ -91,50 +171,6 @@ RSpec.describe StoreModel::Model do
         let(:second_setting) { config_class.new(status: :archived) }
 
         it { is_expected.to be false }
-      end
-    end
-  end
-
-  describe ".parent" do
-    context "json" do
-      subject { custom_product_class.new }
-
-      let(:custom_product_class) do
-        build_custom_product_class do
-          attribute :configuration, Configuration.to_type
-        end
-      end
-
-      let(:configuration) { Configuration.new }
-
-      it "returns parent instance" do
-        expect(subject.configuration.parent).to eq(subject)
-      end
-
-      it "updates parent after assignment" do
-        subject.configuration = configuration
-        expect(configuration.parent).to eq(subject)
-      end
-    end
-
-    context "array" do
-      subject { custom_product_class.new(configuration: [configuration]) }
-
-      let(:custom_product_class) do
-        build_custom_product_class do
-          attribute :configuration, Configuration.to_array_type
-        end
-      end
-
-      let(:configuration) { Configuration.new(color: "red") }
-
-      it "returns parent instance" do
-        expect(subject.configuration[0].parent).to eq(subject)
-      end
-
-      it "updates parent after assignment" do
-        subject.configuration << configuration
-        expect(configuration.parent).to eq(subject)
       end
     end
   end
