@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.5.4 (2019-09-17)
+
+- [PR #38](https://github.com/DmitryTsepelev/store_model/pull/38) Fix inspect output for false values ([@zokioki][])
+
 ## 0.5.3 (2019-09-05)
 
 - [PR #34](https://github.com/DmitryTsepelev/store_model/pull/34) Fix `#unknown_attributes` assignment for `ArrayType` ([@iarie][])
@@ -57,5 +61,5 @@
 
 - Initial version ([@DmitryTsepelev][])
 
-[@DmitryTsepelev]: https://github.com/DmitryTsepelev
+[@dmitrytsepelev]: https://github.com/DmitryTsepelev
 [@iarie]: https://github.com/iarie
