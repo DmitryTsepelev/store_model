@@ -88,6 +88,46 @@ RSpec.describe StoreModel::Types::JsonType do
         let(:value) { ActiveSupport::JSON.encode(attributes) }
         include_examples "for unknown attributes"
       end
+
+      context "when unknown keys are inside nested model" do
+        shared_examples "for unknown nested attributes" do
+          it { is_expected.to be_a(configuration_class) }
+
+          it("assigns attributes") { is_expected.to have_attributes(color: "red") }
+
+          it "assigns unknown_attributes" do
+            expect(subject.suppliers.first.unknown_attributes).to eq(
+              "unknown_attribute" => "something"
+            )
+          end
+        end
+
+        let(:configuration_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :color, :string
+            attribute :suppliers, Supplier.to_array_type
+
+            accepts_nested_attributes_for :suppliers
+          end
+        end
+
+        let(:type) { described_class.new(configuration_class) }
+
+        let(:supplier) { { unknown_attribute: "something" } }
+        let(:attributes) { { color: "red", suppliers: [supplier] } }
+
+        context "when Hash is passed" do
+          let(:value) { attributes }
+          include_examples "for unknown nested attributes"
+        end
+
+        context "when String is passed" do
+          let(:value) { ActiveSupport::JSON.encode(attributes) }
+          include_examples "for unknown nested attributes"
+        end
+      end
     end
   end
 
