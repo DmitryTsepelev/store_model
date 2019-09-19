@@ -90,7 +90,7 @@ RSpec.describe StoreModel::Model do
       end
 
       context "store model parent" do
-        subject { custom_parent_class.new(configuration: Configuration.new) }
+        subject { custom_parent_class.new(configuration: {}) }
 
         let(:custom_parent_class) do
           Class.new do
@@ -105,7 +105,7 @@ RSpec.describe StoreModel::Model do
     end
 
     context "array" do
-      subject { custom_parent_class.new(configuration: [Configuration.new]) }
+      subject { custom_parent_class.new(configuration: [{}]) }
 
       context "activerecord model parent" do
         let(:custom_parent_class) do
