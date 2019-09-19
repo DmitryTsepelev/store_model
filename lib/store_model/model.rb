@@ -17,6 +17,8 @@ module StoreModel
       base.extend StoreModel::TypeBuilders
     end
 
+    attr_accessor :parent
+
     # Returns a hash representing the model. Some configuration can be
     # passed through +options+.
     #
