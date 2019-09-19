@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.6.0 (2019-09-19)
+
 - [PR #35](https://github.com/DmitryTsepelev/store_model/pull/35) Maintain `#parent` reference for StoreModels ([@blaze182][])
 
 ## 0.5.3 (2019-09-05)
