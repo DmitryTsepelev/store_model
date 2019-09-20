@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #38](https://github.com/DmitryTsepelev/store_model/pull/38) Fix inspect output for false values ([@zokioki](https://github.com/zokioki))
+
 ## 0.6.0 (2019-09-19)
 
 - [PR #35](https://github.com/DmitryTsepelev/store_model/pull/35) Maintain `#parent` reference for StoreModels ([@blaze182][])

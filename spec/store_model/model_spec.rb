@@ -4,7 +4,12 @@ require "spec_helper"
 
 RSpec.describe StoreModel::Model do
   let(:attributes) do
-    { color: "red", disabled_at: Time.new(2019, 2, 10, 12) }
+    {
+      color: "red",
+      model: nil,
+      active: false,
+      disabled_at: Time.new(2019, 2, 10, 12)
+    }
   end
 
   describe "#initialize" do
@@ -46,7 +51,8 @@ RSpec.describe StoreModel::Model do
 
     it "prints description" do
       expect(subject).to eq(
-        "#<Configuration color: red, disabled_at: #{attributes[:disabled_at]}>"
+        "#<Configuration color: red, model: nil, active: false, " \
+        "disabled_at: #{attributes[:disabled_at]}>"
       )
     end
   end

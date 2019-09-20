@@ -8,6 +8,8 @@ RSpec.describe StoreModel::Types::JsonType do
   let(:attributes) do
     {
       color: "red",
+      model: nil,
+      active: false,
       disabled_at: Time.new(2019, 2, 22, 12, 30)
     }
   end
