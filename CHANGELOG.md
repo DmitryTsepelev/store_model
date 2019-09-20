@@ -2,7 +2,7 @@
 
 ## master
 
-- [PR #38](https://github.com/DmitryTsepelev/store_model/pull/38) Fix inspect output for false values ([@zokioki](https://github.com/zokioki))
+- [PR #38](https://github.com/DmitryTsepelev/store_model/pull/38) Fix inspect output for false values ([@zokioki]())
 
 ## 0.6.0 (2019-09-19)
 
@@ -66,3 +66,4 @@
 [@DmitryTsepelev]: https://github.com/DmitryTsepelev
 [@iarie]: https://github.com/iarie
 [@blaze182]: https://github.com/blaze182
+[@zokioki]: https://github.com/zokioki
