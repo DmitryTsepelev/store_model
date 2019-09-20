@@ -4,6 +4,10 @@
 
 - [PR #38](https://github.com/DmitryTsepelev/store_model/pull/38) Fix inspect output for false values ([@zokioki](https://github.com/zokioki))
 
+## 0.6.0 (2019-09-19)
+
+- [PR #35](https://github.com/DmitryTsepelev/store_model/pull/35) Maintain `#parent` reference for StoreModels ([@blaze182][])
+
 ## 0.5.3 (2019-09-05)
 
 - [PR #34](https://github.com/DmitryTsepelev/store_model/pull/34) Fix `#unknown_attributes` assignment for `ArrayType` ([@iarie][])
@@ -61,3 +65,4 @@
 
 [@DmitryTsepelev]: https://github.com/DmitryTsepelev
 [@iarie]: https://github.com/iarie
+[@blaze182]: https://github.com/blaze182
