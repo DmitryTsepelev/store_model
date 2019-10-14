@@ -2,6 +2,9 @@
 
 ## master
 
+## 0.6.1 (2019-10-14)
+
+- [PR #42](https://github.com/DmitryTsepelev/store_model/pull/42) Depend on activerecord only in the gemspec ([@keithpitt]())
 - [PR #38](https://github.com/DmitryTsepelev/store_model/pull/38) Fix inspect output for false values ([@zokioki]())
 
 ## 0.6.0 (2019-09-19)
@@ -67,3 +70,4 @@
 [@iarie]: https://github.com/iarie
 [@blaze182]: https://github.com/blaze182
 [@zokioki]: https://github.com/zokioki
+[@keithpitt]: https://github.com/keithpitt
