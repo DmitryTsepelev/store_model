@@ -14,7 +14,7 @@ configuration.unknown_attributes # => { "archived" => true }
 
 # OR
 
-configurations = Configuration.to_array_type.cast_value( [{ color: "red", archived: true }, [{ color: "blue", archived: false }])
+configurations = Configuration.to_array_type.cast_value([{ color: "red", archived: true }, { color: "blue", archived: false }])
 configurations.map { |config| config.unknown_attributes } # => [{ "archived" => true }, { "archived" => false }]
 
 ```

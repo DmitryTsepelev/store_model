@@ -10,7 +10,7 @@ class Configuration
 end
 
 config = Configuration.new
-config.status => # active
+config.status # => active
 
 config.status = :archived
 config.archived? # => true
