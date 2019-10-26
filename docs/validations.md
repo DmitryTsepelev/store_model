@@ -61,7 +61,7 @@ StoreModel.config.merge_errors = true
 You can also add your own custom strategies to handle errors. All you need to do is to provide a callable object to `StoreModel.config.merge_errors` or as value of `:merge_errors`. It should accept three arguments–_attribute_, _base_errors_ and _store_model_errors_:
 
 ```ruby
-StoreModel.config.merge_errors = lambda do |attribute, base_errors, _store_model_errors| do
+StoreModel.config.merge_errors = lambda do |attribute, base_errors, _store_model_errors|
   base_errors.add(attribute, "cthulhu fhtagn")
 end
 ```
