@@ -84,7 +84,7 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
       end
 
       context "when array member is invalid" do
-        let(:attributes) { { configuration: [Configuration.new] } }
+        let(:attributes) { { configuration: [Configuration.new, Configuration.new] } }
 
         it { is_expected.to be_invalid }
 
@@ -94,6 +94,9 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
 
           expect(subject.configuration.first.errors.messages).to eq(color: ["can't be blank"])
           expect(subject.configuration.first.errors.full_messages).to eq(["Color can't be blank"])
+
+          expect(subject.configuration.second.errors.messages).to eq(color: ["can't be blank"])
+          expect(subject.configuration.second.errors.full_messages).to eq(["Color can't be blank"])
         end
       end
 
