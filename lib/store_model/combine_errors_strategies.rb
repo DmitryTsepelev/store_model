@@ -23,8 +23,6 @@ module StoreModel
       )
     end
 
-    module_function
-
     # Finds a array strategy based on +options+ and global config.
     #
     # @param options [Hash]
@@ -38,10 +36,6 @@ module StoreModel
         StoreModel::CombineErrorsStrategies::MergeArrayErrorStrategy
       )
     end
-
-    private
-
-    module_function
 
     def get_configured_strategy(configured_strategy, true_strategy_class)
       if configured_strategy.respond_to?(:call)

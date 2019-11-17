@@ -11,11 +11,12 @@ RSpec.describe StoreModel::CombineErrorsStrategies::MergeArrayErrorStrategy do
   end
 
   let(:record) do
-    product = custom_product_class.new(configurations:
-      [
-        Configuration.new(color: "red"),
-        Configuration.new
-      ]
+    product = custom_product_class.new(
+      configurations:
+        [
+          Configuration.new(color: "red"),
+         Configuration.new
+        ]
     )
     product.configurations.each(&:validate)
     product

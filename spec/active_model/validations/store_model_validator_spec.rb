@@ -110,7 +110,15 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
       end
 
       context "when some array members are invalid" do
-        let(:attributes) { { configurations: [Configuration.new(color: "red"), Configuration.new] } }
+        let(:attributes) do
+          {
+            configurations:
+              [
+                Configuration.new(color: "red"),
+                Configuration.new
+              ]
+          }
+        end
 
         it { is_expected.to be_invalid }
 
@@ -149,7 +157,14 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
         end
 
         context "when more than one array member is invalid" do
-          let(:attributes) { { configurations: [Configuration.new(color: "red"), Configuration.new] } }
+          let(:attributes) do
+            {
+              configurations: [
+                Configuration.new(color: "red"),
+                Configuration.new
+              ]
+            }
+          end
 
           it { is_expected.to be_invalid }
 
