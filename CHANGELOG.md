@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.6.2 (2019-11-17)
+
+- [PR #46](https://github.com/DmitryTsepelev/store_model/pull/46) Validate all elements of ArrayType ([@bostanio]())
+
 ## 0.6.1 (2019-10-14)
 
 - [PR #42](https://github.com/DmitryTsepelev/store_model/pull/42) Depend on activerecord only in the gemspec ([@keithpitt]())
