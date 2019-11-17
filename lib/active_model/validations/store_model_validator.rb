@@ -24,14 +24,18 @@ module ActiveModel
         when :json
           strategy.call(attribute, record.errors, value.errors) if value.invalid?
         when :array
-          record.errors.add(attribute, :invalid) if value.select(&:invalid?).present?
+          array_strategy.call(attribute, record.errors, value) if value.select(&:invalid?).present?
         end
       end
 
       private
 
       def strategy
-        StoreModel::CombineErrorsStrategies.configure(options)
+        @strategy ||= StoreModel::CombineErrorsStrategies.configure(options)
+      end
+
+      def array_strategy
+        @array_strategy ||= StoreModel::CombineErrorsStrategies.configure_array(options)
       end
     end
   end

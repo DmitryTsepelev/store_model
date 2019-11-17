@@ -74,40 +74,129 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
     context "with store_model validator" do
       let(:custom_product_class) do
         build_custom_product_class do
-          attribute :configuration, Configuration.to_array_type
-          validates :configuration, store_model: true
+          attribute :configurations, Configuration.to_array_type
+          validates :configurations, store_model: true
         end
       end
 
       context "when array is empty" do
+        let(:attributes) { { configurations: [] } }
+
         it { is_expected.to be_valid }
       end
 
-      context "when array member is invalid" do
-        let(:attributes) { { configuration: [Configuration.new, Configuration.new] } }
+      context "when all array members are valid" do
+        let(:attributes) do
+          {
+            configurations: [
+              Configuration.new(color: "red"),
+              Configuration.new(color: "blue")
+            ]
+          }
+        end
+
+        it { is_expected.to be_valid }
+
+        it "returns correct error messages" do
+          expect(subject.errors.messages).to be_empty
+          expect(subject.errors.full_messages).to be_empty
+
+          expect(subject.configurations.first.errors.messages).to be_empty
+          expect(subject.configurations.first.errors.full_messages).to be_empty
+
+          expect(subject.configurations.second.errors.messages).to be_empty
+          expect(subject.configurations.second.errors.full_messages).to be_empty
+        end
+      end
+
+      context "when some array members are invalid" do
+        let(:attributes) { { configurations: [Configuration.new(color: "red"), Configuration.new] } }
 
         it { is_expected.to be_invalid }
 
         it "returns correct error messages" do
-          expect(subject.errors.messages).to eq(configuration: ["is invalid"])
-          expect(subject.errors.full_messages).to eq(["Configuration is invalid"])
+          expect(subject.errors.messages).to eq(configurations: ["is invalid"])
+          expect(subject.errors.full_messages).to eq(["Configurations is invalid"])
 
-          expect(subject.configuration.first.errors.messages).to eq(color: ["can't be blank"])
-          expect(subject.configuration.first.errors.full_messages).to eq(["Color can't be blank"])
-
-          expect(subject.configuration.second.errors.messages).to eq(color: ["can't be blank"])
-          expect(subject.configuration.second.errors.full_messages).to eq(["Color can't be blank"])
+          expect(subject.configurations.second.errors.messages).to eq(color: ["can't be blank"])
+          expect(subject.configurations.second.errors.full_messages).to eq(["Color can't be blank"])
         end
       end
 
-      context "when store_model value is nil" do
-        let(:attributes) { { configuration: nil } }
+      context "when more than one array member is invalid" do
+        let(:attributes) { { configurations: [Configuration.new, Configuration.new] } }
+
+        it { is_expected.to be_invalid }
+
+        it "returns correct error messages" do
+          expect(subject.errors.messages).to eq(configurations: ["is invalid"])
+          expect(subject.errors.full_messages).to eq(["Configurations is invalid"])
+
+          expect(subject.configurations.first.errors.messages).to eq(color: ["can't be blank"])
+          expect(subject.configurations.first.errors.full_messages).to eq(["Color can't be blank"])
+
+          expect(subject.configurations.second.errors.messages).to eq(color: ["can't be blank"])
+          expect(subject.configurations.second.errors.full_messages).to eq(["Color can't be blank"])
+        end
+      end
+
+      context "with merge_array_errors: true" do
+        let(:custom_product_class) do
+          build_custom_product_class do
+            attribute :configurations, Configuration.to_array_type
+            validates :configurations, store_model: { merge_array_errors: true }
+          end
+        end
+
+        context "when more than one array member is invalid" do
+          let(:attributes) { { configurations: [Configuration.new(color: "red"), Configuration.new] } }
+
+          it { is_expected.to be_invalid }
+
+          it "returns correct error messages" do
+            expect(subject.errors.messages).to eq(
+              configurations: [
+                "[1] Color can't be blank"
+              ]
+            )
+            expect(subject.errors.full_messages).to eq(
+              [
+                "Configurations [1] Color can't be blank"
+              ]
+            )
+          end
+        end
+
+        context "when more than one array member is invalid" do
+          let(:attributes) { { configurations: [Configuration.new, Configuration.new] } }
+
+          it { is_expected.to be_invalid }
+
+          it "returns correct error messages" do
+            expect(subject.errors.messages).to eq(
+              configurations: [
+                "[0] Color can't be blank",
+                "[1] Color can't be blank"
+              ]
+            )
+            expect(subject.errors.full_messages).to eq(
+              [
+                "Configurations [0] Color can't be blank",
+                "Configurations [1] Color can't be blank"
+              ]
+            )
+          end
+        end
+      end
+
+      context "when array is nil" do
+        let(:attributes) { { configurations: nil } }
 
         it { is_expected.to be_invalid }
 
         it "is invalid because configuration is blank" do
-          expect(subject.errors.messages).to eq(configuration: ["can't be blank"])
-          expect(subject.errors.full_messages).to eq(["Configuration can't be blank"])
+          expect(subject.errors.messages).to eq(configurations: ["can't be blank"])
+          expect(subject.errors.full_messages).to eq(["Configurations can't be blank"])
         end
       end
     end
@@ -115,17 +204,19 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
     context "with allow_nil: true" do
       let(:custom_product_class) do
         build_custom_product_class do
-          attribute :configuration, Configuration.to_array_type
-          validates :configuration, allow_nil: true, store_model: true
+          attribute :configurations, Configuration.to_array_type
+          validates :configurations, allow_nil: true, store_model: true
         end
       end
 
       context "when array is empty" do
+        let(:attributes) { { configurations: [] } }
+
         it { is_expected.to be_valid }
       end
 
-      context "when store_model value is nil" do
-        let(:attributes) { { configuration: nil } }
+      context "when array is nil" do
+        let(:attributes) { { configurations: nil } }
 
         it { is_expected.to be_valid }
       end
