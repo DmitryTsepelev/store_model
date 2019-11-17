@@ -24,7 +24,7 @@ module ActiveModel
         when :json
           strategy.call(attribute, record.errors, value.errors) if value.invalid?
         when :array
-          record.errors.add(attribute, :invalid) if value.any?(&:invalid?)
+          record.errors.add(attribute, :invalid) if value.select(&:invalid?).present?
         end
       end
 
