@@ -22,16 +22,28 @@ module ActiveModel
 
         case record.type_for_attribute(attribute).type
         when :json
-          strategy.call(attribute, record.errors, value.errors) if value.invalid?
+          call_json_strategy(attribute, record.errors, value)
         when :array
-          record.errors.add(attribute, :invalid) if value.select(&:invalid?).present?
+          call_array_strategy(attribute, record.errors, value)
         end
       end
 
       private
 
+      def call_json_strategy(attribute, record_errors, value)
+        strategy.call(attribute, record_errors, value.errors) if value.invalid?
+      end
+
+      def call_array_strategy(attribute, record_errors, value)
+        array_strategy.call(attribute, record_errors, value) if value.select(&:invalid?).present?
+      end
+
       def strategy
-        StoreModel::CombineErrorsStrategies.configure(options)
+        @strategy ||= StoreModel::CombineErrorsStrategies.configure(options)
+      end
+
+      def array_strategy
+        @array_strategy ||= StoreModel::CombineErrorsStrategies.configure_array(options)
       end
     end
   end
