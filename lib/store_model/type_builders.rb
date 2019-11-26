@@ -6,13 +6,23 @@ module StoreModel
     # Converts StoreModel::Model to Types::JsonType
     # @return [Types::JsonType]
     def to_type
-      Types::JsonType.new(self)
+      coder = @type_options[:coder]
+      coder ||= @type_options[:case] && Coders::Case[@type_options[:case]]
+      coder ||= Coders::Null
+
+      Types::JsonType.new(self, coder)
     end
 
     # Converts StoreModel::Model to Types::ArrayType
     # @return [Types::ArrayType]
     def to_array_type
       Types::ArrayType.new(self)
+    end
+
+    def type_options(options = {})
+      @type_options ||= StoreModel.config.type_options
+      @type_options.merge!(options)
+      @type_options
     end
   end
 end

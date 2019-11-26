@@ -10,5 +10,7 @@ module StoreModel
     # Controls usage of MergeArrayErrorStrategy
     # @return [Boolean]
     attr_accessor :merge_array_errors
+
+    attr_accessor :type_options
   end
 end

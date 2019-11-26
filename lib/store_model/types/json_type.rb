@@ -11,8 +11,9 @@ module StoreModel
       # @param model_klass [StoreModel::Model] model class to handle
       #
       # @return [StoreModel::Types::JsonType]
-      def initialize(model_klass)
+      def initialize(model_klass, coder)
         @model_klass = model_klass
+        @coder = coder
       end
 
       # Returns type
@@ -29,10 +30,14 @@ module StoreModel
       # @return StoreModel::Model
       def cast_value(value)
         case value
-        when String then decode_and_initialize(value)
-        when Hash then @model_klass.new(value)
-        when @model_klass, nil then value
-        else raise_cast_error(value)
+        when String
+          cast_value((ActiveSupport::JSON.decode(value) rescue nil))
+        when Hash
+          @model_klass.new(@coder.load(value))
+        when @model_klass, nil
+          value
+        else
+          raise_cast_error(value)
         end
       rescue ActiveModel::UnknownAttributeError => e
         handle_unknown_attribute(value, e)
@@ -46,7 +51,9 @@ module StoreModel
       # @return [String] serialized value
       def serialize(value)
         case value
-        when Hash, @model_klass
+        when @model_klass
+          serialize(@coder.dump(value.attributes))
+        when Hash
           ActiveSupport::JSON.encode(value)
         else
           super
@@ -64,15 +71,6 @@ module StoreModel
       end
 
       private
-
-      # rubocop:disable Style/RescueModifier
-      def decode_and_initialize(value)
-        decoded = ActiveSupport::JSON.decode(value) rescue nil
-        @model_klass.new(decoded) unless decoded.nil?
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(decoded, e)
-      end
-      # rubocop:enable Style/RescueModifier
 
       def raise_cast_error(value)
         raise StoreModel::Types::CastError,
