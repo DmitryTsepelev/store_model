@@ -1,0 +1,7 @@
+source "https://rubygems.org"
+
+gem "jdbc-sqlite3", platform: :jruby
+gem "activerecord-jdbcmysql-adapter", platform: :jruby
+gem "activerecord", "~> 6.0.0"
+
+gemspec path: "../"

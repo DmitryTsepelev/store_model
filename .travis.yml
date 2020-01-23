@@ -8,10 +8,12 @@ rvm:
   - 2.5
   - 2.6
   - ruby-head
+  - jruby
 gemfile:
   - gemfiles/rails_5_2.gemfile
   - gemfiles/rails_6_0.gemfile
   - gemfiles/railsmaster.gemfile
+  - gemfiles/jruby.gemfile
 
 notifications:
   email: false
@@ -23,10 +25,29 @@ matrix:
       gemfile: gemfiles/rails_6_0.gemfile
     - rvm: 2.3
       gemfile: gemfiles/railsmaster.gemfile
+
     - rvm: 2.4
       gemfile: gemfiles/rails_6_0.gemfile
     - rvm: 2.4
       gemfile: gemfiles/railsmaster.gemfile
+
+    - rvm: jruby
+      gemfile: gemfiles/rails_5_2.gemfile
+    - rvm: jruby
+      gemfile: gemfiles/rails_6_0.gemfile
+    - rvm: jruby
+      gemfile: gemfiles/railsmaster.gemfile
+
+    - rvm: 2.3
+      gemfile: gemfiles/jruby.gemfile
+    - rvm: 2.4
+      gemfile: gemfiles/jruby.gemfile
+    - rvm: 2.5
+      gemfile: gemfiles/jruby.gemfile
+    - rvm: 2.6
+      gemfile: gemfiles/jruby.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/jruby.gemfile
   allow_failures:
     - rvm: ruby-head
     - gemfile: gemfiles/railsmaster.gemfile
