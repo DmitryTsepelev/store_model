@@ -1,6 +1,6 @@
 ## Validations
 
-`StoreModel` supports all the validations shipped with `ActiveModel`. Start with defining validation for the store model:
+`StoreModel` supports all validations shipped with `ActiveModel`. Start with defining validation for the store model:
 
 ```ruby
 class Configuration
@@ -50,6 +50,21 @@ puts product.valid? # => false
 puts product.errors.messages # => { color: ["can't be blank"] }
 ```
 
+When using array type, merging errors happens in a following way:
+
+```ruby
+class Product < ApplicationRecord
+  attribute :configurations, Configuration.to_array_type
+
+  validates :configurations, store_model: { merge_errors: true }
+end
+
+product = Product.new
+product.configurations << Configuration.new
+puts product.valid? # => false
+puts product.errors.messages # => { color: ["[0] Color can't be blank"] }
+```
+
 You can change the global behavior using `StoreModel.config`:
 
 ```ruby
@@ -61,16 +76,26 @@ StoreModel.config.merge_errors = true
 You can also add your own custom strategies to handle errors. All you need to do is to provide a callable object to `StoreModel.config.merge_errors` or as value of `:merge_errors`. It should accept three arguments–_attribute_, _base_errors_ and _store_model_errors_:
 
 ```ruby
-StoreModel.config.merge_errors = lambda do |attribute, base_errors, _store_model_errors|
+lambda_strategy = lambda do |attribute, base_errors, _store_model_errors|
   base_errors.add(attribute, "cthulhu fhtagn")
 end
+
+StoreModel.config.merge_errors = lambda_strategy
+
+StoreModel.config.merge_array_errors = lambda_strategy
 ```
 
 If the logic is complex enough–it worth defining a separate class with a `#call` method:
 
 ```ruby
 class FhtagnErrorStrategy
-  def call(attribute, base_errors, _store_model_errors)
+  def call(attribute, base_errors, store_model_errors)
+    base_errors.add(attribute, "cthulhu fhtagn")
+  end
+end
+
+class FhtagnArrayErrorStrategy
+  def call(attribute, base_errors, store_models)
     base_errors.add(attribute, "cthulhu fhtagn")
   end
 end
