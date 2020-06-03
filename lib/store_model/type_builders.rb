@@ -14,5 +14,13 @@ module StoreModel
     def to_array_type
       Types::ArrayType.new(self)
     end
+
+    # TODO: add documentation
+    def one_of(&block)
+      Class.new do
+        define_singleton_method(:to_type) { Types::PolymorphicType.new(block) }
+        define_singleton_method(:to_array_type) { }
+      end
+    end
   end
 end
