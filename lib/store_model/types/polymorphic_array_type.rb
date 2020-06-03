@@ -4,13 +4,14 @@ require "active_model"
 
 module StoreModel
   module Types
-    # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
-    class PolymorphicType < ActiveModel::Type::Value
+    # Implements ActiveModel::Type::Value type for handling an array of
+    # StoreModel::Model
+    class PolymorphicArrayType < ActiveModel::Type::Value
       # Initializes type for model class
       #
       # @param model_wrapper [Proc] class to handle
       #
-      # @return [StoreModel::Types::PolymorphicType ]
+      # @return [StoreModel::Types::PolymorphicArrayType ]
       def initialize(model_wrapper)
         @model_wrapper = model_wrapper
       end
@@ -19,7 +20,7 @@ module StoreModel
       #
       # @return [Symbol]
       def type
-        :polymorphic
+        :polymorphic_array
       end
 
       # Casts +value+ from DB or user to StoreModel::Model instance
@@ -30,15 +31,12 @@ module StoreModel
       def cast_value(value)
         case value
         when String then decode_and_initialize(value)
-        when Hash then @model_wrapper.call(value).new(value)
+        when Array then ensure_model_class(value)
         when nil then value
         else
-          raise_cast_error(value) unless value.class.ancestors.include?(StoreModel::Model)
-
-          value
+          raise StoreModel::Types::CastError,
+                "failed casting #{value.inspect}, only String or Array instances are allowed"
         end
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(value, e)
       end
 
       # Casts a value from the ruby type to a type that the database knows how
@@ -49,11 +47,9 @@ module StoreModel
       # @return [String] serialized value
       def serialize(value)
         case value
-        when Hash
+        when Array
           ActiveSupport::JSON.encode(value)
         else
-          return ActiveSupport::JSON.encode(value) if value.class.ancestors.include?(StoreModel::Model)
-
           super
         end
       end
@@ -71,27 +67,20 @@ module StoreModel
       private
 
       # rubocop:disable Style/RescueModifier
-      def decode_and_initialize(value)
-        decoded = ActiveSupport::JSON.decode(value) rescue nil
-        @model_wrapper.call(value).new(decoded) unless decoded.nil?
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(decoded, e)
+      def decode_and_initialize(array_value)
+        decoded = ActiveSupport::JSON.decode(array_value) rescue []
+        decoded.map { |attributes| cast_model_type_value(attributes) }
       end
       # rubocop:enable Style/RescueModifier
 
-      def raise_cast_error(value)
-        raise StoreModel::Types::CastError,
-              "failed casting #{value.inspect}, only String, " \
-              "Hash or instances which implement StoreModel::Model are allowed"
+      def ensure_model_class(array)
+        array.map do |object|
+          object.class.ancestors.include?(StoreModel::Model) ? object : cast_model_type_value(object)
+        end
       end
 
-      def handle_unknown_attribute(value, exception)
-        attribute = exception.attribute.to_sym
-        value_symbolized = value.symbolize_keys
-
-        cast_value(value_symbolized.except(attribute)).tap do |configuration|
-          configuration.unknown_attributes[attribute.to_s] = value_symbolized[attribute]
-        end
+      def cast_model_type_value(value)
+        @model_wrapper.call(value).to_type.cast_value(value)
       end
     end
   end
