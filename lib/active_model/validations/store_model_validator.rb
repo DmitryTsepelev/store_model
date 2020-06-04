@@ -21,9 +21,9 @@ module ActiveModel
         end
 
         case record.type_for_attribute(attribute).type
-        when :json
+        when :json, :polymorphic
           call_json_strategy(attribute, record.errors, value)
-        when :array
+        when :array, :polymorphic_array
           call_array_strategy(attribute, record.errors, value)
         end
       end
