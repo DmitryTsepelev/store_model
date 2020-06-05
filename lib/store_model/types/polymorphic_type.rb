@@ -30,7 +30,9 @@ module StoreModel
       def cast_value(value)
         case value
         when String then decode_and_initialize(value)
-        when Hash then @model_wrapper.call(value).new(value)
+        when Hash
+          model_klass = extract_model_klass(value)
+          model_klass.new(value)
         when nil then value
         else
           raise_cast_error(value) unless value.class.ancestors.include?(StoreModel::Model)
@@ -73,11 +75,25 @@ module StoreModel
       # rubocop:disable Style/RescueModifier
       def decode_and_initialize(value)
         decoded = ActiveSupport::JSON.decode(value) rescue nil
-        @model_wrapper.call(value).new(decoded) unless decoded.nil?
+        model_klass = extract_model_klass(value)
+        model_klass.new(decoded) unless decoded.nil?
       rescue ActiveModel::UnknownAttributeError => e
         handle_unknown_attribute(decoded, e)
       end
       # rubocop:enable Style/RescueModifier
+
+      # Check if block returns an appropriate class and raise cast error if not
+      #
+      # @param value [Object] raw data
+      #
+      # @return [Class] which implements StoreModel::Model
+      def extract_model_klass(value)
+        model_klass = @model_wrapper.call(value)
+
+        raise raise_cast_error(value) unless model_klass&.ancestors&.include?(StoreModel::Model)
+
+        model_klass
+      end
 
       def raise_cast_error(value)
         raise StoreModel::Types::CastError,
