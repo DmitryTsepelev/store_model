@@ -34,8 +34,7 @@ module StoreModel
         when Array then ensure_model_class(value)
         when nil then value
         else
-          raise StoreModel::Types::CastError,
-                "failed casting #{value.inspect}, only String or Array instances are allowed"
+          raise_cast_error(value)
         end
       end
 
@@ -75,12 +74,24 @@ module StoreModel
 
       def ensure_model_class(array)
         array.map do |object|
-          object.class.ancestors.include?(StoreModel::Model) ? object : cast_model_type_value(object)
+          next object if object.class.ancestors.include?(StoreModel::Model)
+
+          cast_model_type_value(object)
         end
       end
 
       def cast_model_type_value(value)
-        @model_wrapper.call(value).to_type.cast_value(value)
+        model_klass = @model_wrapper.call(value)
+
+        raise raise_cast_error(value) unless model_klass&.respond_to?(:to_type)
+
+        model_klass.to_type.cast_value(value)
+      end
+
+      def raise_cast_error(value)
+        raise StoreModel::Types::CastError,
+              "failed casting #{value.inspect}, only String, " \
+              "Hash or instances which implement StoreModel::Model are allowed"
       end
     end
   end

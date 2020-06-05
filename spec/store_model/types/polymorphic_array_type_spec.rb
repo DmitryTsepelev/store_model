@@ -55,6 +55,18 @@ RSpec.describe StoreModel::Types::PolymorphicArrayType do
     context "when Array of hashes is passed" do
       let(:value) { attributes_array }
       include_examples "cast examples"
+
+      context "when model_wrapper does not return model" do
+        let(:type) { described_class.new(proc { nil }) }
+
+        it "raises exception" do
+          expect { type.cast_value(value) }.to raise_error(
+            StoreModel::Types::CastError,
+            "failed casting #{value.first.inspect}, only String, " \
+            "Hash or instances which implement StoreModel::Model are allowed"
+          )
+        end
+      end
     end
 
     context "when Array of instances is passed" do
@@ -80,7 +92,8 @@ RSpec.describe StoreModel::Types::PolymorphicArrayType do
       it "raises exception" do
         expect { type.cast_value(value) }.to raise_error(
           StoreModel::Types::CastError,
-          "failed casting {}, only String or Array instances are allowed"
+          "failed casting {}, only String, " \
+          "Hash or instances which implement StoreModel::Model are allowed"
         )
       end
     end
