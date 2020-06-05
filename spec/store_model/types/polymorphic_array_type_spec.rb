@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe StoreModel::Types::PolymorphicArrayType do
-  let(:type) { described_class.new(Proc.new { Configuration }) }
+  let(:type) { described_class.new(proc { Configuration }) }
 
   let(:attributes_array) do
     [
@@ -58,7 +58,13 @@ RSpec.describe StoreModel::Types::PolymorphicArrayType do
     end
 
     context "when Array of instances is passed" do
-      let(:value) { attributes_array.map { |attrs| Configuration.new(attrs) } }
+      let(:configuration_class) { Class.new(Configuration) }
+
+      let(:value) { attributes_array.map { |attrs| configuration_class.new(attrs) } }
+
+      it { expect(subject.first).to be_a(configuration_class) }
+      it { expect(subject.second).to be_a(configuration_class) }
+
       include_examples "cast examples"
     end
 
