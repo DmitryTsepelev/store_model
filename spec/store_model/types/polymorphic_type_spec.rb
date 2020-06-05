@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe StoreModel::Types::PolymorphicType do
-  let(:type) { described_class.new(Proc.new { Configuration }) }
+  let(:type) { described_class.new(proc { Configuration }) }
 
   let(:attributes) do
     {
@@ -77,7 +77,7 @@ RSpec.describe StoreModel::Types::PolymorphicType do
       end
 
       let(:configuration_class) { nil }
-      let(:configuration_proc) { Proc.new { configuration_class } }
+      let(:configuration_proc) { proc { configuration_class } }
 
       let(:type) { described_class.new(configuration_proc) }
 
@@ -132,7 +132,7 @@ RSpec.describe StoreModel::Types::PolymorphicType do
           end
         end
 
-        let(:configuration_proc) { Proc.new { configuration_class } }
+        let(:configuration_proc) { proc { configuration_class } }
 
         let(:configuration_class) do
           Class.new do
@@ -159,6 +159,44 @@ RSpec.describe StoreModel::Types::PolymorphicType do
           let(:value) { ActiveSupport::JSON.encode(attributes) }
           include_examples "for unknown nested attributes"
         end
+      end
+    end
+
+    context "when passing more complex block" do
+      let(:type) { described_class.new(configuration_proc) }
+
+      let(:configuration_v1) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :version, :string
+          attribute :brightness, :string
+        end
+      end
+
+      let(:configuration_v2) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :version, :string
+          attribute :brightness, :string
+        end
+      end
+
+      let(:configuration_proc) do
+        proc { |json| json[:version] == "v1" ? configuration_v1 : configuration_v2 }
+      end
+
+      context "when data consist of v1" do
+        let(:value) { { version: "v1" } }
+
+        it { is_expected.to be_a(configuration_v1) }
+      end
+
+      context "when data consist of v2" do
+        let(:value) { { version: "v2" } }
+
+        it { is_expected.to be_a(configuration_v2) }
       end
     end
   end
