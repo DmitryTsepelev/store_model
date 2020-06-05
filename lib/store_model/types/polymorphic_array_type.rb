@@ -83,7 +83,7 @@ module StoreModel
       def cast_model_type_value(value)
         model_klass = @model_wrapper.call(value)
 
-        raise raise_cast_error(value) unless model_klass&.respond_to?(:to_type)
+        raise_expand_wrapper_error(model_klass) unless model_klass&.respond_to?(:to_type)
 
         model_klass.to_type.cast_value(value)
       end
@@ -92,6 +92,11 @@ module StoreModel
         raise StoreModel::Types::CastError,
               "failed casting #{value.inspect}, only String, " \
               "Hash or instances which implement StoreModel::Model are allowed"
+      end
+
+      def raise_expand_wrapper_error(invalid_klass)
+        raise StoreModel::Types::ExpandWrapperError,
+              "#{invalid_klass.inspect} is an invalid model klass"
       end
     end
   end

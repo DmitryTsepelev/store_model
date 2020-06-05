@@ -70,8 +70,8 @@ RSpec.describe StoreModel::Types::PolymorphicType do
       shared_examples "for different data types" do
         it "raises exception" do
           expect { type.cast_value(value) }.to raise_error(
-            StoreModel::Types::CastError,
-            "failed casting #{value.inspect}, only String, Hash or instances which implement StoreModel::Model are allowed"
+            StoreModel::Types::ExpandWrapperError,
+            "#{configuration_class.inspect} is an invalid model klass"
           )
         end
       end

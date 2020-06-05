@@ -11,5 +11,6 @@ module StoreModel
   # Contains all custom types.
   module Types
     class CastError < StandardError; end
+    class ExpandWrapperError < StandardError; end
   end
 end

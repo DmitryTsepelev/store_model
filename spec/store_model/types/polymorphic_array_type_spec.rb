@@ -61,9 +61,8 @@ RSpec.describe StoreModel::Types::PolymorphicArrayType do
 
         it "raises exception" do
           expect { type.cast_value(value) }.to raise_error(
-            StoreModel::Types::CastError,
-            "failed casting #{value.first.inspect}, only String, " \
-            "Hash or instances which implement StoreModel::Model are allowed"
+            StoreModel::Types::ExpandWrapperError,
+            "#{nil.inspect} is an invalid model klass"
           )
         end
       end

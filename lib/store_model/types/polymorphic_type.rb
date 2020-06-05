@@ -90,7 +90,8 @@ module StoreModel
       def extract_model_klass(value)
         model_klass = @model_wrapper.call(value)
 
-        raise raise_cast_error(value) unless model_klass&.ancestors&.include?(StoreModel::Model)
+        model_klass&.ancestors&.include?(StoreModel::Model) ||
+          raise_expand_wrapper_error(model_klass)
 
         model_klass
       end
@@ -99,6 +100,11 @@ module StoreModel
         raise StoreModel::Types::CastError,
               "failed casting #{value.inspect}, only String, " \
               "Hash or instances which implement StoreModel::Model are allowed"
+      end
+
+      def raise_expand_wrapper_error(invalid_klass)
+        raise StoreModel::Types::ExpandWrapperError,
+              "#{invalid_klass.inspect} is an invalid model klass"
       end
 
       def handle_unknown_attribute(value, exception)
