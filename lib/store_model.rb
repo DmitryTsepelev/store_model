@@ -11,12 +11,9 @@ module StoreModel # :nodoc:
       @config ||= Configuration.new
     end
 
-    # TODO: add documentation
+    # @return instance [Types::OneOf]
     def one_of(&block)
-      Class.new do
-        define_singleton_method(:to_type) { Types::PolymorphicType.new(block) }
-        define_singleton_method(:to_array_type) { Types::PolymorphicArrayType.new(block) }
-      end
+      Types::OneOf.new(&block)
     end
   end
 end
