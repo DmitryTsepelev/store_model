@@ -67,14 +67,7 @@ RSpec.describe StoreModel::Types::PolymorphicType do
     end
 
     context "when block does not return appropriate model" do
-      let(:configuration_class) { nil }
-      let(:configuration_proc) { Proc.new { configuration_class } }
-
-      let(:type) { described_class.new(configuration_proc) }
-
-      context "when passing string" do
-        let(:value) { attributes.to_json }
-
+      shared_examples "for different data types" do
         it "raises exception" do
           expect { type.cast_value(value) }.to raise_error(
             StoreModel::Types::CastError,
@@ -83,15 +76,21 @@ RSpec.describe StoreModel::Types::PolymorphicType do
         end
       end
 
+      let(:configuration_class) { nil }
+      let(:configuration_proc) { Proc.new { configuration_class } }
+
+      let(:type) { described_class.new(configuration_proc) }
+
+      context "when passing string" do
+        let(:value) { attributes.to_json }
+
+        include_examples "for different data types"
+      end
+
       context "when passing hash" do
         let(:value) { attributes }
 
-        it "raises exception" do
-          expect { type.cast_value(value) }.to raise_error(
-            StoreModel::Types::CastError,
-            "failed casting #{value.inspect}, only String, Hash or instances which implement StoreModel::Model are allowed"
-          )
-        end
+        include_examples "for different data types"
       end
     end
 
