@@ -141,6 +141,39 @@ RSpec.describe StoreModel::Types::PolymorphicArrayType do
         include_examples "for unknown attributes"
       end
     end
+
+    context "when passing more complex block" do
+      let(:type) { described_class.new(configuration_proc) }
+
+      let(:configuration_v1) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :version, :string
+          attribute :brightness, :string
+        end
+      end
+
+      let(:configuration_v2) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :version, :string
+          attribute :brightness, :string
+        end
+      end
+
+      let(:configuration_proc) do
+        proc { |json| json[:version] == "v1" ? configuration_v1 : configuration_v2 }
+      end
+
+      context "when data consist of v1" do
+        let(:value) { [{ version: "v1" }, { version: "v2" }] }
+
+        it { expect(subject.first).to be_a(configuration_v1) }
+        it { expect(subject.second).to be_a(configuration_v2) }
+      end
+    end
   end
 
   describe "#serialize" do
