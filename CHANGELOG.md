@@ -1,5 +1,8 @@
 # Change log
 
+## master
+- [PR #61](https://github.com/DmitryTsepelev/store_model/pull/61) Add polymorfic associations ([@HolyWalley]())
+
 ## 0.7.0 (2019-11-19)
 
 - [PR #48](https://github.com/DmitryTsepelev/store_model/pull/46) Support merging errors for ArrayType ([@bostanio]())
