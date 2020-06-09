@@ -7,6 +7,8 @@ module StoreModel
     # Implements ActiveModel::Type::Value type for handling an array of
     # StoreModel::Model
     class PolymorphicArrayType < ActiveModel::Type::Value
+      include PolymorphicHelper
+
       # Initializes type for model class
       #
       # @param model_wrapper [Proc] class to handle
@@ -74,7 +76,7 @@ module StoreModel
 
       def ensure_model_class(array)
         array.map do |object|
-          next object if object.class.ancestors.include?(StoreModel::Model)
+          next object if implements_model?(object.class)
 
           cast_model_type_value(object)
         end
@@ -83,7 +85,7 @@ module StoreModel
       def cast_model_type_value(value)
         model_klass = @model_wrapper.call(value)
 
-        raise_expand_wrapper_error(model_klass) unless model_klass&.respond_to?(:to_type)
+        raise_extract_wrapper_error(model_klass) unless implements_model?(model_klass)
 
         model_klass.to_type.cast_value(value)
       end
@@ -92,11 +94,6 @@ module StoreModel
         raise StoreModel::Types::CastError,
               "failed casting #{value.inspect}, only String, " \
               "Hash or instances which implement StoreModel::Model are allowed"
-      end
-
-      def raise_expand_wrapper_error(invalid_klass)
-        raise StoreModel::Types::ExpandWrapperError,
-              "#{invalid_klass.inspect} is an invalid model klass"
       end
     end
   end

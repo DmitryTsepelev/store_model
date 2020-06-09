@@ -6,6 +6,8 @@ module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
     class PolymorphicType < ActiveModel::Type::Value
+      include PolymorphicHelper
+
       # Initializes type for model class
       #
       # @param model_wrapper [Proc] class to handle
@@ -54,7 +56,7 @@ module StoreModel
         when Hash
           ActiveSupport::JSON.encode(value)
         else
-          return ActiveSupport::JSON.encode(value) if value.class.ancestors.include?(StoreModel::Model)
+          return ActiveSupport::JSON.encode(value) if implements_model?(value.class)
 
           super
         end
@@ -90,8 +92,7 @@ module StoreModel
       def extract_model_klass(value)
         model_klass = @model_wrapper.call(value)
 
-        is_a_model = model_klass&.ancestors&.include?(StoreModel::Model)
-        raise_expand_wrapper_error(model_klass) unless is_a_model
+        raise_extract_wrapper_error(model_klass) unless implements_model?(model_klass)
 
         model_klass
       end
@@ -100,11 +101,6 @@ module StoreModel
         raise StoreModel::Types::CastError,
               "failed casting #{value.inspect}, only String, " \
               "Hash or instances which implement StoreModel::Model are allowed"
-      end
-
-      def raise_expand_wrapper_error(invalid_klass)
-        raise StoreModel::Types::ExpandWrapperError,
-              "#{invalid_klass.inspect} is an invalid model klass"
       end
 
       def handle_unknown_attribute(value, exception)
