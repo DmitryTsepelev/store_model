@@ -90,8 +90,8 @@ module StoreModel
       def extract_model_klass(value)
         model_klass = @model_wrapper.call(value)
 
-        model_klass&.ancestors&.include?(StoreModel::Model) ||
-          raise_expand_wrapper_error(model_klass)
+        is_a_model = model_klass&.ancestors&.include?(StoreModel::Model)
+        raise_expand_wrapper_error(model_klass) unless is_a_model
 
         model_klass
       end
