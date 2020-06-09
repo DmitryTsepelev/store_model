@@ -5,7 +5,7 @@ require "active_model"
 module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
-    class PolymorphicType < ActiveModel::Type::Value
+    class PolymorphicType < BaseSingleType
       include PolymorphicHelper
 
       # Initializes type for model class
@@ -62,27 +62,7 @@ module StoreModel
         end
       end
 
-      # Determines whether the mutable value has been modified since it was read
-      #
-      # @param raw_old_value [Object] old value
-      # @param new_value [Object] new value
-      #
-      # @return [Boolean]
-      def changed_in_place?(raw_old_value, new_value)
-        cast_value(raw_old_value) != new_value
-      end
-
       private
-
-      # rubocop:disable Style/RescueModifier
-      def decode_and_initialize(value)
-        decoded = ActiveSupport::JSON.decode(value) rescue nil
-        model_klass = extract_model_klass(value)
-        model_klass.new(decoded) unless decoded.nil?
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(decoded, e)
-      end
-      # rubocop:enable Style/RescueModifier
 
       # Check if block returns an appropriate class and raise cast error if not
       #
@@ -103,13 +83,8 @@ module StoreModel
               "Hash or instances which implement StoreModel::Model are allowed"
       end
 
-      def handle_unknown_attribute(value, exception)
-        attribute = exception.attribute.to_sym
-        value_symbolized = value.symbolize_keys
-
-        cast_value(value_symbolized.except(attribute)).tap do |configuration|
-          configuration.unknown_attributes[attribute.to_s] = value_symbolized[attribute]
-        end
+      def model_instance(value)
+        extract_model_klass(value).new(value)
       end
     end
   end

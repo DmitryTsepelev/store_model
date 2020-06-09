@@ -5,15 +5,7 @@ require "active_model"
 module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
-    class JsonType < ActiveModel::Type::Value
-      # Initializes type for model class
-      #
-      # @param model_klass [StoreModel::Model] model class to handle
-      #
-      # @return [StoreModel::Types::JsonType]
-      def initialize(model_klass)
-        @model_klass = model_klass
-      end
+    class JsonType < BaseSingleType
 
       # Returns type
       #
@@ -30,7 +22,7 @@ module StoreModel
       def cast_value(value)
         case value
         when String then decode_and_initialize(value)
-        when Hash then @model_klass.new(value)
+        when Hash then model_instance(value)
         when @model_klass, nil then value
         else raise_cast_error(value)
         end
@@ -52,27 +44,7 @@ module StoreModel
           super
         end
       end
-
-      # Determines whether the mutable value has been modified since it was read
-      #
-      # @param raw_old_value [Object] old value
-      # @param new_value [Object] new value
-      #
-      # @return [Boolean]
-      def changed_in_place?(raw_old_value, new_value)
-        cast_value(raw_old_value) != new_value
-      end
-
       private
-
-      # rubocop:disable Style/RescueModifier
-      def decode_and_initialize(value)
-        decoded = ActiveSupport::JSON.decode(value) rescue nil
-        @model_klass.new(decoded) unless decoded.nil?
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(decoded, e)
-      end
-      # rubocop:enable Style/RescueModifier
 
       def raise_cast_error(value)
         raise StoreModel::Types::CastError,
@@ -80,13 +52,8 @@ module StoreModel
               "Hash or #{@model_klass.name} instances are allowed"
       end
 
-      def handle_unknown_attribute(value, exception)
-        attribute = exception.attribute.to_sym
-        value_symbolized = value.symbolize_keys
-
-        cast_value(value_symbolized.except(attribute)).tap do |configuration|
-          configuration.unknown_attributes[attribute.to_s] = value_symbolized[attribute]
-        end
+      def model_instance(value)
+        @model_klass.new(value)
       end
     end
   end
