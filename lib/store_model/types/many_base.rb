@@ -6,7 +6,7 @@ module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an array of
     # StoreModel::Model
-    class BaseArrayType < ActiveModel::Type::Value
+    class ManyBase < ActiveModel::Type::Value
       # Returns type
       #
       # @return [Symbol]

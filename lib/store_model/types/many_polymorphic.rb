@@ -6,7 +6,7 @@ module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an array of
     # StoreModel::Model
-    class PolymorphicArrayType < BaseArrayType
+    class ManyPolymorphic < ManyBase
       include PolymorphicHelper
 
       # Initializes type for model class

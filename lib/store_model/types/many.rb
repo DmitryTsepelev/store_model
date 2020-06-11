@@ -6,12 +6,12 @@ module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an array of
     # StoreModel::Model
-    class ArrayType < BaseArrayType
+    class Many < ManyBase
       # Initializes type for model class
       #
       # @param model_klass [StoreModel::Model] model class to handle
       #
-      # @return [StoreModel::Types::ArrayType]
+      # @return [StoreModel::Types::Many]
       def initialize(model_klass)
         @model_klass = model_klass
       end

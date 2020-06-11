@@ -5,7 +5,7 @@ require "active_model"
 module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
-    class BaseSingleType < ActiveModel::Type::Value
+    class OneBase < ActiveModel::Type::Value
       # Returns type
       #
       # @return [Symbol]

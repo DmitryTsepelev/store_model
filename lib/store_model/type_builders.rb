@@ -3,16 +3,16 @@
 module StoreModel
   # Contains methods for converting StoreModel::Model to ActiveModel::Type::Value.
   module TypeBuilders
-    # Converts StoreModel::Model to Types::JsonType
-    # @return [Types::JsonType]
+    # Converts StoreModel::Model to Types::One
+    # @return [Types::One]
     def to_type
-      Types::JsonType.new(self)
+      Types::One.new(self)
     end
 
-    # Converts StoreModel::Model to Types::ArrayType
-    # @return [Types::ArrayType]
+    # Converts StoreModel::Model to Types::Many
+    # @return [Types::Many]
     def to_array_type
-      Types::ArrayType.new(self)
+      Types::Many.new(self)
     end
   end
 end

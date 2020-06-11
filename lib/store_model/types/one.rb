@@ -5,12 +5,12 @@ require "active_model"
 module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
-    class JsonType < BaseSingleType
+    class One < OneBase
       # Initializes type for model class
       #
       # @param model_klass [StoreModel::Model] model class to handle
       #
-      # @return [StoreModel::Types::JsonType]
+      # @return [StoreModel::Types::One]
       def initialize(model_klass)
         @model_klass = model_klass
       end

@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe StoreModel::Types::PolymorphicArrayType do
+RSpec.describe StoreModel::Types::ManyPolymorphic do
   let(:type) { described_class.new(proc { Configuration }) }
 
   let(:attributes_array) do

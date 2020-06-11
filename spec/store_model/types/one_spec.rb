@@ -2,8 +2,8 @@
 
 require "spec_helper"
 
-RSpec.describe StoreModel::Types::PolymorphicType do
-  let(:type) { described_class.new(proc { Configuration }) }
+RSpec.describe StoreModel::Types::One do
+  let(:type) { described_class.new(Configuration) }
 
   let(:attributes) do
     {
@@ -17,7 +17,7 @@ RSpec.describe StoreModel::Types::PolymorphicType do
   describe "#type" do
     subject { type.type }
 
-    it { is_expected.to eq(:polymorphic) }
+    it { is_expected.to eq(:json) }
   end
 
   describe "#changed_in_place?" do
@@ -61,37 +61,8 @@ RSpec.describe StoreModel::Types::PolymorphicType do
       it "raises exception" do
         expect { type.cast_value(value) }.to raise_error(
           StoreModel::Types::CastError,
-          "failed casting [], only String, Hash or instances which " \
-          "implement StoreModel::Model are allowed"
+          "failed casting [], only String, Hash or Configuration instances are allowed"
         )
-      end
-    end
-
-    context "when block does not return appropriate model" do
-      shared_examples "for different data types" do
-        it "raises exception" do
-          expect { type.cast_value(value) }.to raise_error(
-            StoreModel::Types::ExpandWrapperError,
-            "#{configuration_class.inspect} is an invalid model klass"
-          )
-        end
-      end
-
-      let(:configuration_class) { nil }
-      let(:configuration_proc) { proc { configuration_class } }
-
-      let(:type) { described_class.new(configuration_proc) }
-
-      context "when passing string" do
-        let(:value) { attributes.to_json }
-
-        include_examples "for different data types"
-      end
-
-      context "when passing hash" do
-        let(:value) { attributes }
-
-        include_examples "for different data types"
       end
     end
 
@@ -133,8 +104,6 @@ RSpec.describe StoreModel::Types::PolymorphicType do
           end
         end
 
-        let(:configuration_proc) { proc { configuration_class } }
-
         let(:configuration_class) do
           Class.new do
             include StoreModel::Model
@@ -146,7 +115,7 @@ RSpec.describe StoreModel::Types::PolymorphicType do
           end
         end
 
-        let(:type) { described_class.new(configuration_proc) }
+        let(:type) { described_class.new(configuration_class) }
 
         let(:supplier) { { unknown_attribute: "something" } }
         let(:attributes) { { color: "red", suppliers: [supplier] } }
@@ -160,44 +129,6 @@ RSpec.describe StoreModel::Types::PolymorphicType do
           let(:value) { ActiveSupport::JSON.encode(attributes) }
           include_examples "for unknown nested attributes"
         end
-      end
-    end
-
-    context "when passing more complex block" do
-      let(:type) { described_class.new(configuration_proc) }
-
-      let(:configuration_v1) do
-        Class.new do
-          include StoreModel::Model
-
-          attribute :version, :string
-          attribute :brightness, :string
-        end
-      end
-
-      let(:configuration_v2) do
-        Class.new do
-          include StoreModel::Model
-
-          attribute :version, :string
-          attribute :brightness, :string
-        end
-      end
-
-      let(:configuration_proc) do
-        proc { |json| json[:version] == "v1" ? configuration_v1 : configuration_v2 }
-      end
-
-      context "when data consist of v1" do
-        let(:value) { { version: "v1" } }
-
-        it { is_expected.to be_a(configuration_v1) }
-      end
-
-      context "when data consist of v2" do
-        let(:value) { { version: "v2" } }
-
-        it { is_expected.to be_a(configuration_v2) }
       end
     end
   end

@@ -5,14 +5,14 @@ require "active_model"
 module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
-    class PolymorphicType < BaseSingleType
+    class OnePolymorphic < OneBase
       include PolymorphicHelper
 
       # Initializes type for model class
       #
       # @param model_wrapper [Proc] class to handle
       #
-      # @return [StoreModel::Types::PolymorphicType ]
+      # @return [StoreModel::Types::OnePolymorphic ]
       def initialize(model_wrapper)
         @model_wrapper = model_wrapper
       end

@@ -14,9 +14,9 @@ module StoreModel
       def accepts_nested_attributes_for(*associations)
         associations.each do |association|
           case attribute_types[association.to_s]
-          when Types::JsonType
+          when Types::One
             alias_method "#{association}_attributes=", "#{association}="
-          when Types::ArrayType
+          when Types::Many
             define_method "#{association}_attributes=" do |attributes|
               assign_nested_attributes_for_collection_association(association, attributes)
             end

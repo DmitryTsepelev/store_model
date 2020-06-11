@@ -12,11 +12,11 @@ module StoreModel
       end
 
       def to_type
-        Types::PolymorphicType.new(@block)
+        Types::OnePolymorphic.new(@block)
       end
 
       def to_array_type
-        Types::PolymorphicArrayType.new(@block)
+        Types::ManyPolymorphic.new(@block)
       end
     end
   end

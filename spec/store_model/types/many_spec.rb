@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe StoreModel::Types::ArrayType do
+RSpec.describe StoreModel::Types::Many do
   let(:type) { described_class.new(Configuration) }
 
   let(:attributes_array) do
