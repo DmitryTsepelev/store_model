@@ -5,21 +5,23 @@ require "active_model"
 module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
-    class JsonType < BaseSingleType
+    class PolymorphicType < BaseSingleType
+      include PolymorphicHelper
+
       # Initializes type for model class
       #
-      # @param model_klass [StoreModel::Model] model class to handle
+      # @param model_wrapper [Proc] class to handle
       #
-      # @return [StoreModel::Types::JsonType]
-      def initialize(model_klass)
-        @model_klass = model_klass
+      # @return [StoreModel::Types::PolymorphicType ]
+      def initialize(model_wrapper)
+        @model_wrapper = model_wrapper
       end
 
       # Returns type
       #
       # @return [Symbol]
       def type
-        :json
+        :polymorphic
       end
 
       # Casts +value+ from DB or user to StoreModel::Model instance
@@ -30,9 +32,14 @@ module StoreModel
       def cast_value(value)
         case value
         when String then decode_and_initialize(value)
-        when Hash then model_instance(value)
-        when @model_klass, nil then value
-        else raise_cast_error(value)
+        when Hash
+          model_klass = extract_model_klass(value)
+          model_klass.new(value)
+        when nil then value
+        else
+          raise_cast_error(value) unless value.class.ancestors.include?(StoreModel::Model)
+
+          value
         end
       rescue ActiveModel::UnknownAttributeError => e
         handle_unknown_attribute(value, e)
@@ -46,23 +53,38 @@ module StoreModel
       # @return [String] serialized value
       def serialize(value)
         case value
-        when Hash, @model_klass
+        when Hash
           ActiveSupport::JSON.encode(value)
         else
+          return ActiveSupport::JSON.encode(value) if implements_model?(value.class)
+
           super
         end
       end
 
-      private
+      protected
+
+      # Check if block returns an appropriate class and raise cast error if not
+      #
+      # @param value [Object] raw data
+      #
+      # @return [Class] which implements StoreModel::Model
+      def extract_model_klass(value)
+        model_klass = @model_wrapper.call(value)
+
+        raise_extract_wrapper_error(model_klass) unless implements_model?(model_klass)
+
+        model_klass
+      end
 
       def raise_cast_error(value)
         raise StoreModel::Types::CastError,
               "failed casting #{value.inspect}, only String, " \
-              "Hash or #{@model_klass.name} instances are allowed"
+              "Hash or instances which implement StoreModel::Model are allowed"
       end
 
       def model_instance(value)
-        @model_klass.new(value)
+        extract_model_klass(value).new(value)
       end
     end
   end

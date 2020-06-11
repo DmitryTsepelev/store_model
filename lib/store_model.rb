@@ -10,5 +10,10 @@ module StoreModel # :nodoc:
     def config
       @config ||= Configuration.new
     end
+
+    # @return instance [Types::OneOf]
+    def one_of(&block)
+      Types::OneOf.new(&block)
+    end
   end
 end

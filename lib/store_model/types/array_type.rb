@@ -6,7 +6,7 @@ module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an array of
     # StoreModel::Model
-    class ArrayType < ActiveModel::Type::Value
+    class ArrayType < BaseArrayType
       # Initializes type for model class
       #
       # @param model_klass [StoreModel::Model] model class to handle
@@ -23,55 +23,7 @@ module StoreModel
         :array
       end
 
-      # Casts +value+ from DB or user to StoreModel::Model instance
-      #
-      # @param value [Object] a value to cast
-      #
-      # @return StoreModel::Model
-      def cast_value(value)
-        case value
-        when String then decode_and_initialize(value)
-        when Array then ensure_model_class(value)
-        when nil then value
-        else
-          raise StoreModel::Types::CastError,
-                "failed casting #{value.inspect}, only String or Array instances are allowed"
-        end
-      end
-
-      # Casts a value from the ruby type to a type that the database knows how
-      # to understand.
-      #
-      # @param value [Object] value to serialize
-      #
-      # @return [String] serialized value
-      def serialize(value)
-        case value
-        when Array
-          ActiveSupport::JSON.encode(value)
-        else
-          super
-        end
-      end
-
-      # Determines whether the mutable value has been modified since it was read
-      #
-      # @param raw_old_value [Object] old value
-      # @param new_value [Object] new value
-      #
-      # @return [Boolean]
-      def changed_in_place?(raw_old_value, new_value)
-        cast_value(raw_old_value) != new_value
-      end
-
-      private
-
-      # rubocop:disable Style/RescueModifier
-      def decode_and_initialize(array_value)
-        decoded = ActiveSupport::JSON.decode(array_value) rescue []
-        decoded.map { |attributes| cast_model_type_value(attributes) }
-      end
-      # rubocop:enable Style/RescueModifier
+      protected
 
       def ensure_model_class(array)
         array.map do |object|
@@ -85,6 +37,11 @@ module StoreModel
 
       def model_klass_type
         @model_klass_type ||= @model_klass.to_type
+      end
+
+      def raise_cast_error(value)
+        raise StoreModel::Types::CastError,
+              "failed casting #{value.inspect}, only String or Array instances are allowed"
       end
     end
   end
