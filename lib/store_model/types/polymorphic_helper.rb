@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Shared methods for polymorphic classes
 module PolymorphicHelper
   def raise_extract_wrapper_error(invalid_klass)
     raise StoreModel::Types::ExpandWrapperError,

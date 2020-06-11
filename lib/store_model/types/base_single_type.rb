@@ -18,7 +18,7 @@ module StoreModel
       # @param value [Object] a value to cast
       #
       # @return StoreModel::Model
-      def cast_value(value)
+      def cast_value(_value)
         raise NotImplementedError
       end
 
@@ -34,11 +34,11 @@ module StoreModel
 
       protected
 
-      def raise_cast_error(value)
+      def raise_cast_error(_value)
         raise NotImplementedError
       end
 
-      def model_instance(value)
+      def model_instance(_value)
         raise NotImplementedError
       end
 

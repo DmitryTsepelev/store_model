@@ -56,15 +56,15 @@ module StoreModel
 
       protected
 
-      def ensure_model_class(array)
+      def ensure_model_class(_array)
         raise NotImplementedError
       end
 
-      def cast_model_type_value(value)
+      def cast_model_type_value(_value)
         raise NotImplementedError
       end
 
-      def raise_cast_error(value)
+      def raise_cast_error(_value)
         raise NotImplementedError
       end
 

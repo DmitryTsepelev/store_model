@@ -32,9 +32,7 @@ module StoreModel
       def cast_value(value)
         case value
         when String then decode_and_initialize(value)
-        when Hash
-          model_klass = extract_model_klass(value)
-          model_klass.new(value)
+        when Hash then extract_model_klass(value).new(value)
         when nil then value
         else
           raise_cast_error(value) unless value.class.ancestors.include?(StoreModel::Model)
