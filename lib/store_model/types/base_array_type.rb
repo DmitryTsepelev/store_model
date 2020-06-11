@@ -7,15 +7,6 @@ module StoreModel
     # Implements ActiveModel::Type::Value type for handling an array of
     # StoreModel::Model
     class BaseArrayType < ActiveModel::Type::Value
-      # Initializes type for model class
-      #
-      # @param model_wrapper [Proc] class to handle
-      #
-      # @return [StoreModel::Types::PolymorphicArrayType ]
-      def initialize(model_klass)
-        @model_klass = model_klass
-      end
-
       # Returns type
       #
       # @return [Symbol]
@@ -63,31 +54,28 @@ module StoreModel
         cast_value(raw_old_value) != new_value
       end
 
+      protected
+
+      def ensure_model_class(array)
+        raise NotImplementedError
+      end
+
+      def cast_model_type_value(value)
+        raise NotImplementedError
+      end
+
+      def raise_cast_error(value)
+        raise NotImplementedError
+      end
+
+      private
+
       # rubocop:disable Style/RescueModifier
       def decode_and_initialize(array_value)
         decoded = ActiveSupport::JSON.decode(array_value) rescue []
         decoded.map { |attributes| cast_model_type_value(attributes) }
       end
       # rubocop:enable Style/RescueModifier
-
-      def ensure_model_class(array)
-        array.map do |object|
-          object.is_a?(@model_klass) ? object : cast_model_type_value(object)
-        end
-      end
-
-      def cast_model_type_value(value)
-        model_klass_type.cast_value(value)
-      end
-
-      def model_klass_type
-        @model_klass_type ||= @model_klass.to_type
-      end
-
-      def raise_cast_error(value)
-        raise StoreModel::Types::CastError,
-              "failed casting #{value.inspect}, only String or Array instances are allowed"
-      end
     end
   end
 end

@@ -62,7 +62,7 @@ module StoreModel
         end
       end
 
-      private
+      protected
 
       # Check if block returns an appropriate class and raise cast error if not
       #

@@ -6,6 +6,14 @@ module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
     class JsonType < BaseSingleType
+      # Initializes type for model class
+      #
+      # @param model_klass [StoreModel::Model] model class to handle
+      #
+      # @return [StoreModel::Types::JsonType]
+      def initialize(model_klass)
+        @model_klass = model_klass
+      end
 
       # Returns type
       #
@@ -44,6 +52,7 @@ module StoreModel
           super
         end
       end
+
       private
 
       def raise_cast_error(value)

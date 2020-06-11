@@ -6,15 +6,6 @@ module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
     class BaseSingleType < ActiveModel::Type::Value
-      # Initializes type for model class
-      #
-      # @param model_klass [StoreModel::Model] model class to handle
-      #
-      # @return [StoreModel::Types::JsonType]
-      def initialize(model_klass)
-        @model_klass = model_klass
-      end
-
       # Returns type
       #
       # @return [Symbol]
@@ -41,21 +32,10 @@ module StoreModel
         cast_value(raw_old_value) != new_value
       end
 
-      private
-
-      # rubocop:disable Style/RescueModifier
-      def decode_and_initialize(value)
-        decoded = ActiveSupport::JSON.decode(value) rescue nil
-        model_instance(decoded) unless decoded.nil?
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(decoded, e)
-      end
-      # rubocop:enable Style/RescueModifier
+      protected
 
       def raise_cast_error(value)
-        raise StoreModel::Types::CastError,
-              "failed casting #{value.inspect}, only String, " \
-              "Hash or #{@model_klass.name} instances are allowed"
+        raise NotImplementedError
       end
 
       def handle_unknown_attribute(value, exception)
@@ -70,6 +50,17 @@ module StoreModel
       def model_instance(value)
         raise NotImplementedError
       end
+
+      private
+
+      # rubocop:disable Style/RescueModifier
+      def decode_and_initialize(value)
+        decoded = ActiveSupport::JSON.decode(value) rescue nil
+        model_instance(decoded) unless decoded.nil?
+      rescue ActiveModel::UnknownAttributeError => e
+        handle_unknown_attribute(decoded, e)
+      end
+      # rubocop:enable Style/RescueModifier
     end
   end
 end
