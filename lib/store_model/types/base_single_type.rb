@@ -38,15 +38,6 @@ module StoreModel
         raise NotImplementedError
       end
 
-      def handle_unknown_attribute(value, exception)
-        attribute = exception.attribute.to_sym
-        value_symbolized = value.symbolize_keys
-
-        cast_value(value_symbolized.except(attribute)).tap do |configuration|
-          configuration.unknown_attributes[attribute.to_s] = value_symbolized[attribute]
-        end
-      end
-
       def model_instance(value)
         raise NotImplementedError
       end
@@ -61,6 +52,15 @@ module StoreModel
         handle_unknown_attribute(decoded, e)
       end
       # rubocop:enable Style/RescueModifier
+
+      def handle_unknown_attribute(value, exception)
+        attribute = exception.attribute.to_sym
+        value_symbolized = value.symbolize_keys
+
+        cast_value(value_symbolized.except(attribute)).tap do |configuration|
+          configuration.unknown_attributes[attribute.to_s] = value_symbolized[attribute]
+        end
+      end
     end
   end
 end
