@@ -1,6 +1,8 @@
 # Change log
 
-## master
+## 0.8.0 (2020-06-12)
+
+- Rename type classes to One/Many ([@DmitryTsepelev][])
 - [PR #61](https://github.com/DmitryTsepelev/store_model/pull/61) Add polymorfic associations ([@HolyWalley]())
 
 ## 0.7.0 (2019-11-19)
