@@ -88,6 +88,7 @@ product.save
   * [Nested models](./docs/nested_models.md)
   * [Unknown attributes](./docs/unknown_attributes.md)
 3. [Array of stored models](./docs/array_of_stored_models.md)
+4. [One of](./docs/one_of.md)
 4. [Alternatives](./docs/alternatives.md)
 5. [Defining custom types](./docs/defining_custom_types.md)
 
