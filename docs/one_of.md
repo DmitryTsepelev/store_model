@@ -12,6 +12,6 @@ class Product < ApplicationRecord
 end
 
 class ProductList < ApplicationRecord
-  attribute :configurations, OneOfConfigurations.to_aray_type
+  attribute :configurations, OneOfConfigurations.to_array_type
 end
 ```
