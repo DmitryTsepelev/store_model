@@ -22,6 +22,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rspec-rails"
-  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "rubocop", "0.64.0"
   spec.add_development_dependency "coveralls"
 end
