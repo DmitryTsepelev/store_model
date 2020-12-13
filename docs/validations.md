@@ -56,7 +56,7 @@ When using array type, merging errors happens in a following way:
 class Product < ApplicationRecord
   attribute :configurations, Configuration.to_array_type
 
-  validates :configurations, store_model: { merge_errors: true }
+  validates :configurations, store_model: { merge_array_errors: true }
 end
 
 product = Product.new
