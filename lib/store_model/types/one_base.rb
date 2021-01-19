@@ -57,8 +57,18 @@ module StoreModel
         attribute = exception.attribute.to_sym
         value_symbolized = value.symbolize_keys
 
-        cast_value(value_symbolized.except(attribute)).tap do |configuration|
+        filtered_value = value_symbolized.except(attribute)
+
+        if value_symbolized.key?(:attributes)
+          filtered_value[:attributes] = filtered_value[:attributes].except(attribute)
+        end
+
+        cast_value(filtered_value).tap do |configuration|
           configuration.unknown_attributes[attribute.to_s] = value_symbolized[attribute]
+
+          if value_symbolized.key?(:attributes)
+            configuration.unknown_attributes[attribute.to_s] = value_symbolized[:attributes][attribute]
+          end
         end
       end
     end

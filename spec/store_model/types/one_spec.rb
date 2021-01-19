@@ -125,6 +125,12 @@ RSpec.describe StoreModel::Types::One do
           include_examples "for unknown nested attributes"
         end
 
+        context "when Hash is passed with :attributes key" do
+          let(:value) { attributes }
+          let(:supplier) { { attributes: { unknown_attribute: "something" } } }
+          include_examples "for unknown nested attributes"
+        end
+
         context "when String is passed" do
           let(:value) { ActiveSupport::JSON.encode(attributes) }
           include_examples "for unknown nested attributes"
