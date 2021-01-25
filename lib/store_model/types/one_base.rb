@@ -56,6 +56,7 @@ module StoreModel
       def handle_unknown_attribute(value, exception)
         attribute = exception.attribute.to_sym
         value_symbolized = value.symbolize_keys
+        value_symbolized = value_symbolized[:attributes] if value_symbolized.key?(:attributes)
 
         cast_value(value_symbolized.except(attribute)).tap do |configuration|
           configuration.unknown_attributes[attribute.to_s] = value_symbolized[attribute]
