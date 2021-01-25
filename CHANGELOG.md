@@ -1,5 +1,11 @@
 # Change log
 
+## master
+
+## 0.8.1 (2021-01-25)
+
+- [PR #79](https://github.com/DmitryTsepelev/store_model/pull/79) Fix infinite loop with nested model and :attributes key ([@timhwang21]())
+
 ## 0.8.0 (2020-06-12)
 
 - Rename type classes to One/Many ([@DmitryTsepelev][])
@@ -83,3 +89,4 @@
 [@zokioki]: https://github.com/zokioki
 [@keithpitt]: https://github.com/keithpitt
 [@bostanio]: https://github.com/bostanio
+[@timhwang21]: https://github.com/timhwang21
