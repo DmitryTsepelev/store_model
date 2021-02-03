@@ -40,6 +40,14 @@ RSpec.describe StoreModel::Model do
     end
   end
 
+  describe "#to_yaml" do
+    let(:instance) { Configuration.new(attributes) }
+
+    subject { instance.to_yaml }
+
+    it("returns YAML of the hash") { is_expected.to eq(instance.attributes.to_yaml) }
+  end
+
   describe "#blank?" do
     subject { Configuration.new(color: nil).blank? }
 

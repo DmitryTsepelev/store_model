@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #86](https://github.com/DmitryTsepelev/store_model/pull/86) Add #to_yaml method to StoreModel ([@DmitryTsepelev]())
+
 ## 0.8.1 (2021-01-25)
 
 - [PR #79](https://github.com/DmitryTsepelev/store_model/pull/79) Fix infinite loop with nested model and :attributes key ([@timhwang21]())

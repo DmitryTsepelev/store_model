@@ -29,6 +29,13 @@ module StoreModel
       attributes.with_indifferent_access.as_json(options)
     end
 
+    # Returns a YAML representing the model.
+    #
+    # @return [String]
+    def to_yaml
+      attributes.to_yaml
+    end
+
     # Compares two StoreModel::Model instances
     #
     # @param other [StoreModel::Model]
