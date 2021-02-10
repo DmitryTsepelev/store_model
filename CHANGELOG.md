@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.8.2 (2021-02-10)
+
 - [PR #88](https://github.com/DmitryTsepelev/store_model/pull/88) Avoid overriding parent validation messages when child is invalid ([@DmitryTsepelev]
 
 ## 0.8.1 (2021-01-25)
