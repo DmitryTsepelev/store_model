@@ -13,7 +13,8 @@ module StoreModel
       # attribute
       def call(attribute, base_errors, store_model_errors)
         if Rails::VERSION::MAJOR < 6 || Rails::VERSION::MAJOR == 6 && Rails::VERSION::MINOR.zero?
-          base_errors.copy!(store_model_errors)
+          base_errors.delete(attribute)
+          store_model_errors.each { |field, error| base_errors.add(field, error) }
         else
           store_model_errors.errors.each do |error|
             base_errors.add(attribute, :invalid, message: error.full_message)
