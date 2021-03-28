@@ -3,12 +3,12 @@
 require "spec_helper"
 
 RSpec.describe StoreModel::CombineErrorsStrategies do
-  describe ".configure" do
-    LAMBDA_FHTAGN_STRATEGY =
-      lambda do |attribute, base_errors, _store_model_errors|
-        base_errors.add(attribute, "cthulhu fhtagn")
-      end
+  LAMBDA_FHTAGN_STRATEGY =
+    lambda do |attribute, base_errors, _store_model_errors|
+      base_errors.add(attribute, "cthulhu fhtagn")
+    end
 
+  describe ".configure" do
     subject { described_class.configure(options) }
 
     context "when empty hash is passed" do
@@ -43,11 +43,6 @@ RSpec.describe StoreModel::CombineErrorsStrategies do
   end
 
   describe ".configure_array" do
-    LAMBDA_FHTAGN_STRATEGY =
-      lambda do |attribute, base_errors, _store_model|
-        base_errors.add(attribute, "cthulhu fhtagn")
-      end
-
     subject { described_class.configure_array(options) }
 
     context "when empty hash is passed" do
