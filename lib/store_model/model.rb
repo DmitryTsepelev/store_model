@@ -70,6 +70,18 @@ module StoreModel
 
     # Checks if the attribute with a given name is defined
     #
+    # @example
+    #    class Person
+    #      include StoreModel::Model
+    #      attribute :name, :string
+    #      alias_attribute :new_name, :name
+    #    end
+    #
+    #    Person.has_attribute?('name')     # => true
+    #    Person.has_attribute?('new_name') # => true
+    #    Person.has_attribute?(:age)       # => true
+    #    Person.has_attribute?(:nothing)   # => false
+    #
     # @param attr_name [String] name of the attribute
     #
     # @return [Boolean]
@@ -79,6 +91,16 @@ module StoreModel
       attr_name = self.class.attribute_aliases[attr_name] || attr_name
       attribute_types.key?(attr_name)
     end
+
+    # Legacy implementation of #has_attribute?
+    #
+    # @param attr_name [String] name of the attribute
+    #
+    # @return [Boolean]
+    def _has_attribute?(attr_name)
+      attribute_types.key?(attr_name)
+    end
+
     # rubocop:enable Naming/PredicateName
 
     # Contains a hash of attributes which are not defined but exist in the
