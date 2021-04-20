@@ -75,7 +75,9 @@ module StoreModel
     # @return [Boolean]
     # rubocop:disable Naming/PredicateName
     def has_attribute?(attr_name)
-      attribute_types.key?(attr_name.to_s)
+      attr_name = attr_name.to_s
+      attr_name = self.class.attribute_aliases[attr_name] || attr_name
+      attribute_types.key?(attr_name)
     end
     # rubocop:enable Naming/PredicateName
 

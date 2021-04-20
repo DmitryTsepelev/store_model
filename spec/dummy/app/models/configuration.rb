@@ -8,5 +8,7 @@ class Configuration
   attribute :active, :boolean
   attribute :disabled_at, :datetime
 
+  alias_attribute :enabled, :active
+
   validates :color, presence: true
 end
