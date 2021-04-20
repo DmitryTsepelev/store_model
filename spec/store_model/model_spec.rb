@@ -228,7 +228,7 @@ RSpec.describe StoreModel::Model do
     end
 
     context "when alias attribute is passed" do
-      let(:attribute) {:enabled}
+      let(:attribute) { :enabled }
 
       it { is_expected.to be_truthy }
     end
