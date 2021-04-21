@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.9.0 (2021-04-21)
+
+- [PR #93](https://github.com/DmitryTsepelev/store_model/pull/93) Handle aliases with has_attributes ([@Zooip]
+
 ## 0.8.2 (2021-02-10)
 
 - [PR #88](https://github.com/DmitryTsepelev/store_model/pull/88) Avoid overriding parent validation messages when child is invalid ([@DmitryTsepelev]
@@ -94,3 +98,4 @@
 [@keithpitt]: https://github.com/keithpitt
 [@bostanio]: https://github.com/bostanio
 [@timhwang21]: https://github.com/timhwang21
+[@Zooip]: https://github.com/Zooip
