@@ -226,5 +226,11 @@ RSpec.describe StoreModel::Model do
 
       it { is_expected.to be_falsey }
     end
+
+    context "when alias attribute is passed" do
+      let(:attribute) { :enabled }
+
+      it { is_expected.to be_truthy }
+    end
   end
 end
