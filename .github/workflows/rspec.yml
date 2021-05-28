@@ -24,7 +24,8 @@ jobs:
         gemfile: [
           "gemfiles/jruby.gemfile",
           "gemfiles/rails_5_2.gemfile",
-          "gemfiles/rails_6_0.gemfile"
+          "gemfiles/rails_6_0.gemfile",
+          "gemfiles/rails_6_2.gemfile"
         ]
 
         allow_failures:
@@ -35,6 +36,8 @@ jobs:
             gemfile: gemfiles/rails_5_2.gemfile
           - ruby: jruby
             gemfile: gemfiles/rails_6_0.gemfile
+          - ruby: jruby
+            gemfile: gemfiles/rails_6_2.gemfile
           - ruby: jruby
             gemfile: gemfiles/railsmaster.gemfile
 
@@ -54,24 +57,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/cache@v2
-      with:
-        path: /home/runner/bundle
-        key: bundle-${{ matrix.ruby }}-${{ matrix.gemfile }}-${{ hashFiles(matrix.gemfile) }}-${{ hashFiles('**/*.gemspec') }}
-        restore-keys: |
-          bundle-${{ matrix.ruby }}-${{ matrix.gemfile }}-
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}
-    - name: Install system deps
-      run: |
-        sudo apt-get update
-        sudo apt-get install libsqlite3-dev
-    - name: Bundle install
-      run: |
-        bundle config path /home/runner/bundle
-        bundle config --global gemfile ${{ matrix.gemfile }}
-        bundle install
-        bundle update
+        ruby-version: ${{ matrix.ruby }
+        bundler-cache: true
+        bundler: 2.2.0
     - name: Run RSpec
       run: bundle exec rake spec || $ALLOW_FAILURES
