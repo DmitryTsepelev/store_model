@@ -15,6 +15,7 @@ jobs:
     env:
       CI: true
       ALLOW_FAILURES: "${{ matrix.allow_failures }}"
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
 
     strategy:
       fail-fast: false
@@ -61,6 +62,7 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
+        cache-version: 4
         bundler: 2.2.0
     - name: Run RSpec
       run: bundle exec rake spec || $ALLOW_FAILURES
