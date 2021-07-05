@@ -118,8 +118,7 @@ module StoreModel
 
     def attribute?(attribute)
       case value = attributes[attribute]
-      when true then true
-      when false, nil, 0 then false
+      when 0 then false
       else value.present?
       end
     end
