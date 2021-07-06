@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.10.0 (2021-07-06)
+
 - [PR #97](https://github.com/DmitryTsepelev/store_model/pull/97) Add predicate methods ([@f-mer])
 
 ## 0.9.0 (2021-04-21)
