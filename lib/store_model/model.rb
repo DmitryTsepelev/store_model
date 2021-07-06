@@ -11,10 +11,13 @@ module StoreModel
     def self.included(base) # :nodoc:
       base.include ActiveModel::Model
       base.include ActiveModel::Attributes
+      base.include ActiveModel::AttributeMethods
       base.include StoreModel::NestedAttributes
 
       base.extend StoreModel::Enum
       base.extend StoreModel::TypeBuilders
+
+      base.attribute_method_suffix "?"
     end
 
     attr_accessor :parent
@@ -109,6 +112,15 @@ module StoreModel
     # @return [Hash]
     def unknown_attributes
       @unknown_attributes ||= {}
+    end
+
+    private
+
+    def attribute?(attribute)
+      case value = attributes[attribute]
+      when 0 then false
+      else value.present?
+      end
     end
   end
 end

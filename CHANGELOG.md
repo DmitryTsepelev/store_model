@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #97](https://github.com/DmitryTsepelev/store_model/pull/97) Add predicate methods ([@f-mer])
+
 ## 0.9.0 (2021-04-21)
 
 - [PR #93](https://github.com/DmitryTsepelev/store_model/pull/93) Handle aliases with has_attributes ([@Zooip]
@@ -99,3 +101,4 @@
 [@bostanio]: https://github.com/bostanio
 [@timhwang21]: https://github.com/timhwang21
 [@Zooip]: https://github.com/Zooip
+[@f-mer]: https://github.com/f-mer

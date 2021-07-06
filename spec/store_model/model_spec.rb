@@ -233,4 +233,76 @@ RSpec.describe StoreModel::Model do
       it { is_expected.to be_truthy }
     end
   end
+
+  describe "predicate method for string attribute" do
+    subject { Configuration.new(color: value).color? }
+
+    context "when value is present" do
+      let(:value) { "red" }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when value is nil" do
+      let(:value) { nil }
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when value is blank" do
+      let(:value) { "" }
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when value is \" \"" do
+      let(:value) { " " }
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
+  describe "predicate method for number attribute" do
+    subject { Bicycle.new(gears: value).gears? }
+
+    context "when value is 1" do
+      let(:value) { 1 }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when value is nil" do
+      let(:value) { nil }
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when value is 0" do
+      let(:value) { 0 }
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
+  describe "predicate method for boolean attribute" do
+    subject { Configuration.new(active: value).active? }
+
+    context "when value is true" do
+      let(:value) { true }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when value is nil" do
+      let(:value) { nil }
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when value is false" do
+      let(:value) { false }
+
+      it { is_expected.to eq(false) }
+    end
+  end
 end
