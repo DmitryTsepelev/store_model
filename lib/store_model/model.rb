@@ -29,7 +29,7 @@ module StoreModel
     #
     # @return [Hash]
     def as_json(options = {})
-      attributes.with_indifferent_access.as_json(options)
+      attributes.with_indifferent_access.merge(unknown_attributes).as_json(options)
     end
 
     # Compares two StoreModel::Model instances
