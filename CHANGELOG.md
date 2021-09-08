@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.11.0 (2021-09-08)
+
 - [PR #99](https://github.com/DmitryTsepelev/store_model/pull/99) Add `#hash` method ([@skryukov])
 
 ## 0.10.0 (2021-07-06)
