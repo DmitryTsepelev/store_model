@@ -43,6 +43,13 @@ module StoreModel
       attributes.all? { |name, value| value == other.attributes[name] }
     end
 
+    # Returns hash for a StoreModel::Model instance based on attributes hash
+    #
+    # @return [Integer]
+    def hash
+      attributes.hash
+    end
+
     # Allows to call :presence validation on the association itself.
     #
     # @return [Boolean]

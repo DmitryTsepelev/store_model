@@ -2,17 +2,19 @@
 
 ## master
 
+- [PR #99](https://github.com/DmitryTsepelev/store_model/pull/99) Add `#hash` method ([@skryukov])
+
 ## 0.10.0 (2021-07-06)
 
 - [PR #97](https://github.com/DmitryTsepelev/store_model/pull/97) Add predicate methods ([@f-mer])
 
 ## 0.9.0 (2021-04-21)
 
-- [PR #93](https://github.com/DmitryTsepelev/store_model/pull/93) Handle aliases with has_attributes ([@Zooip]
+- [PR #93](https://github.com/DmitryTsepelev/store_model/pull/93) Handle aliases with has_attributes ([@Zooip])
 
 ## 0.8.2 (2021-02-10)
 
-- [PR #88](https://github.com/DmitryTsepelev/store_model/pull/88) Avoid overriding parent validation messages when child is invalid ([@DmitryTsepelev]
+- [PR #88](https://github.com/DmitryTsepelev/store_model/pull/88) Avoid overriding parent validation messages when child is invalid ([@DmitryTsepelev])
 
 ## 0.8.1 (2021-01-25)
 
@@ -104,3 +106,4 @@
 [@timhwang21]: https://github.com/timhwang21
 [@Zooip]: https://github.com/Zooip
 [@f-mer]: https://github.com/f-mer
+[@skryukov]: https://github.com/skryukov
