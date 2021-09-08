@@ -2,7 +2,7 @@
 
 require "store_model/model"
 require "store_model/configuration"
-require "store_model/railtie"
+require "store_model/railtie" if defined?(::Rails::Railtie)
 require "active_model/validations/store_model_validator"
 
 module StoreModel # :nodoc:
