@@ -79,6 +79,11 @@ end
 product.save
 ```
 
+_Usage note: Rails and assigning Arrays/Hashes to records_
+
+- Assigned attributes must be a String, Hash, Array of Hashes, or StoreModel. For example, if the attributes are coming from a controller, be sure to convert any ActionController::Parameters as needed.
+- Any changes made to a StoreModel instance requires the attribute be re-assigned; Rails doesn't track mutations of objects. For example: `self.my_stored_models = my_stored_models.map(&:as_json)`
+
 ## Documentation
 
 1. [Installation](./docs/installation.md)
