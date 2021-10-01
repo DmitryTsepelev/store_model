@@ -10,14 +10,15 @@ module StoreModel
     # @param kwargs [Object]
     def enum(name, values = nil, **kwargs)
       values ||= kwargs[:in] || kwargs
+      options = kwargs.slice(:_prefix, :_suffix, :default)
 
       ensure_hash(values).tap do |mapping|
-        define_attribute(name, mapping, kwargs[:default])
+        define_attribute(name, mapping, options[:default])
         define_reader(name, mapping)
         define_writer(name, mapping)
         define_method("#{name}_value") { attributes[name.to_s] }
         define_method("#{name}_values") { mapping }
-        define_predicate_methods(name, mapping)
+        define_predicate_methods(name, mapping, options)
       end
     end
 
@@ -36,8 +37,9 @@ module StoreModel
       define_method("#{name}=") { |value| super type.cast_value(value) }
     end
 
-    def define_predicate_methods(name, mapping)
+    def define_predicate_methods(name, mapping, options)
       mapping.each do |label, value|
+        label = affixed_label(label, name, options[:_prefix], options[:_suffix])
         define_method("#{label}?") { send(name) == mapping.key(value).to_s }
       end
     end
@@ -50,6 +52,13 @@ module StoreModel
       return values if values.is_a?(Hash)
 
       values.zip(0...values.size).to_h
+    end
+
+    def affixed_label(label, name, prefix = nil, suffix = nil)
+      prefix = prefix == true ? "#{name}_" : "#{prefix}_" if prefix
+      suffix = suffix == true ? "_#{name}" : "_#{suffix}" if suffix
+
+      "#{prefix}#{label}#{suffix}"
     end
   end
 end

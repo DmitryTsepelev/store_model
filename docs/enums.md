@@ -35,3 +35,26 @@ class Review
   enum :rating, in: { excellent: 100, okay: 50, bad: 25, awful: 10 }, default: :okay
 end
 ```
+
+You can use the `:_prefix` or `:_suffix` options when you need to define multiple enums with same values. If the passed value is true, the methods are prefixed/suffixed with the name of the enum. It is also possible to supply a custom value:
+
+```ruby
+class Review
+  include StoreModel::Model
+
+  enum status: [:active, :archived], _suffix: true
+  enum comments_status: [:active, :inactive], _prefix: :comments
+end
+```
+With the above example, the predicate methods are now prefixed and/or suffixed accordingly:
+
+```ruby
+review = Review.new(status: :active, comment_status: :inactive)
+
+review.active_status? # => true
+review.archived_status? # => false
+
+review.comments_active? # => false
+review.comments_inactive? # => true
+
+```

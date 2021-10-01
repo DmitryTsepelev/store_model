@@ -108,6 +108,48 @@ RSpec.describe StoreModel::Model do
     end
   end
 
+  context "when multiple enum with prefix is provided" do
+    let(:config_class) do
+      Class.new do
+        include StoreModel::Model
+
+        enum :status, %i[active archived], _prefix: true
+        enum :comment_status, %i[active archived], _prefix: "comment"
+      end
+    end
+
+    subject { config_class.new(status: :active, comment_status: :archived) }
+
+    it "has prefixed predicate methods" do
+      expect(subject).to be_status_active
+      expect(subject).not_to be_status_archived
+
+      expect(subject).to be_comment_archived
+      expect(subject).not_to be_comment_active
+    end
+  end
+
+  context "when multiple enum with suffix is provided" do
+    let(:config_class) do
+      Class.new do
+        include StoreModel::Model
+
+        enum :status, %i[active archived], _suffix: true
+        enum :comment_status, %i[active archived], _suffix: "comment"
+      end
+    end
+
+    subject { config_class.new(status: :active, comment_status: :archived) }
+
+    it "has suffixed predicate methods" do
+      expect(subject).to be_active_status
+      expect(subject).not_to be_archived_status
+
+      expect(subject).to be_archived_comment
+      expect(subject).not_to be_active_comment
+    end
+  end
+
   describe "#valid?" do
     let(:config_class) do
       Class.new do
