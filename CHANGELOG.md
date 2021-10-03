@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.12.0 (2021-10-03)
+
+- [PR #102](https://github.com/DmitryTsepelev/store_model/pull/102) Add support for enum affixes ([@CodeMogul])
+
 ## 0.11.1 (2021-09-09)
 
 - [PR #99](https://github.com/DmitryTsepelev/store_model/pull/99) Don't load railtie if there is no rails ([@mherold])
@@ -114,3 +118,4 @@
 [@f-mer]: https://github.com/f-mer
 [@skryukov]: https://github.com/skryukov
 [@mherold]: https://github.com/mherold
+[@CodeMogul]: https://github.com/CodeMogul
