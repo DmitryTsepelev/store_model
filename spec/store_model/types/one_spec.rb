@@ -99,7 +99,9 @@ RSpec.describe StoreModel::Types::One do
         end
 
         let(:subject) do
-          product = custom_product_class.create(configuration: Configuration.to_type.cast_value(attributes))
+          product = custom_product_class.create(
+            configuration: Configuration.to_type.cast_value(attributes)
+          )
           product.configuration
         end
 
