@@ -92,17 +92,19 @@ RSpec.describe StoreModel::Types::One do
       end
 
       context "when saving model" do
+        after(:each) { persisted_product.delete }
+        subject { persisted_product.configuration }
+
         let(:custom_product_class) do
           build_custom_product_class do
             attribute :configuration, Configuration.to_type
           end
         end
 
-        let(:subject) do
-          product = custom_product_class.create(
+        let(:persisted_product) do
+          custom_product_class.create(
             configuration: Configuration.to_type.cast_value(attributes)
           )
-          product.configuration
         end
 
         include_examples "for unknown attributes"
