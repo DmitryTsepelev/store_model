@@ -91,6 +91,25 @@ RSpec.describe StoreModel::Types::One do
         include_examples "for unknown attributes"
       end
 
+      context "when saving model" do
+        after(:each) { persisted_product.delete }
+        subject { persisted_product.configuration }
+
+        let(:custom_product_class) do
+          build_custom_product_class do
+            attribute :configuration, Configuration.to_type
+          end
+        end
+
+        let(:persisted_product) do
+          custom_product_class.create(
+            configuration: Configuration.to_type.cast_value(attributes)
+          )
+        end
+
+        include_examples "for unknown attributes"
+      end
+
       context "when unknown keys are inside nested model" do
         shared_examples "for unknown nested attributes" do
           it { is_expected.to be_a(configuration_class) }
