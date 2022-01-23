@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #108](https://github.com/DmitryTsepelev/store_model/pull/108) Fix saving unknown_attributes ([@nikokon])
+
 ## 0.12.0 (2021-10-03)
 
 - [PR #102](https://github.com/DmitryTsepelev/store_model/pull/102) Add support for enum affixes ([@CodeMogul])
@@ -119,3 +121,4 @@
 [@skryukov]: https://github.com/skryukov
 [@mherold]: https://github.com/mherold
 [@CodeMogul]: https://github.com/CodeMogul
+[@nikokon]: https://github.com/nikokon

@@ -92,7 +92,6 @@ RSpec.describe StoreModel::Types::One do
       end
 
       context "when saving model" do
-        after(:each) { persisted_product.delete }
         subject { persisted_product.configuration }
 
         let(:custom_product_class) do
