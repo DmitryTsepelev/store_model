@@ -11,6 +11,7 @@ module StoreModel
     def self.included(base) # :nodoc:
       base.include ActiveModel::Model
       base.include ActiveModel::Attributes
+      base.include ActiveRecord::AttributeMethods::BeforeTypeCast
       base.include ActiveModel::AttributeMethods
       base.include StoreModel::NestedAttributes
 
