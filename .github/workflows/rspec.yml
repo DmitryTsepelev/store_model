@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [jruby, 2.5, 2.6, 2.7]
+        ruby: [jruby, 2.6, 2.7]
 
         gemfile: [
           "gemfiles/jruby.gemfile",

@@ -2,6 +2,7 @@
 
 ## master
 
+- [PR #112](https://github.com/DmitryTsepelev/store_model/pull/112) Deprecate ruby 2.5 ([@nikokon])
 - [PR #108](https://github.com/DmitryTsepelev/store_model/pull/108) Fix saving unknown_attributes ([@nikokon])
 
 ## 0.12.0 (2021-10-03)
