@@ -15,9 +15,17 @@ module StoreModel
       end
     end
 
-    def write_attribute(*)
-      super.tap do |value|
-        assign_parent_to_store_model_relation(value)
+    if Rails::VERSION::MAJOR >= 7
+      def _write_attribute(*)
+        super.tap do |value|
+          assign_parent_to_store_model_relation(value)
+        end
+      end
+    else
+      def write_attribute(*)
+        super.tap do |value|
+          assign_parent_to_store_model_relation(value)
+        end
       end
     end
   end

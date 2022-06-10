@@ -52,6 +52,13 @@ RSpec.describe StoreModel::CombineErrorsStrategies::MergeErrorStrategy do
       if Rails::VERSION::MAJOR < 6 || Rails::VERSION::MAJOR == 6 && Rails::VERSION::MINOR.zero?
         expect(record.errors.messages).to eq(name: ["can't be blank"], color: ["can't be blank"])
         expect(record.errors.full_messages).to eq(["Name can't be blank", "Color can't be blank"])
+      elsif Rails::VERSION::MAJOR == 7
+        expect(record.errors.messages).to eq(
+          name: ["can't be blank"], configuration: ["is invalid", "Color can't be blank"]
+        )
+        expect(record.errors.full_messages).to eq(
+          ["Name can't be blank", "Configuration is invalid", "Configuration Color can't be blank"]
+        )
       else
         expect(record.errors.messages).to eq(
           name: ["can't be blank"], configuration: ["Color can't be blank"]

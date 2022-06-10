@@ -20,13 +20,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [jruby, 2.6, 2.7]
+        ruby: [jruby, 2.6, 2.7, 3.0, 3.1]
 
         gemfile: [
           "gemfiles/jruby.gemfile",
-          "gemfiles/rails_5_2.gemfile",
           "gemfiles/rails_6_0.gemfile",
-          "gemfiles/rails_6_2.gemfile"
+          "gemfiles/rails_6_2.gemfile",
+          "gemfiles/rails_7_0.gemfile"
         ]
 
         allow_failures:
@@ -34,22 +34,27 @@ jobs:
 
         exclude:
           - ruby: jruby
-            gemfile: gemfiles/rails_5_2.gemfile
-          - ruby: jruby
             gemfile: gemfiles/rails_6_0.gemfile
           - ruby: jruby
             gemfile: gemfiles/rails_6_2.gemfile
           - ruby: jruby
+            gemfile: gemfiles/rails_7_0.gemfile
+          - ruby: jruby
             gemfile: gemfiles/railsmaster.gemfile
 
-          - ruby: 2.5
-            gemfile: gemfiles/jruby.gemfile
           - ruby: 2.6
             gemfile: gemfiles/jruby.gemfile
           - ruby: 2.7
             gemfile: gemfiles/jruby.gemfile
-          - ruby: ruby-head
+          - ruby: 3.0
             gemfile: gemfiles/jruby.gemfile
+          - ruby: 3.1
+            gemfile: gemfiles/jruby.gemfile
+
+          - ruby: 2.6
+            gemfile: gemfiles/rails_7_0.gemfile
+          - ruby: 2.6
+            gemfile: gemfiles/railsmaster.gemfile
 
         include:
           - ruby: ruby-head

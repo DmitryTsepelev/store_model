@@ -2,6 +2,7 @@
 
 ## master
 
+- [PR #117](https://github.com/DmitryTsepelev/store_model/pull/117) Rails 7 support ([@DmitryTsepelev])
 - [PR #112](https://github.com/DmitryTsepelev/store_model/pull/111) Fix validation for cast attributes ([@zk475811])
 
 ## 0.13.0 (2022-02-11)
