@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #112](https://github.com/DmitryTsepelev/store_model/pull/111) Fix validation for cast attributes ([@zk475811])
+
 ## 0.13.0 (2022-02-11)
 
 - [PR #112](https://github.com/DmitryTsepelev/store_model/pull/112) Deprecate ruby 2.5 ([@DmitryTsepelev])
@@ -125,3 +127,4 @@
 [@mherold]: https://github.com/mherold
 [@CodeMogul]: https://github.com/CodeMogul
 [@nikokon]: https://github.com/nikokon
+[@zk475811]: https://github.com/zk475811
