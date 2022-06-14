@@ -8,13 +8,15 @@ RSpec.describe StoreModel::Model do
       color: "red",
       model: nil,
       active: false,
-      disabled_at: Time.new(2019, 2, 10, 12)
+      disabled_at: Time.new(2019, 2, 10, 12),
+      encrypted_serial: nil
     }
   end
 
   describe "#initialize" do
+    subject { Configuration.new(attributes) }
+
     context "when symbolized hash is passed" do
-      subject { Configuration.new(attributes) }
 
       it("assigns attributes") { is_expected.to have_attributes(attributes) }
     end
@@ -23,6 +25,20 @@ RSpec.describe StoreModel::Model do
       subject { Configuration.new(attributes.stringify_keys) }
 
       it("assigns attributes") { is_expected.to have_attributes(attributes) }
+    end
+
+    context "when attributes contain a field with a custom type" do
+      let(:attributes) do
+        {
+          color: "red",
+          model: nil,
+          active: false,
+          disabled_at: Time.new(2019, 2, 10, 12),
+          encrypted_serial: "111-222"
+        }
+      end
+
+      it("assigns attributes") { is_expected.to have_attributes(attributes.merge(encrypted_serial: "=111-222=")) }
     end
   end
 
@@ -52,7 +68,7 @@ RSpec.describe StoreModel::Model do
     it "prints description" do
       expect(subject).to eq(
         "#<Configuration color: red, model: nil, active: false, " \
-        "disabled_at: #{attributes[:disabled_at]}>"
+        "disabled_at: #{attributes[:disabled_at]}, encrypted_serial: nil>"
       )
     end
   end
