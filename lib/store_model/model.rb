@@ -43,6 +43,7 @@ module StoreModel
 
       attributes.all? { |name, value| value == other.attributes[name] }
     end
+    alias eql? ==
 
     # Returns hash for a StoreModel::Model instance based on attributes hash
     #

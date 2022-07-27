@@ -137,10 +137,8 @@ RSpec.describe StoreModel::Model do
     end
   end
 
-  describe "hash" do
+  shared_examples "comparing two instances" do
     let(:first_setting) { Configuration.new(color: "red") }
-
-    subject { first_setting.hash == second_setting.hash }
 
     context "when two instances have same attributes" do
       let(:second_setting) { Configuration.new(color: "red") }
@@ -164,8 +162,6 @@ RSpec.describe StoreModel::Model do
       end
 
       let(:first_setting) { config_class.new(status: :active) }
-
-      subject { first_setting.hash == second_setting.hash }
 
       context "when two instances have same attributes" do
         let(:second_setting) { config_class.new(status: :active) }
@@ -181,48 +177,22 @@ RSpec.describe StoreModel::Model do
     end
   end
 
-  describe "==" do
-    let(:first_setting) { Configuration.new(color: "red") }
+  describe "hash" do
+    subject { first_setting.hash == second_setting.hash }
 
+    include_examples "comparing two instances"
+  end
+
+  describe "==" do
     subject { first_setting == second_setting }
 
-    context "when two instances have same attributes" do
-      let(:second_setting) { Configuration.new(color: "red") }
+    include_examples "comparing two instances"
+  end
 
-      it { is_expected.to be true }
-    end
+  describe "eql?" do
+    subject { first_setting.eql?(second_setting) }
 
-    context "when two instances have different attributes" do
-      let(:second_setting) { Configuration.new(color: "black") }
-
-      it { is_expected.to be false }
-    end
-
-    context "when StoreModel has enum attribute" do
-      let(:config_class) do
-        Class.new do
-          include StoreModel::Model
-
-          enum :status, in: { active: 1, archived: 0 }
-        end
-      end
-
-      let(:first_setting) { config_class.new(status: :active) }
-
-      subject { first_setting == second_setting }
-
-      context "when two instances have same attributes" do
-        let(:second_setting) { config_class.new(status: :active) }
-
-        it { is_expected.to be true }
-      end
-
-      context "when two instances have different attributes" do
-        let(:second_setting) { config_class.new(status: :archived) }
-
-        it { is_expected.to be false }
-      end
-    end
+    include_examples "comparing two instances"
   end
 
   describe ".to_type" do
