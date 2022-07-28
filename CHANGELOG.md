@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #124](https://github.com/DmitryTsepelev/store_model/pull/124) Alias :== as :eql? ([@jdeff])
+- 
 ## 1.0.0 (2022-06-27)
 
 - [PR #117](https://github.com/DmitryTsepelev/store_model/pull/117) Rails 7 support ([@DmitryTsepelev])
@@ -131,3 +133,4 @@
 [@CodeMogul]: https://github.com/CodeMogul
 [@nikokon]: https://github.com/nikokon
 [@zk475811]: https://github.com/zk475811
+[@jdeff]: https://github.com/jdeff
