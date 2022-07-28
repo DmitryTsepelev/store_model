@@ -122,6 +122,24 @@ RSpec.describe StoreModel::Types::Many do
         let(:value) { ActiveSupport::JSON.encode(attributes_array) }
         include_examples "for unknown attributes"
       end
+
+      context "when saving model" do
+        subject { persisted_product.configurations }
+
+        let(:custom_product_class) do
+          build_custom_product_class do
+            attribute :configurations, Configuration.to_array_type
+          end
+        end
+
+        let(:persisted_product) do
+          custom_product_class.create(
+            configurations: Configuration.to_array_type.cast_value(attributes_array)
+          )
+        end
+
+        include_examples "for unknown attributes"
+      end
     end
   end
 

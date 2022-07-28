@@ -38,6 +38,67 @@ RSpec.describe StoreModel::Model do
 
       it("returns correct JSON") { is_expected.to eq(attributes.slice(:color).as_json) }
     end
+
+    context "with unknown attributes" do
+      let(:type) { StoreModel::Types::One.new(Configuration) }
+      let(:instance) { type.cast_value(attributes.merge(unknown_attributes)) }
+
+      let(:unknown_attributes) do
+        {
+          archived: true
+        }
+      end
+
+      shared_examples "with unknown attributes" do
+        it("returns correct JSON") do
+          is_expected.to eq(attributes.merge(unknown_attributes).as_json)
+        end
+      end
+
+      shared_examples "without unknown attributes" do
+        it("returns correct JSON") { is_expected.to eq(attributes.as_json) }
+      end
+
+      context "with default config about unknown attributes serialization" do
+        include_examples "with unknown attributes"
+      end
+
+      context "with config set to serialize unknown attributes" do
+        before do
+          StoreModel.config.serialize_unknown_attributes = true
+        end
+
+        include_examples "with unknown attributes"
+      end
+
+      context "with config set not to serialize unknown attributes" do
+        before do
+          StoreModel.config.serialize_unknown_attributes = false
+        end
+
+        include_examples "without unknown attributes"
+      end
+
+      context "with config set to serialize unknown attributes overridden by option" do
+        before do
+          StoreModel.config.serialize_unknown_attributes = true
+        end
+
+        subject { instance.as_json(serialize_unknown_attributes: false) }
+
+        include_examples "without unknown attributes"
+      end
+
+      context "with config set not to serialize unknown attributes overridden by option" do
+        before do
+          StoreModel.config.serialize_unknown_attributes = false
+        end
+
+        subject { instance.as_json(serialize_unknown_attributes: true) }
+
+        include_examples "with unknown attributes"
+      end
+    end
   end
 
   describe "#blank?" do

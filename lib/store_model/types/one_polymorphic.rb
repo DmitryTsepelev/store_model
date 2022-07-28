@@ -52,9 +52,11 @@ module StoreModel
       def serialize(value)
         case value
         when Hash
-          ActiveSupport::JSON.encode(value)
+          ActiveSupport::JSON.encode(value, serialize_unknown_attributes: true)
         else
-          return ActiveSupport::JSON.encode(value) if implements_model?(value.class)
+          if implements_model?(value.class)
+            return ActiveSupport::JSON.encode(value, serialize_unknown_attributes: true)
+          end
 
           super
         end
