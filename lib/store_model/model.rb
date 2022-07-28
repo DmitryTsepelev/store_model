@@ -30,7 +30,15 @@ module StoreModel
     #
     # @return [Hash]
     def as_json(options = {})
-      attributes.with_indifferent_access.merge(unknown_attributes).as_json(options)
+      serialize_unknown_attributes = if options.key?(:serialize_unknown_attributes)
+                                       options[:serialize_unknown_attributes]
+                                     else
+                                       StoreModel.config.serialize_unknown_attributes
+                                     end
+
+      result = attributes.with_indifferent_access
+      result.merge!(unknown_attributes) if serialize_unknown_attributes
+      result.as_json(options)
     end
 
     # Compares two StoreModel::Model instances

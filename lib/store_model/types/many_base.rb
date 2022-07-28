@@ -38,7 +38,7 @@ module StoreModel
       def serialize(value)
         case value
         when Array
-          ActiveSupport::JSON.encode(value)
+          ActiveSupport::JSON.encode(value, serialize_unknown_attributes: true)
         else
           super
         end
