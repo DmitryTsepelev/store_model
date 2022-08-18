@@ -2,6 +2,7 @@
 
 ## master
 
+- [PR #126](https://github.com/DmitryTsepelev/store_model/pull/126) Add access to attributes using brackets ([@raphox])
 - [PR #125](https://github.com/DmitryTsepelev/store_model/pull/125) Add config option serialize_unknown_attributes ([@Flixt])
 - [PR #124](https://github.com/DmitryTsepelev/store_model/pull/124) Alias :== as :eql? ([@jdeff])
 
@@ -136,3 +137,4 @@
 [@zk475811]: https://github.com/zk475811
 [@jdeff]: https://github.com/jdeff
 [@Flixt]: https://github.com/Flixt
+[@raphox]: https://github.com/raphox
