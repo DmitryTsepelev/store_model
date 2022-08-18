@@ -2,7 +2,12 @@
 
 ## master
 
+## 1.2.0 (2022-08-18)
+
 - [PR #126](https://github.com/DmitryTsepelev/store_model/pull/126) Add access to attributes using brackets ([@raphox])
+
+## 1.1.0 (2022-07-31)
+
 - [PR #125](https://github.com/DmitryTsepelev/store_model/pull/125) Add config option serialize_unknown_attributes ([@Flixt])
 - [PR #124](https://github.com/DmitryTsepelev/store_model/pull/124) Alias :== as :eql? ([@jdeff])
 
