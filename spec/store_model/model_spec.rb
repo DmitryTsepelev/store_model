@@ -256,6 +256,34 @@ RSpec.describe StoreModel::Model do
     include_examples "comparing two instances"
   end
 
+  describe "[]" do
+    let(:attributes) { { color: "red" } }
+
+    subject { Configuration.new(attributes) }
+
+    it { expect(subject[:color]).to eq "red" }
+
+    context "when string value is passed" do
+      it { expect(subject["color"]).to eq "red" }
+    end
+  end
+
+  describe "[]=" do
+    let(:attributes) { { color: "red" } }
+
+    subject { Configuration.new(attributes) }
+
+    it do
+      expect { subject[:color] = "black" }.to change { subject[:color] }.to("black")
+    end
+
+    context "when string value is passed" do
+      it do
+        expect { subject[:color] = "black" }.to change { subject[:color] }.to("black")
+      end
+    end
+  end
+
   describe ".to_type" do
     subject { custom_product_class.new }
 

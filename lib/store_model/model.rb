@@ -23,6 +23,8 @@ module StoreModel
 
     attr_accessor :parent
 
+    delegate :each_value, :fetch, to: :attributes
+
     # Returns a hash representing the model. Some configuration can be
     # passed through +options+.
     #
@@ -52,6 +54,23 @@ module StoreModel
       attributes.all? { |name, value| value == other.attributes[name] }
     end
     alias eql? ==
+
+    # Accessing attribute using brackets
+    #
+    # @return [Object]
+    def [](attr_name)
+      @attributes.fetch_value(attr_name.to_s)
+    end
+
+    # Setting attribute using brackets
+    #
+    # @param name [String, Symbol]
+    # @param value [Object]
+    #
+    # @return [Object]
+    def []=(attr_name, value)
+      @attributes.write_from_user(attr_name.to_s, value)
+    end
 
     # Returns hash for a StoreModel::Model instance based on attributes hash
     #
