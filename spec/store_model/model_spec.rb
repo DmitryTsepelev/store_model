@@ -274,12 +274,12 @@ RSpec.describe StoreModel::Model do
     subject { Configuration.new(attributes) }
 
     it do
-      expect { subject[:color] = "black" }.to change { subject[:color] }.to("black")
+      expect { subject[:color] = "black" }.to change { subject.color }.to("black")
     end
 
     context "when string value is passed" do
       it do
-        expect { subject[:color] = "black" }.to change { subject[:color] }.to("black")
+        expect { subject["color"] = "black" }.to change { subject.color }.to("black")
       end
     end
   end
