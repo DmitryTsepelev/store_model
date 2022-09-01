@@ -23,7 +23,7 @@ module StoreModel
 
     attr_accessor :parent
 
-    delegate :each_value, :fetch, to: :attributes
+    delegate :each_value, to: :attributes
 
     # Returns a hash representing the model. Some configuration can be
     # passed through +options+.

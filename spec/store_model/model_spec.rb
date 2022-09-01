@@ -268,15 +268,6 @@ RSpec.describe StoreModel::Model do
     end
   end
 
-  describe "#fetch" do
-    subject(:configuration) { Configuration.new }
-
-    it "fails when fetching nil" do
-      expect(configuration.color).to be_nil
-      expect(configuration.fetch(:color)).to be_nil
-    end
-  end
-
   describe "[]=" do
     let(:attributes) { { color: "red" } }
 
