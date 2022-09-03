@@ -43,6 +43,28 @@ module StoreModel
       result.as_json(options)
     end
 
+    # Returns an Object, similar to Hash#fetch, raises
+    # a KeyError if attr_name doesn't exist.
+    # @param attr_name [String, Symbol]
+    #
+    # @return Object
+    def fetch(attr_name)
+      stringified_key = attr_name.to_s
+      if attributes.key?(stringified_key)
+        attributes[stringified_key]
+      elsif attribute_names.include?(stringified_key)
+        nil
+      else
+        message = if attr_name.is_a?(Symbol)
+                    "key not found: :#{attr_name}"
+                  else
+                    "key not found: #{attr_name}"
+                  end
+
+        raise KeyError, message
+      end
+    end
+
     # Compares two StoreModel::Model instances
     #
     # @param other [StoreModel::Model]
@@ -56,6 +78,8 @@ module StoreModel
     alias eql? ==
 
     # Accessing attribute using brackets
+    #
+    # @param attr_name [String, Symbol]
     #
     # @return [Object]
     def [](attr_name)
