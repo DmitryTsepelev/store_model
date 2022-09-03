@@ -41,6 +41,14 @@ RSpec.describe StoreModel::Model do
       it { is_expected.to be_nil }
     end
 
+    context "when fetching a method defined on the model" do
+      let(:attr_name) { :method_attribute }
+
+      it "calls the model method" do
+        is_expected.to eq("bar")
+      end
+    end
+
     context "when fetching an attribute that doesn't exist" do
       let(:attr_name) { :unknown_attribute }
 

@@ -50,10 +50,8 @@ module StoreModel
     # @return Object
     def fetch(attr_name)
       stringified_key = attr_name.to_s
-      if attributes.key?(stringified_key)
-        attributes[stringified_key]
-      elsif attribute_names.include?(stringified_key)
-        nil
+      if attribute_names.include?(stringified_key)
+        public_send(stringified_key)
       else
         message = if attr_name.is_a?(Symbol)
                     "key not found: :#{attr_name}"
