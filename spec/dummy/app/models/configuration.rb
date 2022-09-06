@@ -12,8 +12,4 @@ class Configuration
   alias_attribute :enabled, :active
 
   validates :color, presence: true
-
-  def method_attribute
-    super || "bar"
-  end
 end
