@@ -4,7 +4,6 @@ require "store_model/types"
 require "store_model/enum"
 require "store_model/type_builders"
 require "store_model/nested_attributes"
-
 module StoreModel
   # When included into class configures it to handle JSON column
   module Model
@@ -53,12 +52,7 @@ module StoreModel
       if attribute_names.include?(stringified_key)
         public_send(stringified_key)
       else
-        message = if attr_name.is_a?(Symbol)
-                    "key not found: :#{attr_name}"
-                  else
-                    "key not found: #{attr_name}"
-                  end
-
+        message = attr_name.is_a?(Symbol) ? "key not found: :#{attr_name}" : "key not found: #{attr_name}"
         raise KeyError, message
       end
     end
