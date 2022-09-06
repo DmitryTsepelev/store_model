@@ -6,6 +6,8 @@ class MethodModel
   attribute :gear, :string
   attribute :tire, :integer
 
+  alias_attribute :foo, :gear
+
   def gear
     super || "gear"
   end

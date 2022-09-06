@@ -4,6 +4,7 @@ require "store_model/types"
 require "store_model/enum"
 require "store_model/type_builders"
 require "store_model/nested_attributes"
+
 module StoreModel
   # When included into class configures it to handle JSON column
   module Model
@@ -49,7 +50,7 @@ module StoreModel
     # @return Object
     def fetch(attr_name)
       stringified_key = attr_name.to_s
-      if attribute_names.include?(stringified_key)
+      if attribute_names.include?(stringified_key) || attribute_aliases.key?(stringified_key)
         public_send(stringified_key)
       else
         message = attr_name.is_a?(Symbol) ? "key not found: :#{attr_name}" : "key not found: #{attr_name}"

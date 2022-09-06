@@ -35,6 +35,10 @@ RSpec.describe StoreModel::Model do
 
     it { is_expected.to eq("blue") }
 
+    context "when fetching an alias attribute" do
+      it { is_expected.to eq("blue") }
+    end
+
     context "when fetching a nil attribute" do
       let(:attr_name) { :tire }
 
