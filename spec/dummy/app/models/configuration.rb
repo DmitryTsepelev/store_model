@@ -6,7 +6,6 @@ class Configuration
   attribute :color, :string
   attribute :model, :string
   attribute :active, :boolean
-  attribute :method_attribute
   attribute :disabled_at, :datetime
 
   alias_attribute :enabled, :active

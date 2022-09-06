@@ -27,26 +27,18 @@ RSpec.describe StoreModel::Model do
   end
 
   describe "#fetch" do
-    let(:instance) { Configuration.new(attributes) }
-    let(:attributes) { { color: "blue" } }
-    let(:attr_name) { :color }
+    let(:instance) { MethodModel.new(attributes) }
+    let(:attributes) { { gear: "blue" } }
+    let(:attr_name) { :gear }
 
     subject(:fetch) { instance.fetch(attr_name) }
 
     it { is_expected.to eq("blue") }
 
     context "when fetching a nil attribute" do
-      let(:attr_name) { :model }
+      let(:attr_name) { :tire }
 
       it { is_expected.to be_nil }
-    end
-
-    context "when fetching a method defined on the model" do
-      let(:attr_name) { :method_attribute }
-
-      it "calls the model method" do
-        is_expected.to eq("bar")
-      end
     end
 
     context "when fetching an attribute that doesn't exist" do
