@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #128](https://github.com/DmitryTsepelev/store_model/pull/128) Fix fetch to handle `nil` values ([@danielvdao])
+
 ## 1.2.0 (2022-08-18)
 
 - [PR #126](https://github.com/DmitryTsepelev/store_model/pull/126) Add access to attributes using brackets ([@raphox])
@@ -143,3 +145,4 @@
 [@jdeff]: https://github.com/jdeff
 [@Flixt]: https://github.com/Flixt
 [@raphox]: https://github.com/raphox
+[@danielvdao]: https://github.com/danielvdao
