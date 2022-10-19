@@ -26,6 +26,34 @@ RSpec.describe StoreModel::Model do
     end
   end
 
+  describe "#fetch" do
+    let(:instance) { MethodModel.new(attributes) }
+    let(:attributes) { { gear: "blue" } }
+    let(:attr_name) { :gear }
+
+    subject(:fetch) { instance.fetch(attr_name) }
+
+    it { is_expected.to eq("blue") }
+
+    context "when fetching an alias attribute" do
+      it { is_expected.to eq("blue") }
+    end
+
+    context "when fetching a nil attribute" do
+      let(:attr_name) { :tire }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when fetching an attribute that doesn't exist" do
+      let(:attr_name) { :unknown_attribute }
+
+      it "raises a KeyError" do
+        expect { fetch }.to raise_error(KeyError, "key not found: :unknown_attribute")
+      end
+    end
+  end
+
   describe "#as_json" do
     let(:instance) { Configuration.new(attributes) }
 

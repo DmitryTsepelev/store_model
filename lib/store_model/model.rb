@@ -23,7 +23,7 @@ module StoreModel
 
     attr_accessor :parent
 
-    delegate :each_value, :fetch, to: :attributes
+    delegate :each_value, to: :attributes
 
     # Returns a hash representing the model. Some configuration can be
     # passed through +options+.
@@ -43,6 +43,21 @@ module StoreModel
       result.as_json(options)
     end
 
+    # Returns an Object, similar to Hash#fetch, raises
+    # a KeyError if attr_name doesn't exist.
+    # @param attr_name [String, Symbol]
+    #
+    # @return Object
+    def fetch(attr_name)
+      stringified_key = attr_name.to_s
+      if attribute_names.include?(stringified_key) || attribute_aliases.key?(stringified_key)
+        public_send(stringified_key)
+      else
+        message = attr_name.is_a?(Symbol) ? "key not found: :#{attr_name}" : "key not found: #{attr_name}"
+        raise KeyError, message
+      end
+    end
+
     # Compares two StoreModel::Model instances
     #
     # @param other [StoreModel::Model]
@@ -56,6 +71,8 @@ module StoreModel
     alias eql? ==
 
     # Accessing attribute using brackets
+    #
+    # @param attr_name [String, Symbol]
     #
     # @return [Object]
     def [](attr_name)
