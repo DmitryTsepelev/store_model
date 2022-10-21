@@ -2,6 +2,8 @@
 
 ## master
 
+## 1.3.0 (2022-10-21)
+
 - [PR #128](https://github.com/DmitryTsepelev/store_model/pull/128) Fix fetch to handle `nil` values ([@danielvdao])
 
 ## 1.2.0 (2022-08-18)
