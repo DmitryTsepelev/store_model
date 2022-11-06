@@ -1,4 +1,4 @@
-# StoreModel [![Gem Version](https://badge.fury.io/rb/store_model.svg)](https://rubygems.org/gems/store_model) [![Coverage Status](https://coveralls.io/repos/github/DmitryTsepelev/store_model/badge.svg?branch=master)](https://coveralls.io/github/DmitryTsepelev/store_model?branch=master)
+# StoreModel [![Gem Version](https://badge.fury.io/rb/store_model.svg)](https://rubygems.org/gems/store_model) [![Coverage Status](https://coveralls.io/repos/github/DmitryTsepelev/store_model/badge.svg?branch=master)](https://coveralls.io/github/DmitryTsepelev/store_model?branch=master) ![](https://ruby-gem-downloads-badge.herokuapp.com/store_model?type=total)
 
 **StoreModel** gem allows you to wrap JSON-backed DB columns with ActiveModel-like classes.
 
@@ -21,12 +21,6 @@ class Product < ApplicationRecord
   attribute :configuration, Configuration.to_type
 end
 ```
-
-<p align="center">
-  <a href="https://evilmartians.com/?utm_source=store_model">
-    <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54">
-  </a>
-</p>
 
 ## Why should I wrap my JSON columns?
 
@@ -96,6 +90,10 @@ _Usage note: Rails and assigning Arrays/Hashes to records_
 4. [One of](./docs/one_of.md)
 4. [Alternatives](./docs/alternatives.md)
 5. [Defining custom types](./docs/defining_custom_types.md)
+
+## Credits
+
+Initially sponsored by [Evil Martians](http://evilmartians.com).
 
 ## License
 
