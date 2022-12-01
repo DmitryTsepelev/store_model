@@ -36,7 +36,7 @@ product.save
 
 This approach works fine when you don't have a lot of keys with logic around them and just read the data. However, when you start working with that data more intensively–you may find the code a bit verbose and error-prone.
 
-For instance, try to find a way to validate `:model` value to be required. Despite of the fact, that you'll have to write this validation by hand, it violates single-repsponsibility principle: why parent model (`Product`) should know about the logic related to a child (`Configuration`)?
+For instance, try to find a way to validate `:model` value to be required. Despite of the fact, that you'll have to write this validation by hand, it violates the single-responsibility principle: why parent model (`Product`) should know about the logic related to a child (`Configuration`)?
 
 > 📖 Read more about the motivation in the [Wrapping JSON-based ActiveRecord attributes with classes](https://evilmartians.com/chronicles/wrapping-json-based-active-record-attributes-with-classes) post
 
