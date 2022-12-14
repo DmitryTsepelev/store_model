@@ -39,6 +39,14 @@ RSpec.describe StoreModel::Model do
     expect(config_class.status_values).to eq(active: 1, archived: 0)
   end
 
+  it "aliases the pluralized name to the #values method" do
+    expect(subject.statuses).to eq(subject.status_values)
+  end
+
+  it "aliases the pluralized name to the .values method" do
+    expect(config_class.statuses).to eq(config_class.status_values)
+  end
+
   context "when multiple StoreModel classes are defined" do
     let!(:another_config_class) do
       Class.new do

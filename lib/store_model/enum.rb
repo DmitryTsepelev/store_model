@@ -18,7 +18,9 @@ module StoreModel
         define_writer(name, mapping)
         define_method("#{name}_value") { attributes[name.to_s] }
         define_method("#{name}_values") { mapping }
+        alias_method(ActiveSupport::Inflector.pluralize(name), "#{name}_values")
         singleton_class.define_method("#{name}_values") { mapping }
+        singleton_class.alias_method(ActiveSupport::Inflector.pluralize(name), "#{name}_values")
         define_predicate_methods(name, mapping, options)
       end
     end
