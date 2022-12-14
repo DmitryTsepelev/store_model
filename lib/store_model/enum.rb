@@ -18,6 +18,7 @@ module StoreModel
         define_writer(name, mapping)
         define_method("#{name}_value") { attributes[name.to_s] }
         define_method("#{name}_values") { mapping }
+        singleton_class.define_method("#{name}_values") { mapping }
         define_predicate_methods(name, mapping, options)
       end
     end

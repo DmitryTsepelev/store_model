@@ -18,6 +18,7 @@ config.active? # => false
 config.status_value # => 0
 
 config.status_values # => { :active => 0, :archived => 1 }
+Configuration.status_values # => { :active => 0, :archived => 1 }
 ```
 
 Under the hood, values are stored as integers, according to the index of the element in the array:
