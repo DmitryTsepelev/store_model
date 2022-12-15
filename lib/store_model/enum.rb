@@ -17,10 +17,7 @@ module StoreModel
         define_reader(name, mapping)
         define_writer(name, mapping)
         define_method("#{name}_value") { attributes[name.to_s] }
-        define_method("#{name}_values") { mapping }
-        alias_method(ActiveSupport::Inflector.pluralize(name), "#{name}_values")
-        singleton_class.define_method("#{name}_values") { mapping }
-        singleton_class.alias_method(ActiveSupport::Inflector.pluralize(name), "#{name}_values")
+        define_map_readers(name, mapping)
         define_predicate_methods(name, mapping, options)
       end
     end
@@ -45,6 +42,13 @@ module StoreModel
         label = affixed_label(label, name, options[:_prefix], options[:_suffix])
         define_method("#{label}?") { send(name) == mapping.key(value).to_s }
       end
+    end
+
+    def define_map_readers(name, mapping)
+      define_method("#{name}_values") { mapping }
+      alias_method(ActiveSupport::Inflector.pluralize(name), "#{name}_values")
+      singleton_class.define_method("#{name}_values") { mapping }
+      singleton_class.alias_method(ActiveSupport::Inflector.pluralize(name), "#{name}_values")
     end
 
     def cast_type(mapping)
