@@ -49,7 +49,7 @@ RSpec.describe StoreModel::Model do
       let(:attr_name) { :unknown_attribute }
 
       it "raises a KeyError" do
-        expect { fetch }.to raise_error(KeyError, "key not found: :unknown_attribute")
+        expect { fetch }.to raise_error(KeyError)
       end
     end
   end
