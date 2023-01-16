@@ -81,6 +81,73 @@ RSpec.describe StoreModel::NestedAttributes do
       it("assigns attributes to nested model") do
         expect(subject.supplier).to have_attributes(supplier1)
       end
+
+      context "and allow_destroy is true" do
+        let(:configuration_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :color, :string
+            attribute :supplier, Supplier.to_type
+
+            accepts_nested_attributes_for [:supplier, { allow_destroy: true }]
+          end
+        end
+
+        before { supplier1[:_destroy] = _destroy }
+
+        context "and _destroy is 1" do
+          let(:_destroy) { "1" }
+
+          it("does not assign attributes to nested model") do
+            expect(subject.supplier).to be_nil
+          end
+        end
+
+        context "and _destroy is 0" do
+          let(:_destroy) { "0" }
+
+          it("assigns attributes to nested model") do
+            expect(subject.supplier).to have_attributes(supplier1.except(:_destroy))
+          end
+        end
+      end
+    end
+
+    context "when allow_destroy is true" do
+      let(:configuration_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :color, :string
+          attribute :suppliers, Supplier.to_array_type
+
+          accepts_nested_attributes_for [:suppliers, { allow_destroy: true }]
+        end
+      end
+
+      before { supplier1[:_destroy] = _destroy }
+
+      context "and _destroy is 1" do
+        let(:_destroy) { "1" }
+
+        it "assigns only supplier2" do
+          expect(subject.suppliers).to contain_exactly(
+            have_attributes(supplier2)
+          )
+        end
+      end
+
+      context "and _destroy is 0" do
+        let(:_destroy) { "0" }
+
+        it "assigns attributes to nested model" do
+          expect(subject.suppliers).to contain_exactly(
+            have_attributes(supplier1.except(:_destroy)),
+            have_attributes(supplier2)
+          )
+        end
+      end
     end
   end
 
