@@ -2,6 +2,10 @@
 
 ## master
 
+## 1.4.0 (2023-01-17)
+
+- [PR #138](https://github.com/DmitryTsepelev/store_model/pull/138) Support option `allow_destroy` to accepts_nested_attributes_for ([@mateusnava])
+
 ## 1.3.0 (2022-10-21)
 
 - [PR #128](https://github.com/DmitryTsepelev/store_model/pull/128) Fix fetch to handle `nil` values ([@danielvdao])
@@ -148,3 +152,4 @@
 [@Flixt]: https://github.com/Flixt
 [@raphox]: https://github.com/raphox
 [@danielvdao]: https://github.com/danielvdao
+[@mateusnava]: https://github.com/mateusnava
