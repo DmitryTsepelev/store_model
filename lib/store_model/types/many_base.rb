@@ -7,6 +7,8 @@ module StoreModel
     # Implements ActiveModel::Type::Value type for handling an array of
     # StoreModel::Model
     class ManyBase < ActiveModel::Type::Value
+      attr_reader :model_klass
+
       # Returns type
       #
       # @return [Symbol]

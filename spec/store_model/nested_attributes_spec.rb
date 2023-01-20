@@ -95,6 +95,7 @@ RSpec.describe StoreModel::NestedAttributes do
         end
 
         before { supplier1[:_destroy] = _destroy }
+        let(:_destroy) { "0" }
 
         context "and _destroy is 1" do
           let(:_destroy) { "1" }
@@ -110,6 +111,11 @@ RSpec.describe StoreModel::NestedAttributes do
           it("assigns attributes to nested model") do
             expect(subject.supplier).to have_attributes(supplier1.except(:_destroy))
           end
+        end
+
+        it "defines _destroy attribute" do
+          expect(subject.supplier).to respond_to(:_destroy)
+          expect(subject.supplier).to respond_to(:_destroy=)
         end
       end
     end
@@ -127,6 +133,12 @@ RSpec.describe StoreModel::NestedAttributes do
       end
 
       before { supplier1[:_destroy] = _destroy }
+      let(:_destroy) { "0" }
+
+      it "defines _destroy attribute" do
+        expect(subject.suppliers.first).to respond_to(:_destroy)
+        expect(subject.suppliers.first).to respond_to(:_destroy=)
+      end
 
       context "and _destroy is 1" do
         let(:_destroy) { "1" }

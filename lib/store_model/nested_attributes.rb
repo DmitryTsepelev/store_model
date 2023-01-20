@@ -27,10 +27,20 @@ module StoreModel
           when Types::Many
             define_association_setter_for_many(association, options)
           end
+
+          define_attr_accessor_for_destroy(association, options)
         end
       end
 
       private
+
+      def define_attr_accessor_for_destroy(association, options)
+        return unless options&.dig(:allow_destroy)
+
+        attribute_types[association.to_s].model_klass.class_eval do
+          attr_accessor :_destroy
+        end
+      end
 
       def define_association_setter_for_many(association, options)
         define_method "#{association}_attributes=" do |attributes|

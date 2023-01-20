@@ -6,6 +6,8 @@ module StoreModel
   module Types
     # Implements ActiveModel::Type::Value type for handling an instance of StoreModel::Model
     class OneBase < ActiveModel::Type::Value
+      attr_reader :model_klass
+
       # Returns type
       #
       # @return [Symbol]
