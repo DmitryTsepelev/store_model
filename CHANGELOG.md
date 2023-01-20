@@ -2,6 +2,10 @@
 
 ## master
 
+## 1.5.1 (2023-01-21)
+
+- [PR #139](https://github.com/DmitryTsepelev/store_model/pull/139) Add _destroy attr_accessor for association in nested attributes ([@mateusnava])
+
 ## 1.5.0 (2023-01-17)
 
 - [PR #138](https://github.com/DmitryTsepelev/store_model/pull/138) Support option `allow_destroy` to accepts_nested_attributes_for ([@mateusnava])
