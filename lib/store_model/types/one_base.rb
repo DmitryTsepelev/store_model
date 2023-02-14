@@ -8,6 +8,18 @@ module StoreModel
     class OneBase < ActiveModel::Type::Value
       attr_reader :model_klass
 
+      STORAGE_JSON = :json
+      STORAGE_HSTORE = :hstore
+      STORAGES = [STORAGE_JSON, STORAGE_HSTORE].freeze
+
+      def initialize(storage = STORAGE_JSON)
+        unless STORAGES.include?(storage)
+          raise ArgumentError, "#{storage} is not supported, supported storages are #{STORAGES.join(', ')}"
+        end
+
+        @storage = storage
+      end
+
       # Returns type
       #
       # @return [Symbol]
@@ -48,7 +60,14 @@ module StoreModel
 
       # rubocop:disable Style/RescueModifier
       def decode_and_initialize(value)
-        decoded = ActiveSupport::JSON.decode(value) rescue nil
+        decoded =
+          case @storage
+          when STORAGE_JSON
+            ActiveSupport::JSON.decode(value) rescue nil
+          when STORAGE_HSTORE
+            # TODO: remove long namespace?
+            ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Hstore.new.deserialize(value) rescue nil
+          end
         model_instance(decoded) unless decoded.nil?
       rescue ActiveModel::UnknownAttributeError => e
         handle_unknown_attribute(decoded, e)
@@ -61,6 +80,7 @@ module StoreModel
         value_symbolized = value_symbolized[:attributes] if value_symbolized.key?(:attributes)
 
         cast_value(value_symbolized.except(attribute)).tap do |configuration|
+          puts "#{attribute.to_s} = #{value_symbolized[attribute]}"
           configuration.unknown_attributes[attribute.to_s] = value_symbolized[attribute]
         end
       end
