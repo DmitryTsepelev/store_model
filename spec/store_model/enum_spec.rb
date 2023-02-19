@@ -35,6 +35,35 @@ RSpec.describe StoreModel::Model do
     expect(subject.status_values).to eq(active: 1, archived: 0)
   end
 
+  it "has .values class method" do
+    expect(config_class.status_values).to eq(active: 1, archived: 0)
+  end
+
+  it "aliases the pluralized name to the #values method" do
+    expect(subject.statuses).to eq(subject.status_values)
+  end
+
+  it "aliases the pluralized name to the .values method" do
+    expect(config_class.statuses).to eq(config_class.status_values)
+  end
+
+  context "when multiple StoreModel classes are defined" do
+    let!(:another_config_class) do
+      Class.new do
+        include StoreModel::Model
+
+        enum :status, off: 0, on: 1
+        enum :level, low: 1, medium: 2, high: 3
+      end
+    end
+
+    it "does not share enum mapping methods between classes" do
+      expect(another_config_class.status_values).to eq(off: 0, on: 1)
+      expect(config_class.status_values).to eq(active: 1, archived: 0)
+      expect(config_class.respond_to?(:level_values)).to eq(false)
+    end
+  end
+
   context "when value is not in the list" do
     let(:value) { "undefined" }
 
