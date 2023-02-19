@@ -2,6 +2,10 @@
 
 ## master
 
+## 1.6.0 (2023-02-19)
+
+- [PR #135](https://github.com/DmitryTsepelev/store_model/pull/135) Create class enum accessor ([@jas14])
+
 ## 1.5.1 (2023-01-21)
 
 - [PR #139](https://github.com/DmitryTsepelev/store_model/pull/139) Add _destroy attr_accessor for association in nested attributes ([@mateusnava])
@@ -157,3 +161,4 @@
 [@raphox]: https://github.com/raphox
 [@danielvdao]: https://github.com/danielvdao
 [@mateusnava]: https://github.com/mateusnava
+[@jas14]: https://github.com/jas14
