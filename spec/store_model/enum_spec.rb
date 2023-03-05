@@ -39,8 +39,8 @@ RSpec.describe StoreModel::Model do
     expect(config_class.status_values).to eq(active: 1, archived: 0)
   end
 
-  it "aliases the pluralized name to the #values method" do
-    expect(subject.statuses).to eq(subject.status_values)
+  it "does not alias the pluralized name to the #values method" do
+    expect(subject).not_to respond_to(:statuses)
   end
 
   it "aliases the pluralized name to the .values method" do
@@ -61,6 +61,27 @@ RSpec.describe StoreModel::Model do
       expect(another_config_class.status_values).to eq(off: 0, on: 1)
       expect(config_class.status_values).to eq(active: 1, archived: 0)
       expect(config_class.respond_to?(:level_values)).to eq(false)
+    end
+  end
+
+  context "when enum name is already pluralized" do
+    let(:config_class) do
+      Class.new do
+        include StoreModel::Model
+
+        enum :amounts, in: { many: 0, few: 1 }
+      end
+    end
+
+    subject { config_class.new(amounts: :many) }
+
+    it "aliases the name to the .values method" do
+      expect(config_class.amounts).to eq(config_class.amounts_values)
+    end
+
+    it "does not alias the name to the #values method" do
+      expect(subject.amounts).to eq("many")
+      expect(subject.amounts).not_to eq(subject.amounts_values)
     end
   end
 

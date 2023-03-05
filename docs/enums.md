@@ -18,7 +18,6 @@ config.active? # => false
 config.status_value # => 0
 
 config.status_values # => { :active => 0, :archived => 1 }
-config.statuses # => { :active => 0, :archived => 1 }
 Configuration.status_values # => { :active => 0, :archived => 1 }
 Configuration.statuses # => { :active => 0, :archived => 1 }
 ```

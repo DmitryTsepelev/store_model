@@ -46,7 +46,6 @@ module StoreModel
 
     def define_map_readers(name, mapping)
       define_method("#{name}_values") { mapping }
-      alias_method(ActiveSupport::Inflector.pluralize(name), "#{name}_values")
       singleton_class.define_method("#{name}_values") { mapping }
       singleton_class.alias_method(ActiveSupport::Inflector.pluralize(name), "#{name}_values")
     end

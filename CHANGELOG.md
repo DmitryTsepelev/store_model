@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #136](https://github.com/DmitryTsepelev/store_model/pull/136) Remove enum mapping instance method ([@jas14])
+
 ## 1.6.0 (2023-02-19)
 
 - [PR #135](https://github.com/DmitryTsepelev/store_model/pull/135) Create class enum accessor ([@jas14])
