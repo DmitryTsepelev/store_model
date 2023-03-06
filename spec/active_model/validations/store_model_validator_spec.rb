@@ -46,6 +46,15 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
           expect(subject.errors.full_messages).to eq(["Configuration can't be blank"])
         end
       end
+
+      context "with contextual validations" do
+        let(:attributes) { { configuration: Configuration.new(color: "red") } }
+
+        it "propogates context" do
+          expect(subject).to be_valid
+          expect(subject).to be_invalid(:custom_context)
+        end
+      end
     end
 
     context "with allow_nil: true" do
@@ -106,6 +115,11 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
 
           expect(subject.configurations.second.errors.messages).to be_empty
           expect(subject.configurations.second.errors.full_messages).to be_empty
+        end
+
+        it "propogates context" do
+          expect(subject).to be_valid
+          expect(subject).to be_invalid(:custom_context)
         end
       end
 

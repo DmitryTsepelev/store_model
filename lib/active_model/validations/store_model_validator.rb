@@ -22,20 +22,20 @@ module ActiveModel
 
         case record.type_for_attribute(attribute).type
         when :json, :polymorphic
-          call_json_strategy(attribute, record.errors, value)
+          call_json_strategy(record, attribute, value)
         when :array, :polymorphic_array
-          call_array_strategy(attribute, record.errors, value)
+          call_array_strategy(record, attribute, value)
         end
       end
 
       private
 
-      def call_json_strategy(attribute, record_errors, value)
-        strategy.call(attribute, record_errors, value.errors) if value.invalid?
+      def call_json_strategy(record, attribute, value)
+        strategy.call(attribute, record.errors, value.errors) if value.invalid?(record.validation_context)
       end
 
-      def call_array_strategy(attribute, record_errors, value)
-        array_strategy.call(attribute, record_errors, value) if value.select(&:invalid?).present?
+      def call_array_strategy(record, attribute, value)
+        array_strategy.call(attribute, record.errors, value) if value.select {|v| v.invalid?(record.validation_context) }.present?
       end
 
       def strategy
