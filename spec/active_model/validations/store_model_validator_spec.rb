@@ -50,7 +50,7 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
       context "with contextual validations" do
         let(:attributes) { { configuration: Configuration.new(color: "red") } }
 
-        it "propogates context" do
+        it "propagates context" do
           expect(subject).to be_valid
           expect(subject).to be_invalid(:custom_context)
         end
@@ -117,7 +117,7 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
           expect(subject.configurations.second.errors.full_messages).to be_empty
         end
 
-        it "propogates context" do
+        it "propagates context" do
           expect(subject).to be_valid
           expect(subject).to be_invalid(:custom_context)
         end

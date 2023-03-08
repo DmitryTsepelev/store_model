@@ -35,7 +35,8 @@ module ActiveModel
       end
 
       def call_array_strategy(record, attribute, value)
-        array_strategy.call(attribute, record.errors, value) if value.select {|v| v.invalid?(record.validation_context) }.present?
+        any_invalid = value.select { |v| v.invalid?(record.validation_context) }.present?
+        array_strategy.call(attribute, record.errors, value) if any_invalid
       end
 
       def strategy
