@@ -2,6 +2,8 @@
 
 ## master
 
+## 1.6.1 (2023-03-10)
+
 - [PR #136](https://github.com/DmitryTsepelev/store_model/pull/136) Remove enum mapping instance method ([@jas14])
 
 ## 1.6.0 (2023-02-19)
