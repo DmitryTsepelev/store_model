@@ -2,6 +2,10 @@
 
 ## master
 
+## 1.6.2 (2023-03-17)
+
+- [PR #143](https://github.com/DmitryTsepelev/store_model/pull/143) Propogate validation context to store model ([@penguoir])
+
 ## 1.6.1 (2023-03-10)
 
 - [PR #136](https://github.com/DmitryTsepelev/store_model/pull/136) Remove enum mapping instance method ([@jas14])
@@ -166,3 +170,4 @@
 [@danielvdao]: https://github.com/danielvdao
 [@mateusnava]: https://github.com/mateusnava
 [@jas14]: https://github.com/jas14
+[@penguoir]: https://github.com/penguoir
