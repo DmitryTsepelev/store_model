@@ -43,7 +43,7 @@ You can always pass the `serialize_unknown_attributes` option to the `as_json` m
 StoreModel.config.serialize_unknown_attributes = false
 
 configuration = Configuration.to_type.cast_value(color: "red", archived: true)
-configuration.as_json # => {"color": "red", "archived": true}
+configuration.as_json(serialize_unknown_attributes: true) # => {"color": "red", "archived": true}
 ```
 
 In any case unknown attributes are always stored in the database.
