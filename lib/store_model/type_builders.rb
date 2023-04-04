@@ -5,8 +5,8 @@ module StoreModel
   module TypeBuilders
     # Converts StoreModel::Model to Types::One
     # @return [Types::One]
-    def to_type
-      Types::One.new(self)
+    def to_type(storage: :json)
+      Types::One.new(self, storage)
     end
 
     # Converts StoreModel::Model to Types::Many

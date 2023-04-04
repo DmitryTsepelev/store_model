@@ -32,8 +32,10 @@ RSpec.configure do |config|
 end
 
 ActiveRecord::Base.establish_connection(
-  adapter: "sqlite3",
-  database: ":memory:"
+  adapter: "postgresql",
+  database: "store_model"
+  # TODO: bin/setup
+  # TODO: update CI
 )
 
 load "#{Rails.root}/db/schema.rb"

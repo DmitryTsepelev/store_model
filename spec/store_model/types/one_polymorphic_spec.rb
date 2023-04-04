@@ -188,7 +188,7 @@ RSpec.describe StoreModel::Types::OnePolymorphic do
     end
 
     context "when passing more complex block" do
-      let(:type) { described_class.new(configuration_proc) }
+      let(:type) { described_class.new(configuration_proc, :json) }
 
       let(:configuration_v1) do
         Class.new do

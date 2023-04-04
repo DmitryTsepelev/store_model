@@ -13,8 +13,9 @@ module StoreModel
       # @param model_wrapper [Proc] class to handle
       #
       # @return [StoreModel::Types::OnePolymorphic ]
-      def initialize(model_wrapper)
+      def initialize(model_wrapper, storage = :json)
         @model_wrapper = model_wrapper
+        super(storage)
       end
 
       # Returns type

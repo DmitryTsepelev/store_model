@@ -11,8 +11,8 @@ module StoreModel
         @block = block
       end
 
-      def to_type
-        Types::OnePolymorphic.new(@block)
+      def to_type(storage: :json)
+        Types::OnePolymorphic.new(@block, storage)
       end
 
       def to_array_type

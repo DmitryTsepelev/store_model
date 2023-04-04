@@ -68,7 +68,7 @@ RSpec.describe StoreModel::Model do
     end
 
     context "with unknown attributes" do
-      let(:type) { StoreModel::Types::One.new(Configuration) }
+      let(:type) { StoreModel::Types::One.new(Configuration, :json) }
       let(:instance) { type.cast_value(attributes.merge(unknown_attributes)) }
 
       let(:unknown_attributes) do

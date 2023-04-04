@@ -43,6 +43,8 @@ module StoreModel
       private
 
       def cast_symbol_value(value)
+        return cast_integer_value(value.to_s.to_i) if value.to_s.to_i.to_s == value.to_s
+
         raise_invalid_value!(value) unless @mapping.key?(value.to_sym)
         @mapping[value.to_sym]
       end
