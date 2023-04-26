@@ -167,6 +167,17 @@ module StoreModel
       @unknown_attributes ||= {}
     end
 
+    # Serialized values for storing in db
+    #
+    # @return [Hash]
+    def values_for_database
+      result = @attributes.keys.each_with_object({}) do |key, values|
+        values[key] = @attributes.fetch(key).value_for_database
+      end
+      result.merge!(unknown_attributes)
+      result
+    end
+
     private
 
     def attribute?(attribute)

@@ -46,12 +46,35 @@ module StoreModel
       # @return [String] serialized value
       def serialize(value)
         case value
-        when Hash, @model_klass
-          ActiveSupport::JSON.encode(value, serialize_unknown_attributes: true)
+        when @model_klass
+          ActiveSupport::JSON.encode(value.values_for_database)
+        when Hash
+          ActiveSupport::JSON.encode(value)
         else
           super
         end
       end
+
+      # Converts a value from database input to the appropriate ruby type.
+      #
+      # @param value [String] value to deserialize
+      #
+      # @return [Object] deserialized value
+
+      # rubocop:disable Style/RescueModifier
+      def deserialize(value)
+        case value
+        when String
+          payload = ActiveSupport::JSON.decode(value) rescue nil
+          model_instance(deserialize_by_types(payload))
+        when Hash
+          model_instance(deserialize_by_types(value))
+        when nil
+          nil
+        else raise_cast_error(value)
+        end
+      end
+      # rubocop:enable Style/RescueModifier
 
       private
 
@@ -63,6 +86,14 @@ module StoreModel
 
       def model_instance(value)
         @model_klass.new(value)
+      rescue ActiveModel::UnknownAttributeError => e
+        handle_unknown_attribute(value, e)
+      end
+
+      def deserialize_by_types(hash)
+        @model_klass.attribute_types.each.with_object(hash.dup) do |(key, type), value|
+          value[key] = type.deserialize(hash[key])
+        end
       end
     end
   end
