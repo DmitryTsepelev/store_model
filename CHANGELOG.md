@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR #146](https://github.com/DmitryTsepelev/store_model/pull/146) Serializing and deserializing values during save. Fixes lockbox but changes the way dates are stored (this might be a breaking change) ([@RudskikhIvan])
+
 ## 1.6.2 (2023-03-17)
 
 - [PR #143](https://github.com/DmitryTsepelev/store_model/pull/143) Propogate validation context to store model ([@penguoir])
@@ -171,3 +173,4 @@
 [@mateusnava]: https://github.com/mateusnava
 [@jas14]: https://github.com/jas14
 [@penguoir]: https://github.com/penguoir
+[@RudskikhIvan]: https://github.com/RudskikhIvan
