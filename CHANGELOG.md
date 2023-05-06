@@ -2,6 +2,8 @@
 
 ## master
 
+## 2.0.0 (2023-05-06)
+
 - [PR #146](https://github.com/DmitryTsepelev/store_model/pull/146) Serializing and deserializing values during save. Fixes lockbox but changes the way dates are stored (this might be a breaking change) ([@RudskikhIvan])
 
 ## 1.6.2 (2023-03-17)
