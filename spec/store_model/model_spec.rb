@@ -147,7 +147,7 @@ RSpec.describe StoreModel::Model do
   end
 
   describe "#blank?" do
-    subject { Configuration.new(color: nil).blank? }
+    subject { Configuration.new(active: nil).blank? }
 
     it { is_expected.to be_truthy }
   end
@@ -174,6 +174,10 @@ RSpec.describe StoreModel::Model do
       it "updates parent after assignment" do
         subject.configuration = configuration
         expect(configuration.parent).to eq(subject)
+      end
+
+      it "uses defaults" do
+        expect(subject.configuration.active).to be(true)
       end
     end
 
