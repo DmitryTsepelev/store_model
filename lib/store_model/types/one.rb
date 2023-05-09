@@ -92,7 +92,7 @@ module StoreModel
 
       def deserialize_by_types(hash)
         @model_klass.attribute_types.each.with_object(hash.dup) do |(key, type), value|
-          value[key] = type.deserialize(hash[key])
+          value[key] = type.deserialize(hash[key]) if hash.key?(key)
         end
       end
     end

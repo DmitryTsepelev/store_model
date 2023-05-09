@@ -18,7 +18,7 @@ class Configuration
 
   attribute :color, :string
   attribute :model, :string
-  attribute :active, :boolean
+  attribute :active, :boolean, default: true
   attribute :disabled_at, :datetime
   attribute :encrypted_serial, Encrypted.new
 
