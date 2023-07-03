@@ -33,6 +33,34 @@ RSpec.describe StoreModel::NestedAttributes do
     end
   end
 
+  describe 'serializing nested json' do
+    it 'formats nested json as objects' do
+      class ProductConfiguration
+        include StoreModel::Model
+
+        attribute :color, :string
+        attribute :suppliers, Supplier.to_array_type
+
+        accepts_nested_attributes_for :suppliers
+      end
+
+      class Product < ActiveRecord::Base
+        attribute :configuration, ProductConfiguration.to_type, default: ProductConfiguration.new
+      end
+
+      suppliers = [Supplier.new(title: "The Supplier")]
+      product = Product.create!(configuration: ProductConfiguration.new(color: "red", suppliers: suppliers))
+
+      configuration_type = Product.select('json_type(configuration, "$") as config').where(id: product.id).first
+      suppliers_type = Product.select('json_type(configuration, "$.suppliers") as config').where(id: product.id).first
+      supplier_type = Product.select('json_type(configuration, "$.suppliers[0]") as config').where(id: product.id).first
+
+      expect(configuration_type.config).to eq('object')
+      expect(suppliers_type.config).to eq('array')
+      expect(supplier_type.config).to eq('object')
+    end
+  end
+
   describe "#as_json" do
     it "returns correct JSON" do
       expect(subject.as_json).to eq(attributes.as_json)
