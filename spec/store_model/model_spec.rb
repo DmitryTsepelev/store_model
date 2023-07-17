@@ -9,7 +9,8 @@ RSpec.describe StoreModel::Model do
       model: nil,
       active: false,
       disabled_at: Time.new(2019, 2, 10, 12),
-      encrypted_serial: nil
+      encrypted_serial: nil,
+      type: :left
     }
   end
 

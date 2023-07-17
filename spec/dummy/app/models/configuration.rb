@@ -22,6 +22,8 @@ class Configuration
   attribute :disabled_at, :datetime
   attribute :encrypted_serial, Encrypted.new
 
+  enum :type, { left: 1, right: 2 }
+
   alias_attribute :enabled, :active
 
   validates :color, presence: true
