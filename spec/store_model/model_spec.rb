@@ -9,7 +9,8 @@ RSpec.describe StoreModel::Model do
       model: nil,
       active: false,
       disabled_at: Time.new(2019, 2, 10, 12),
-      encrypted_serial: nil
+      encrypted_serial: nil,
+      type: "left"
     }
   end
 
@@ -77,6 +78,14 @@ RSpec.describe StoreModel::Model do
     subject { instance.as_json }
 
     it("returns correct JSON") { is_expected.to eq(attributes.as_json) }
+
+    context "when serialize_enums_using_as_json is off" do
+      before do
+        StoreModel.config.serialize_enums_using_as_json = false
+      end
+
+      it("returns correct JSON") { is_expected.to eq(attributes.merge(type: 1).as_json) }
+    end
 
     context "with only" do
       subject { instance.as_json(only: %i[color]) }
@@ -158,7 +167,7 @@ RSpec.describe StoreModel::Model do
     it "prints description" do
       expect(subject).to eq(
         "#<Configuration color: red, model: nil, active: false, " \
-        "disabled_at: #{attributes[:disabled_at]}, encrypted_serial: nil>"
+        "disabled_at: #{attributes[:disabled_at]}, encrypted_serial: nil, type: 1>"
       )
     end
   end

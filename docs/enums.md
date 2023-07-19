@@ -38,6 +38,14 @@ class Review
 end
 ```
 
+There was a [bug](https://github.com/DmitryTsepelev/store_model/pull/151) related to `:in` causing values to be returned from `#as_json`:
+
+```ruby
+Review.new(rating: :okay).as_json # => "{\"type\": 1}"
+```
+
+Please use `StoreModel.config.serialize_enums_using_as_json = true` to turn this behavior on; this will be a new default in the next major release.
+
 You can use the `:_prefix` or `:_suffix` options when you need to define multiple enums with same values. If the passed value is true, the methods are prefixed/suffixed with the name of the enum. It is also possible to supply a custom value:
 
 ```ruby
@@ -58,5 +66,4 @@ review.archived_status? # => false
 
 review.comments_active? # => false
 review.comments_inactive? # => true
-
 ```
