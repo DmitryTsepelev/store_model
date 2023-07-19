@@ -13,22 +13,32 @@ module StoreModel
       # @param associations [Array] list of associations and options to define attributes, for example:
       #   accepts_nested_attributes_for [:suppliers, allow_destroy: true]
       #
+      # Alternatively, use the standard Rails syntax:
+      #
+      # @param associations [Array] list of associations and attributes to define getters and setters.
+      #
+      # @param options [Hash] options not supported by StoreModel will still be passed to ActiveRecord.
+      #
       # Supported options:
       # [:allow_destroy]
       #   If true, destroys any members from the attributes hash with a
       #   <tt>_destroy</tt> key and a value that evaluates to +true+
       #   (e.g. 1, '1', true, or 'true'). This option is off by default.
       def accepts_nested_attributes_for(*associations)
+        global_options = associations.extract_options!
+
         associations.each do |association, options|
           case attribute_types[association.to_s]
-          when Types::One
-            define_association_setter_for_single(association, options)
+          when Types::OneBase
+            define_association_setter_for_single(association, options || global_options)
             alias_method "#{association}_attributes=", "#{association}="
-          when Types::Many
-            define_association_setter_for_many(association, options)
+            define_attr_accessor_for_destroy(association, options || global_options)
+          when Types::ManyBase
+            define_association_setter_for_many(association, options || global_options)
+            define_attr_accessor_for_destroy(association, options || global_options)
+          else
+            super(association, options || global_options)
           end
-
-          define_attr_accessor_for_destroy(association, options)
         end
       end
 
