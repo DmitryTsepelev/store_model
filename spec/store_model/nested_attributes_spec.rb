@@ -206,20 +206,20 @@ RSpec.describe StoreModel::NestedAttributes do
 
     describe "#accepts_nested_attributes_for" do
       context "with standard rails syntax" do
-        subject {
+        subject do
           model_class.accepts_nested_attributes_for(:products, allow_destroy: true)
           model_class.new
-        }
+        end
 
         it { is_expected.to respond_to(:products_attributes=) }
       end
 
       context "allows mixing associations with attributes" do
-        subject {
+        subject do
           model_class.attribute :bicycles, Bicycle.to_array_type
           model_class.accepts_nested_attributes_for(:products, :bicycles, allow_destroy: true)
           model_class.new
-        }
+        end
 
         it { is_expected.to respond_to(:products_attributes=) }
         it { is_expected.to respond_to(:bicycles_attributes=) }
