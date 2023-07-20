@@ -76,7 +76,49 @@ product.save
 _Usage note: Rails and assigning Arrays/Hashes to records_
 
 - Assigned attributes must be a String, Hash, Array of Hashes, or StoreModel. For example, if the attributes are coming from a controller, be sure to convert any ActionController::Parameters as needed.
-- Any changes made to a StoreModel instance requires the attribute be re-assigned; Rails doesn't track mutations of objects. For example: `self.my_stored_models = my_stored_models.map(&:as_json)`
+- Any changes made to a StoreModel instance requires the attribute be flagged as dirty, either by reassignment (`self.my_stored_models = my_stored_models.map(&:as_json)`) or by `will_change!` (`self.my_stored_models_will_change!`)
+- Mixing `StoreModel::NestedAttributes` into your model will allow you to use `accepts_nested_attributes_for` in the same way as ActiveRecord.
+
+```ruby
+class Supplier < ActiveRecord::Base
+  include StoreModel::NestedAttributes
+
+  has_many :bicycles, dependent: :destroy
+
+  attribute :products, Product.to_array_type
+
+  accepts_nested_attributes_for :bicycles, :products, allow_destroy: true
+end
+```
+
+This will allow the form builders to work their magic:
+
+```erb
+<%= form_with model: @supplier do |form| %>
+  <%= form.fields_for :products do |product_fields| %>
+    <%= product_fields.text_field :name %>
+  <% end %>
+<% end %>
+```
+
+Resulting in:
+```html
+<input type="text" name="supplier[products_attributes][0][name]" id="supplier_products_attributes_0_name">
+```
+
+In the controller:
+```ruby
+def create
+  @supplier = Supplier.new(supplier_params)
+  @supplier.save
+end
+
+private
+
+def supplier_params
+  params.require(:supplier).permit(products_attributes: [:name])
+end
+```
 
 ## Documentation
 
