@@ -174,8 +174,8 @@ RSpec.describe StoreModel::NestedAttributes do
         end
       end
 
-      let(:blank_supplier) { {"title" => ""} }
-      let(:present_supplier) { {"title" => "foo"} }
+      let(:blank_supplier) { { "title" => "" } }
+      let(:present_supplier) { { "title" => "foo" } }
       let(:suppliers_attributes) { [blank_supplier, present_supplier] }
 
       subject { configuration_class.new(suppliers_attributes: suppliers_attributes) }
@@ -203,8 +203,8 @@ RSpec.describe StoreModel::NestedAttributes do
         end
       end
 
-      let(:blank_supplier) { {"title" => ""} }
-      let(:present_supplier) { {"title" => "foo"} }
+      let(:blank_supplier) { { "title" => "" } }
+      let(:present_supplier) { { "title" => "foo" } }
       let(:suppliers_attributes) { [blank_supplier, present_supplier] }
 
       subject { configuration_class.new(suppliers_attributes: suppliers_attributes) }
@@ -228,8 +228,8 @@ RSpec.describe StoreModel::NestedAttributes do
         end
       end
 
-      let(:blank_supplier) { {"title" => ""} }
-      let(:present_supplier) { {"title" => "foo"} }
+      let(:blank_supplier) { { "title" => "" } }
+      let(:present_supplier) { { "title" => "foo" } }
       let(:suppliers_attributes) { [blank_supplier, present_supplier] }
 
       subject { configuration_class.new(suppliers_attributes: suppliers_attributes) }
