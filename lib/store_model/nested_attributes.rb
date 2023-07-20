@@ -24,25 +24,42 @@ module StoreModel
       #   If true, destroys any members from the attributes hash with a
       #   <tt>_destroy</tt> key and a value that evaluates to +true+
       #   (e.g. 1, '1', true, or 'true'). This option is off by default.
-      def accepts_nested_attributes_for(*associations)
-        global_options = associations.extract_options!
+      #
+      # [:reject_if]
+      #   Allows you to specify a Proc or a Symbol pointing to a method that
+      #   checks whether a record should be built for a certain attribute hash.
+      #   The hash is passed to the supplied Proc or the method and it should
+      #   return either true or false. Passing <tt>:all_blank</tt> instead of a Proc
+      #   will create a proc that will reject a record where all the attributes
+      #   are blank excluding any value for <tt>_destroy</tt>.
+      #
+      #   See https://api.rubyonrails.org/classes/ActiveRecord/NestedAttributes/ClassMethods.html#method-i-accepts_nested_attributes_for
+      def accepts_nested_attributes_for(*attributes)
+        global_options = attributes.extract_options!
 
-        associations.each do |association, options|
-          case attribute_types[association.to_s]
-          when Types::OneBase
-            define_association_setter_for_single(association, options || global_options)
-            alias_method "#{association}_attributes=", "#{association}="
-            define_attr_accessor_for_destroy(association, options || global_options)
-          when Types::ManyBase
-            define_association_setter_for_many(association, options || global_options)
-            define_attr_accessor_for_destroy(association, options || global_options)
+        attributes.each do |attribute, options|
+          case attribute_types[attribute.to_s]
+          when Types::OneBase, Types::ManyBase
+            define_store_model_attr_accessors(attribute, options || global_options)
           else
-            super(association, options || global_options)
+            super(attribute, options || global_options)
           end
         end
       end
 
       private
+
+      def define_store_model_attr_accessors(attribute, options)
+        case attribute_types[attribute.to_s]
+        when Types::OneBase
+          define_association_setter_for_single(attribute, options)
+          alias_method "#{attribute}_attributes=", "#{attribute}="
+        when Types::ManyBase
+          define_association_setter_for_many(attribute, options)
+        end
+
+        define_attr_accessor_for_destroy(attribute, options)
+      end
 
       def define_attr_accessor_for_destroy(association, options)
         return unless options&.dig(:allow_destroy)
@@ -71,8 +88,6 @@ module StoreModel
       end
     end
 
-    private
-
     def assign_nested_attributes_for_collection_association(association, attributes, options)
       attributes = attributes.values if attributes.is_a?(Hash)
 
@@ -82,7 +97,20 @@ module StoreModel
         end
       end
 
+      attributes.reject! { |attribute| call_reject_if(attribute, options[:reject_if]) } if options&.dig(:reject_if)
+
       send("#{association}=", attributes)
+    end
+
+    def call_reject_if(attributes, callback)
+      callback = ActiveRecord::NestedAttributes::ClassMethods::REJECT_ALL_BLANK_PROC if callback == :all_blank
+
+      case callback
+      when Symbol
+        method(callback).arity.zero? ? send(callback) : send(callback, attributes)
+      when Proc
+        callback.call(attributes)
+      end
     end
   end
 end

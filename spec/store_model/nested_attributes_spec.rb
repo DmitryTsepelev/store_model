@@ -161,6 +161,85 @@ RSpec.describe StoreModel::NestedAttributes do
         end
       end
     end
+
+    context "when reject_if is a proc" do
+      let(:configuration_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :color, :string
+          attribute :suppliers, Supplier.to_array_type
+
+          accepts_nested_attributes_for :suppliers, reject_if: ->(attributes) { attributes["title"].blank? }
+        end
+      end
+
+      let(:blank_supplier) { {"title" => ""} }
+      let(:present_supplier) { {"title" => "foo"} }
+      let(:suppliers_attributes) { [blank_supplier, present_supplier] }
+
+      subject { configuration_class.new(suppliers_attributes: suppliers_attributes) }
+
+      it "rejects any attributes hash that returns true from the proc" do
+        expect(subject.suppliers).to contain_exactly(
+          have_attributes(present_supplier)
+        )
+      end
+    end
+
+    context "when reject_if is a symbol" do
+      let(:configuration_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :color, :string
+          attribute :suppliers, Supplier.to_array_type
+
+          accepts_nested_attributes_for :suppliers, reject_if: :reject_supplier
+
+          def reject_supplier(attributes)
+            attributes["title"].blank?
+          end
+        end
+      end
+
+      let(:blank_supplier) { {"title" => ""} }
+      let(:present_supplier) { {"title" => "foo"} }
+      let(:suppliers_attributes) { [blank_supplier, present_supplier] }
+
+      subject { configuration_class.new(suppliers_attributes: suppliers_attributes) }
+
+      it "rejects any attributes hash that returns true from the method" do
+        expect(subject.suppliers).to contain_exactly(
+          have_attributes(present_supplier)
+        )
+      end
+    end
+
+    context "when reject_if is :all_blank" do
+      let(:configuration_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :color, :string
+          attribute :suppliers, Supplier.to_array_type
+
+          accepts_nested_attributes_for :suppliers, reject_if: :all_blank
+        end
+      end
+
+      let(:blank_supplier) { {"title" => ""} }
+      let(:present_supplier) { {"title" => "foo"} }
+      let(:suppliers_attributes) { [blank_supplier, present_supplier] }
+
+      subject { configuration_class.new(suppliers_attributes: suppliers_attributes) }
+
+      it "rejects any attributes hash that has all blank values" do
+        expect(subject.suppliers).to contain_exactly(
+          have_attributes(present_supplier)
+        )
+      end
+    end
   end
 
   describe "#valid?" do
