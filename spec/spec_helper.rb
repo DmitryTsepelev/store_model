@@ -28,6 +28,7 @@ RSpec.configure do |config|
 
   config.after(:each) do
     StoreModel.remove_instance_variable(:@config) if StoreModel.instance_variable_defined?(:@config)
+    StoreModel.config.serialize_enums_using_as_json = true
   end
 end
 

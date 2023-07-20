@@ -11,7 +11,8 @@ RSpec.describe StoreModel::Types::OnePolymorphic do
       model: nil,
       active: false,
       disabled_at: Time.new(2019, 2, 22, 12, 30),
-      encrypted_serial: nil
+      encrypted_serial: nil,
+      type: "left"
     }
   end
 

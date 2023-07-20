@@ -26,4 +26,6 @@ class Configuration
 
   validates :color, presence: true
   validates :model, presence: true, on: :custom_context
+
+  enum :type, in: { left: 1, right: 2 }
 end

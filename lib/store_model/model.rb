@@ -31,16 +31,24 @@ module StoreModel
     # @param options [Hash]
     #
     # @return [Hash]
-    def as_json(options = {})
+    def as_json(options = {}) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       serialize_unknown_attributes = if options.key?(:serialize_unknown_attributes)
                                        options[:serialize_unknown_attributes]
                                      else
                                        StoreModel.config.serialize_unknown_attributes
                                      end
 
+      serialize_enums_using_as_json = if options.key?(:serialize_enums_using_as_json)
+                                        options[:serialize_enums_using_as_json]
+                                      else
+                                        StoreModel.config.serialize_enums_using_as_json
+                                      end
+
       result = attributes.with_indifferent_access
       result.merge!(unknown_attributes) if serialize_unknown_attributes
-      result.as_json(options)
+      result.as_json(options).tap do |json|
+        serialize_enums!(json) if serialize_enums_using_as_json
+      end
     end
 
     # Returns an Object, similar to Hash#fetch, raises
@@ -184,6 +192,19 @@ module StoreModel
       case value = attributes[attribute]
       when 0 then false
       else value.present?
+      end
+    end
+
+    def serialize_enums!(json)
+      enum_mappings =
+        self.class
+            .attribute_types
+            .select { |_, type| type.is_a?(StoreModel::Types::EnumType) }
+
+      enum_mappings.each do |name, _|
+        next unless json.key?(name)
+
+        json[name] = public_send(name).as_json unless json[name].nil?
       end
     end
   end

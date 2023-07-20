@@ -174,22 +174,30 @@ RSpec.describe StoreModel::Types::One do
       subject { type.serialize(value) }
 
       it { is_expected.to be_a(String) }
+
       it("is equal to attributes") { is_expected.to eq(attributes.to_json) }
     end
 
     context "when Hash is passed" do
       let(:value) { attributes }
+
       include_examples "serialize examples"
     end
 
     context "when String is passed" do
       let(:value) { ActiveSupport::JSON.encode(attributes) }
+
       include_examples "serialize examples"
     end
 
     context "when Configuration instance is passed" do
       let(:value) { Configuration.new(attributes) }
-      include_examples "serialize examples"
+
+      subject { type.serialize(value) }
+
+      it { is_expected.to be_a(String) }
+
+      it("is equal to attributes") { is_expected.to eq(attributes.merge(type: nil).to_json) }
     end
   end
 end

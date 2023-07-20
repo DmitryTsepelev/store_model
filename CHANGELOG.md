@@ -1,6 +1,12 @@
 # Change log
 
+## 3.0.0 (eventually)
+
+- Make `StoreModel.config.serialize_enums_using_as_json = true` default
+
 ## master
+
+- [PR #153](https://github.com/DmitryTsepelev/store_model/pull/153) Model#as_json serializes key-value enums using keys  ([@DmitryTsepelev])
 
 ## 2.0.1 (2023-05-09)
 
