@@ -6,6 +6,8 @@
 
 ## master
 
+## 2.1.0 (2023-06-31)
+
 - [PR #152](https://github.com/DmitryTsepelev/store_model/pull/152) Use accepts_nested_attributes_for with StoreModel::NestedAttributes   ([@morgangrubb])
 - [PR #153](https://github.com/DmitryTsepelev/store_model/pull/153) Model#as_json serializes key-value enums using keys  ([@DmitryTsepelev])
 
