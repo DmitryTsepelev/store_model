@@ -14,6 +14,8 @@ require "store_model/types/enum_type"
 
 require "store_model/types/one_of"
 
+require "store_model/types/raw_json"
+
 module StoreModel
   # Contains all custom types.
   module Types

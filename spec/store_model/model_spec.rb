@@ -8,7 +8,7 @@ RSpec.describe StoreModel::Model do
       color: "red",
       model: nil,
       active: false,
-      disabled_at: Time.new(2019, 2, 10, 12),
+      disabled_at: Time.new(2019, 2, 10, 12).utc,
       encrypted_serial: nil,
       type: "left"
     }
@@ -35,7 +35,7 @@ RSpec.describe StoreModel::Model do
           color: "red",
           model: nil,
           active: false,
-          disabled_at: Time.new(2019, 2, 10, 12),
+          disabled_at: Time.new(2019, 2, 10, 12).utc,
           encrypted_serial: "111-222"
         }
       end
