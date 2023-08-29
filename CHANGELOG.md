@@ -6,6 +6,8 @@
 
 ## master
 
+- [PR #154](https://github.com/DmitryTsepelev/store_model/pull/154) Fix serialization on nested objects ([@mweitzel])
+
 ## 2.1.0 (2023-06-31)
 
 - [PR #152](https://github.com/DmitryTsepelev/store_model/pull/152) Use accepts_nested_attributes_for with StoreModel::NestedAttributes   ([@morgangrubb])
@@ -190,3 +192,4 @@
 [@penguoir]: https://github.com/penguoir
 [@RudskikhIvan]: https://github.com/RudskikhIvan
 [@morgangrubb]: https://github.com/morgangrubb
+[@mweitzel]: https://github.com/mweitzel
