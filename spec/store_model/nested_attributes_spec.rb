@@ -33,6 +33,92 @@ RSpec.describe StoreModel::NestedAttributes do
     end
   end
 
+  describe "serializing nested json" do
+    it "formats nested json as objects" do
+      class ProductConfiguration
+        include StoreModel::Model
+
+        attribute :color, :string
+        attribute :suppliers, Supplier.to_array_type
+
+        accepts_nested_attributes_for :suppliers
+      end
+
+      class Product < ActiveRecord::Base
+        attribute :configuration, ProductConfiguration.to_type, default: ProductConfiguration.new
+      end
+
+      suppliers = [Supplier.new(title: "The Supplier")]
+      product = Product.create!(configuration: ProductConfiguration.new(color: "red", suppliers: suppliers))
+
+      configuration_type = Product.select('json_type(configuration, "$") as config').where(id: product.id).first
+      suppliers_type = Product.select('json_type(configuration, "$.suppliers") as config').where(id: product.id).first
+      supplier_type = Product.select('json_type(configuration, "$.suppliers[0]") as config').where(id: product.id).first
+
+      expect(configuration_type.config).to eq("object")
+      expect(suppliers_type.config).to eq("array")
+      expect(supplier_type.config).to eq("object")
+    end
+
+    context "when there are nested store_model attributes" do
+      class NestedAndEncryptedAttrs < Anything
+        class NestedStore
+          include StoreModel::Model
+
+          attribute :enc_val, Configuration::Encrypted.new
+          attribute :non_enc_val
+        end
+        class Store
+          include StoreModel::Model
+
+          attribute :enc_val, Configuration::Encrypted.new
+          attribute :non_enc_val
+          attribute :nested, NestedStore.to_type
+        end
+        attribute :store, Store.to_type, default: -> { {} }
+      end
+
+      subject(:record) { NestedAndEncryptedAttrs.new(store: store) }
+
+      let(:store) do
+        { enc_val: "secret",
+          non_enc_val: "public",
+          nested: {
+            enc_val: "nested secret",
+            non_enc_val: "nested public"
+          } }
+      end
+
+      let(:store_encrypted) do
+        { enc_val: "vmhYmD",
+          non_enc_val: "public",
+          nested: {
+            enc_val: "LmvDmq vmhYmD",
+            non_enc_val: "nested public"
+          } }
+      end
+
+      it "persists encrypted values" do
+        record.save
+        query = Anything.where(id: record.id).select(:id, :type, :store).to_sql
+        _id, _type, store_persisted = ActiveRecord::Base.connection.query(query).first
+
+        expect(store_persisted).to eq(store_encrypted.to_json)
+        expect(JSON.parse(store_persisted).with_indifferent_access).to eq(store_encrypted.with_indifferent_access)
+        expect(store_persisted).not_to include("secret")
+        expect(store_persisted).to include("vmhYmD")
+      end
+
+      it "inner items can query with sql json syntax" do
+        record.save
+        very_nested_value = ActiveRecord::Base.connection.query(
+          Anything.where(id: record.id).select("id, json_extract(store,'$.nested.non_enc_val')").to_sql
+        ).first
+        expect(very_nested_value).to eq([record.id, "nested public"])
+      end
+    end
+  end
+
   describe "#as_json" do
     it "returns correct JSON" do
       expect(subject.as_json).to eq(attributes.as_json)

@@ -7,7 +7,7 @@ require "store_model/nested_attributes"
 
 module StoreModel
   # When included into class configures it to handle JSON column
-  module Model
+  module Model # rubocop:disable Metrics/ModuleLength
     def self.included(base) # :nodoc:
       base.include ActiveModel::Model
       base.include ActiveModel::Attributes
@@ -44,7 +44,10 @@ module StoreModel
                                         StoreModel.config.serialize_enums_using_as_json
                                       end
 
-      result = attributes.with_indifferent_access
+      result = @attributes.keys.each_with_object({}) do |key, values|
+        values[key] = serialized_attribute(key)
+      end.with_indifferent_access
+
       result.merge!(unknown_attributes) if serialize_unknown_attributes
       result.as_json(options).tap do |json|
         serialize_enums!(json) if serialize_enums_using_as_json
@@ -175,17 +178,6 @@ module StoreModel
       @unknown_attributes ||= {}
     end
 
-    # Serialized values for storing in db
-    #
-    # @return [Hash]
-    def values_for_database
-      result = @attributes.keys.each_with_object({}) do |key, values|
-        values[key] = @attributes.fetch(key).value_for_database
-      end
-      result.merge!(unknown_attributes)
-      result
-    end
-
     private
 
     def attribute?(attribute)
@@ -205,6 +197,17 @@ module StoreModel
         next unless json.key?(name)
 
         json[name] = public_send(name).as_json unless json[name].nil?
+      end
+    end
+
+    def serialized_attribute(attr_name)
+      attr = @attributes.fetch(attr_name)
+      if attr.value.is_a? StoreModel::Model
+        Types::RawJSONEncoder.new(attr.value_for_database)
+      elsif attr.value.is_a? Array
+        attr.value.as_json
+      else
+        attr.value_for_database
       end
     end
   end

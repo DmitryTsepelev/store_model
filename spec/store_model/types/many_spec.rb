@@ -9,11 +9,11 @@ RSpec.describe StoreModel::Types::Many do
     [
       {
         color: "red",
-        disabled_at: Time.new(2019, 2, 22, 12, 30)
+        disabled_at: Time.new(2019, 2, 22, 12, 30).utc
       },
       {
         color: "green",
-        disabled_at: Time.new(2019, 3, 12, 8, 10)
+        disabled_at: Time.new(2019, 3, 12, 8, 10).utc
       }
     ]
   end
