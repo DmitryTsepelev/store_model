@@ -6,6 +6,8 @@
 
 ## master
 
+## 2.1.1 (2023-08-29)
+
 - [PR #154](https://github.com/DmitryTsepelev/store_model/pull/154) Fix serialization on nested objects ([@mweitzel])
 
 ## 2.1.0 (2023-06-31)
