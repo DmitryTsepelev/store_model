@@ -35,22 +35,42 @@ module StoreModel
       #
       #   See https://api.rubyonrails.org/classes/ActiveRecord/NestedAttributes/ClassMethods.html#method-i-accepts_nested_attributes_for
       def accepts_nested_attributes_for(*attributes)
-        global_options = attributes.extract_options!
+        options = attributes.extract_options!
 
-        attributes.each do |attribute, options|
-          case attribute_types[attribute.to_s]
+        attributes.each do |attribute|
+          case nested_attribute_type(attribute)
           when Types::OneBase, Types::ManyBase
-            define_store_model_attr_accessors(attribute, options || global_options)
+            options.reverse_merge!(allow_destroy: false, update_only: false)
+            options.assert_valid_keys(:allow_destroy, :reject_if, :limit, :update_only)
+
+            define_store_model_attr_accessors(attribute, options)
           else
-            super(attribute, options || global_options)
+            super(*attribute, options)
           end
         end
       end
 
       private
 
+      # If attribute defined in ActiveRecord model but you dont yet have database created
+      # you cannot access attribute types.
+      # To handle this case, we can use ActiveRecord::Attributes 'attributes_to_define_after_schema_loads'
+      # which stores information about custom defined attributes.
+      # See ActiveRecord::Attributes#atribute
+      # If #accepts_nested_attributes_for is used inside active model instance
+      # schema is not required to determine attribute type so we can still use attribute_types
+      # If schema loaded the attribute_types already populated and we can safely use it
+      # See ActiveRecord::ModelSchema#load_schema!
+      def nested_attribute_type(attribute)
+        if self < ActiveRecord::Base && !schema_loaded?
+          attributes_to_define_after_schema_loads[attribute.to_s]&.first
+        else
+          attribute_types[attribute.to_s]
+        end
+      end
+
       def define_store_model_attr_accessors(attribute, options)
-        case attribute_types[attribute.to_s]
+        case nested_attribute_type(attribute)
         when Types::OneBase
           define_association_setter_for_single(attribute, options)
           alias_method "#{attribute}_attributes=", "#{attribute}="
@@ -88,7 +108,10 @@ module StoreModel
       end
     end
 
-    def assign_nested_attributes_for_collection_association(association, attributes, options)
+    # Base
+    def assign_nested_attributes_for_collection_association(association, attributes, options=nil)
+      return super(association, attributes) unless options
+
       attributes = attributes.values if attributes.is_a?(Hash)
 
       if options&.dig(:allow_destroy)

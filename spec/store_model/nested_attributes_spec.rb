@@ -176,7 +176,7 @@ RSpec.describe StoreModel::NestedAttributes do
             attribute :color, :string
             attribute :supplier, Supplier.to_type
 
-            accepts_nested_attributes_for [:supplier, { allow_destroy: true }]
+            accepts_nested_attributes_for :supplier, allow_destroy: true
           end
         end
 
@@ -214,7 +214,7 @@ RSpec.describe StoreModel::NestedAttributes do
           attribute :color, :string
           attribute :suppliers, Supplier.to_array_type
 
-          accepts_nested_attributes_for [:suppliers, { allow_destroy: true }]
+          accepts_nested_attributes_for :suppliers, allow_destroy: true
         end
       end
 
@@ -388,6 +388,26 @@ RSpec.describe StoreModel::NestedAttributes do
 
         it { is_expected.to respond_to(:products_attributes=) }
         it { is_expected.to respond_to(:bicycles_attributes=) }
+      end
+
+      context "when db is not connected" do
+        subject do
+          model_class.accepts_nested_attributes_for(:suppliers)
+          model_class
+        end
+
+        let(:model_class) do
+          Class.new(ActiveRecord::Base) do
+            include StoreModel::NestedAttributes
+
+            def self.name = "invalid_table_name"
+
+            attribute :suppliers, Supplier.to_array_type
+          end
+        end
+
+        it { expect { subject }.not_to(raise_error) }
+        it { expect(subject.instance_methods).to(include(:suppliers_attributes=)) }
       end
     end
   end
