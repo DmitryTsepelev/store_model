@@ -41,8 +41,6 @@ module StoreModel
           case nested_attribute_type(attribute)
           when Types::OneBase, Types::ManyBase
             options.reverse_merge!(allow_destroy: false, update_only: false)
-            options.assert_valid_keys(:allow_destroy, :reject_if, :limit, :update_only)
-
             define_store_model_attr_accessors(attribute, options)
           else
             super(*attribute, options)
@@ -73,7 +71,9 @@ module StoreModel
         case nested_attribute_type(attribute)
         when Types::OneBase
           define_association_setter_for_single(attribute, options)
-          alias_method "#{attribute}_attributes=", "#{attribute}="
+          define_method "#{attribute}_attributes=" do |*args, **kwargs|
+            send("#{attribute}=", *args, **kwargs)
+          end
         when Types::ManyBase
           define_association_setter_for_many(attribute, options)
         end
@@ -109,7 +109,7 @@ module StoreModel
     end
 
     # Base
-    def assign_nested_attributes_for_collection_association(association, attributes, options=nil)
+    def assign_nested_attributes_for_collection_association(association, attributes, options = nil)
       return super(association, attributes) unless options
 
       attributes = attributes.values if attributes.is_a?(Hash)

@@ -400,7 +400,9 @@ RSpec.describe StoreModel::NestedAttributes do
           Class.new(ActiveRecord::Base) do
             include StoreModel::NestedAttributes
 
-            def self.name = "invalid_table_name"
+            def self.name
+              "invalid_table_name"
+            end
 
             attribute :suppliers, Supplier.to_array_type
           end
