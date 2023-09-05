@@ -6,6 +6,8 @@
 
 ## master
 
+- [PR #156](https://github.com/DmitryTsepelev/store_model/pull/156) Override of accepts_nested_attributes_for breaks app start when connection to db is not available ([@Supernich])
+
 ## 2.1.1 (2023-08-29)
 
 - [PR #154](https://github.com/DmitryTsepelev/store_model/pull/154) Fix serialization on nested objects ([@mweitzel])
@@ -195,3 +197,4 @@
 [@RudskikhIvan]: https://github.com/RudskikhIvan
 [@morgangrubb]: https://github.com/morgangrubb
 [@mweitzel]: https://github.com/mweitzel
+[@Supernich]: https://github.com/Supernich
