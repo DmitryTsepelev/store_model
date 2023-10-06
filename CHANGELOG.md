@@ -6,6 +6,8 @@
 
 ## master
 
+## 2.1.2 (2023-10-07)
+
 - [PR #156](https://github.com/DmitryTsepelev/store_model/pull/156) Override of accepts_nested_attributes_for breaks app start when connection to db is not available ([@Supernich])
 
 ## 2.1.1 (2023-08-29)
