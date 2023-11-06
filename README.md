@@ -1,4 +1,4 @@
-# StoreModel [![Gem Version](https://badge.fury.io/rb/store_model.svg)](https://rubygems.org/gems/store_model) [![Coverage Status](https://coveralls.io/repos/github/DmitryTsepelev/store_model/badge.svg?branch=master)](https://coveralls.io/github/DmitryTsepelev/store_model?branch=master) ![](https://ruby-gem-downloads-badge.herokuapp.com/store_model?type=total)
+# StoreModel [![Gem Version](https://badge.fury.io/rb/store_model.svg)](https://rubygems.org/gems/store_model) ![](https://ruby-gem-downloads-badge.herokuapp.com/store_model?type=total)
 
 **StoreModel** gem allows you to wrap JSON-backed DB columns with ActiveModel-like classes.
 
