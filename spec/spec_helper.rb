@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "coveralls"
-Coveralls.wear!
-
 if RUBY_ENGINE == "jruby"
   # Workaround for JRuby CI failure https://github.com/jruby/jruby/issues/6547#issuecomment-774104996
   require "i18n/backend"
