@@ -201,25 +201,25 @@ RSpec.describe StoreModel::Types::One do
     end
   end
 
-  describe '#deserialize' do
-    describe 'when an empty string is passed' do
+  describe "#deserialize" do
+    describe "when an empty string is passed" do
       let(:value) { "" }
 
       subject { type.deserialize(value) }
 
       it { is_expected.to be_a(Configuration) }
 
-      it('is equal to an empty model') { is_expected.to eq(Configuration.new) }
+      it("is equal to an empty model") { is_expected.to eq(Configuration.new) }
     end
 
-    describe 'when a malformed JSON string is passed' do
+    describe "when a malformed JSON string is passed" do
       let(:value) { "{/sdfgsdfre}" }
 
       subject { type.deserialize(value) }
 
       it { is_expected.to be_a(Configuration) }
 
-      it('is equal to an empty model') { is_expected.to eq(Configuration.new) }
+      it("is equal to an empty model") { is_expected.to eq(Configuration.new) }
     end
   end
 end

@@ -6,6 +6,8 @@
 
 ## master
 
+- [PR #161](https://github.com/DmitryTsepelev/store_model/pull/161) Addresses error deserializing malformed json string ([@agiveygives])
+
 ## 2.1.2 (2023-10-07)
 
 - [PR #156](https://github.com/DmitryTsepelev/store_model/pull/156) Override of accepts_nested_attributes_for breaks app start when connection to db is not available ([@Supernich])
@@ -200,3 +202,4 @@
 [@morgangrubb]: https://github.com/morgangrubb
 [@mweitzel]: https://github.com/mweitzel
 [@Supernich]: https://github.com/Supernich
+[@agiveygives]: https://github.com/agiveygives
