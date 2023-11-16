@@ -118,7 +118,7 @@ module StoreModel
     #
     # @return [String]
     def inspect
-      attribute_string = attributes.map { |name, value| "#{name}: #{value.nil? ? 'nil' : value}" }
+      attribute_string = attributes.map { |name, value| "#{name}: #{value.inspect}" }
                                    .join(", ")
       "#<#{self.class.name} #{attribute_string}>"
     end

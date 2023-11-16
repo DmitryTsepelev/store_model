@@ -166,7 +166,7 @@ RSpec.describe StoreModel::Model do
 
     it "prints description" do
       expect(subject).to eq(
-        "#<Configuration color: red, model: nil, active: false, " \
+        "#<Configuration color: \"red\", model: nil, active: false, " \
         "disabled_at: #{attributes[:disabled_at]}, encrypted_serial: nil, type: 1>"
       )
     end
