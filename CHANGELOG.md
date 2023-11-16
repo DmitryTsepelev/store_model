@@ -6,6 +6,7 @@
 
 ## master
 
+- [PR #162](https://github.com/DmitryTsepelev/store_model/pull/162) Improve inspect readability ([@neilvcarvalho])
 - [PR #161](https://github.com/DmitryTsepelev/store_model/pull/161) Addresses error deserializing malformed json string ([@agiveygives])
 
 ## 2.1.2 (2023-10-07)
@@ -203,3 +204,4 @@
 [@mweitzel]: https://github.com/mweitzel
 [@Supernich]: https://github.com/Supernich
 [@agiveygives]: https://github.com/agiveygives
+[@neilvcarvalho]: https://github.com/neilvcarvalho
