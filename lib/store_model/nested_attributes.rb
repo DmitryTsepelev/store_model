@@ -84,7 +84,7 @@ module StoreModel
       def define_attr_accessor_for_destroy(association, options)
         return unless options&.dig(:allow_destroy)
 
-        attribute_types[association.to_s].model_klass.class_eval do
+        nested_attribute_type(association).model_klass.class_eval do
           attr_accessor :_destroy
         end
       end
