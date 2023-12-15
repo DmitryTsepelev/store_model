@@ -8,6 +8,7 @@
 
 - [PR #162](https://github.com/DmitryTsepelev/store_model/pull/162) Improve inspect readability ([@neilvcarvalho])
 - [PR #161](https://github.com/DmitryTsepelev/store_model/pull/161) Addresses error deserializing malformed json string ([@agiveygives])
+- [PR #163](https://github.com/DmitryTsepelev/store_model/pull/163) Fix accepts_nested_attributes_for with allow_destroy: true raising error when database is not initialized or table for model doesnt exist ([@dush)
 
 ## 2.1.2 (2023-10-07)
 
@@ -205,3 +206,4 @@
 [@Supernich]: https://github.com/Supernich
 [@agiveygives]: https://github.com/agiveygives
 [@neilvcarvalho]: https://github.com/neilvcarvalho
+[@dush]: https://github.com/dush
