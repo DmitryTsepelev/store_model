@@ -392,7 +392,7 @@ RSpec.describe StoreModel::NestedAttributes do
 
       context "when db is not connected" do
         subject do
-          model_class.accepts_nested_attributes_for(:suppliers)
+          model_class.accepts_nested_attributes_for(:suppliers, allow_destroy: true)
           model_class
         end
 
