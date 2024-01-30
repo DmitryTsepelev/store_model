@@ -10,8 +10,7 @@ module StoreModel
     # @param kwargs [Object]
     def enum(name, values = nil, **kwargs)
       values ||= kwargs[:in] || kwargs
-      options = kwargs.slice(:_prefix, :_suffix, :default, :raise_on_invalid_values)
-                      .reverse_merge(raise_on_invalid_values: true)
+      options = retrieve_options(kwargs)
 
       ensure_hash(values).tap do |mapping|
         define_attribute(name, mapping, options)
@@ -24,6 +23,12 @@ module StoreModel
     end
 
     private
+
+    def retrieve_options(options)
+      default_options = { raise_on_invalid_values: true }
+      options.slice(:_prefix, :_suffix, :default, :raise_on_invalid_values)
+             .reverse_merge(default_options)
+    end
 
     def define_attribute(name, mapping, options)
       attribute name, cast_type(mapping, options[:raise_on_invalid_values]), default: options[:default]
