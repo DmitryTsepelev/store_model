@@ -67,3 +67,15 @@ review.archived_status? # => false
 review.comments_active? # => false
 review.comments_inactive? # => true
 ```
+
+You can use the `:raise_on_invalid_values` options when you need to allow the enum to accept invalid values. However, in this case you'll need to handle validation of the values manually:
+
+```ruby
+class Review
+  include StoreModel::Model
+
+  enum status: [:active, :archived], raise_on_invalid_values: false
+
+  validate_inclusion_of :status, in: ['active', 'archived']
+end
+```
