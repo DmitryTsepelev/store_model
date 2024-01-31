@@ -88,11 +88,28 @@ RSpec.describe StoreModel::Model do
   context "when value is not in the list" do
     let(:value) { "undefined" }
 
-    it "raises exception" do
-      expect { subject.status = value }.to raise_error(
-        ArgumentError,
-        "invalid value '#{value}' is assigned"
-      )
+    context "when raise_on_invalid_values is true" do
+      it "raises exception" do
+        expect { subject.status = value }.to raise_error(
+          ArgumentError,
+          "invalid value '#{value}' is assigned"
+        )
+      end
+    end
+
+    context "when raise_on_invalid_values is false" do
+      let(:config_class) do
+        Class.new do
+          include StoreModel::Model
+
+          enum :status, in: { active: 1, archived: 0 }, raise_on_invalid_values: false
+        end
+      end
+
+      it "sets the value" do
+        subject.status = value
+        expect(subject.status).to eq(value)
+      end
     end
   end
 

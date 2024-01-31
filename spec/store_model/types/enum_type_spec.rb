@@ -3,7 +3,8 @@
 require "spec_helper"
 
 RSpec.describe StoreModel::Types::EnumType do
-  let(:type) { described_class.new(active: 1, archived: 0) }
+  let(:type) { described_class.new({ active: 1, archived: 0 }, raise_on_invalid_values) }
+  let(:raise_on_invalid_values) { true }
 
   describe "#type" do
     subject { type.type }
@@ -22,11 +23,19 @@ RSpec.describe StoreModel::Types::EnumType do
       context "when value is not in the list" do
         let(:value) { "reactive" }
 
-        it "raises exception" do
-          expect { subject }.to raise_error(
-            ArgumentError,
-            "invalid value '#{value}' is assigned"
-          )
+        context "when raise_on_invalid_values is true" do
+          it "raises exception" do
+            expect { subject }.to raise_error(
+              ArgumentError,
+              "invalid value '#{value}' is assigned"
+            )
+          end
+        end
+
+        context "when raise_on_invalid_values is false" do
+          let(:raise_on_invalid_values) { false }
+
+          it { is_expected.to eq(value) }
         end
       end
     end
@@ -39,11 +48,19 @@ RSpec.describe StoreModel::Types::EnumType do
       context "when value is not in the list" do
         let(:value) { :reactive }
 
-        it "raises exception" do
-          expect { subject }.to raise_error(
-            ArgumentError,
-            "invalid value '#{value}' is assigned"
-          )
+        context "when raise_on_invalid_values is true" do
+          it "raises exception" do
+            expect { subject }.to raise_error(
+              ArgumentError,
+              "invalid value '#{value}' is assigned"
+            )
+          end
+        end
+
+        context "when raise_on_invalid_values is false" do
+          let(:raise_on_invalid_values) { false }
+
+          it { is_expected.to eq(value) }
         end
       end
     end
@@ -56,11 +73,19 @@ RSpec.describe StoreModel::Types::EnumType do
       context "when value is not in the list" do
         let(:value) { 5 }
 
-        it "raises exception" do
-          expect { subject }.to raise_error(
-            ArgumentError,
-            "invalid value '#{value}' is assigned"
-          )
+        context "when raise_on_invalid_values is true" do
+          it "raises exception" do
+            expect { subject }.to raise_error(
+              ArgumentError,
+              "invalid value '#{value}' is assigned"
+            )
+          end
+        end
+
+        context "when raise_on_invalid_values is false" do
+          let(:raise_on_invalid_values) { false }
+
+          it { is_expected.to eq(value) }
         end
       end
     end

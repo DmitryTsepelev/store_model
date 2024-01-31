@@ -10,12 +10,12 @@ module StoreModel
     # @param kwargs [Object]
     def enum(name, values = nil, **kwargs)
       values ||= kwargs[:in] || kwargs
-      options = kwargs.slice(:_prefix, :_suffix, :default)
+      options = retrieve_options(kwargs)
 
       ensure_hash(values).tap do |mapping|
-        define_attribute(name, mapping, options[:default])
+        define_attribute(name, mapping, options)
         define_reader(name, mapping)
-        define_writer(name, mapping)
+        define_writer(name, mapping, options[:raise_on_invalid_values])
         define_method("#{name}_value") { attributes[name.to_s] }
         define_map_readers(name, mapping)
         define_predicate_methods(name, mapping, options)
@@ -24,16 +24,25 @@ module StoreModel
 
     private
 
-    def define_attribute(name, mapping, default)
-      attribute name, cast_type(mapping), default: default
+    def retrieve_options(options)
+      default_options = { raise_on_invalid_values: true }
+      options.slice(:_prefix, :_suffix, :default, :raise_on_invalid_values)
+             .reverse_merge(default_options)
+    end
+
+    def define_attribute(name, mapping, options)
+      attribute name, cast_type(mapping, options[:raise_on_invalid_values]), default: options[:default]
     end
 
     def define_reader(name, mapping)
-      define_method(name) { mapping.key(send("#{name}_value")).to_s }
+      define_method(name) do
+        raw_value = send("#{name}_value")
+        (mapping.key(raw_value) || raw_value).to_s
+      end
     end
 
-    def define_writer(name, mapping)
-      type = cast_type(mapping)
+    def define_writer(name, mapping, raise_on_invalid_values)
+      type = cast_type(mapping, raise_on_invalid_values)
       define_method("#{name}=") { |value| super type.cast_value(value) }
     end
 
@@ -50,8 +59,8 @@ module StoreModel
       singleton_class.alias_method(ActiveSupport::Inflector.pluralize(name), "#{name}_values")
     end
 
-    def cast_type(mapping)
-      StoreModel::Types::EnumType.new(mapping)
+    def cast_type(mapping, raise_on_invalid_values)
+      StoreModel::Types::EnumType.new(mapping, raise_on_invalid_values)
     end
 
     def ensure_hash(values)

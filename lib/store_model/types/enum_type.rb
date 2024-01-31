@@ -11,8 +11,9 @@ module StoreModel
       # @param mapping [Hash] mapping for enum values
       #
       # @return [StoreModel::Types::EnumType]
-      def initialize(mapping)
+      def initialize(mapping, raise_on_invalid_values)
         @mapping = mapping
+        @raise_on_invalid_values = raise_on_invalid_values
       end
 
       # Returns type
@@ -31,7 +32,7 @@ module StoreModel
         return if value.blank?
 
         case value
-        when String, Symbol then cast_symbol_value(value.to_sym)
+        when String, Symbol then cast_symbol_value(value)
         when Integer then cast_integer_value(value)
         else
           raise StoreModel::Types::CastError,
@@ -43,12 +44,12 @@ module StoreModel
       private
 
       def cast_symbol_value(value)
-        raise_invalid_value!(value) unless @mapping.key?(value.to_sym)
-        @mapping[value.to_sym]
+        raise_invalid_value!(value) if @raise_on_invalid_values && !@mapping.key?(value.to_sym)
+        @mapping[value.to_sym] || value
       end
 
       def cast_integer_value(value)
-        raise_invalid_value!(value) unless @mapping.value?(value)
+        raise_invalid_value!(value) if @raise_on_invalid_values && !@mapping.value?(value)
         value
       end
 
