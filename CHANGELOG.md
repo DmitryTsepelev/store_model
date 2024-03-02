@@ -6,8 +6,10 @@
 
 ## master
 
+## 2.3.0 (2024-03-02)
+
 - [PR #164](https://github.com/DmitryTsepelev/store_model/pull/164) Manageable raising on invalid enum value ([@alexeevit])
-  
+
 ## 2.2.0 (2024-01-06 🎄)
 
 - [PR #162](https://github.com/DmitryTsepelev/store_model/pull/162) Improve inspect readability ([@neilvcarvalho])
