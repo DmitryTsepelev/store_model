@@ -46,4 +46,4 @@ configuration = Configuration.to_type.cast_value(color: "red", archived: true)
 configuration.as_json(serialize_unknown_attributes: true) # => {"color": "red", "archived": true}
 ```
 
-In any case unknown attributes are always stored in the database.
+Prior to version 2.1.1, unknown attributes are always stored in the database. However, starting from version 2.1.1, if `serialize_unknown_attributes` is set to `false`, unknown attributes will not be stored in the database.
