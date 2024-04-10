@@ -29,6 +29,8 @@ jobs:
           "gemfiles/rails_7_0.gemfile"
         ]
 
+        # TODO: ENV ENABLE_PARAM_ASSIGNMENT set to true/false
+
         allow_failures:
           - false
 

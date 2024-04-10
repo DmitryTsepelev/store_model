@@ -19,8 +19,11 @@ module StoreModel
     # @return [Boolean]
     attr_accessor :serialize_enums_using_as_json
 
+    attr_accessor :enable_parent_assignment
+
     def initialize
       @serialize_unknown_attributes = true
+      @enable_parent_assignment = true
     end
   end
 end
