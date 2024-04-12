@@ -181,8 +181,11 @@ RSpec.describe StoreModel::Model do
           expect(subject.configuration.parent).to eq(subject)
         else
           expect(subject.configuration.parent).to be_nil
+
+          # TODO: Remove me!
+          expect("Verify correct github workflow").to eq("This should fail too see ENV ENABLE_PARENT_ASSIGNMENT working")
         end
-        
+
       end
 
       it "updates parent after assignment" do
