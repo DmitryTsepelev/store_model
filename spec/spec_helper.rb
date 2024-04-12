@@ -26,7 +26,7 @@ RSpec.configure do |config|
   config.after(:each) do
     StoreModel.remove_instance_variable(:@config) if StoreModel.instance_variable_defined?(:@config)
     StoreModel.config.serialize_enums_using_as_json = true
-    StoreModel.config.enable_parent_assignment = ENABLE_PARAM_ASSIGNMENT
+    StoreModel.config.enable_parent_assignment = ENABLE_PARENT_ASSIGNMENT
   end
 end
 
