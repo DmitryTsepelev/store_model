@@ -15,10 +15,13 @@ module StoreModel
     # @return [Boolean]
     attr_accessor :serialize_unknown_attributes
 
-    # Controls if the result of `as_json` will serialize enum fiels using `as_json`
+    # Controls if the result of `as_json` will serialize enum fields using `as_json`
     # @return [Boolean]
     attr_accessor :serialize_enums_using_as_json
 
+    # Controls if parent tracking functionality is enabled.
+    # Default: true
+    # @return [Boolean]
     attr_accessor :enable_parent_assignment
 
     def initialize
