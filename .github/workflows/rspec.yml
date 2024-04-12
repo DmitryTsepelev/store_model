@@ -16,6 +16,7 @@ jobs:
       CI: true
       ALLOW_FAILURES: "${{ matrix.allow_failures }}"
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+      ENABLE_PARAM_ASSIGNMENT: "${{ matrix.enable_param_assignment }}"
 
     strategy:
       fail-fast: false
@@ -29,7 +30,7 @@ jobs:
           "gemfiles/rails_7_0.gemfile"
         ]
 
-        # TODO: ENV ENABLE_PARAM_ASSIGNMENT set to true/false
+        enable_param_assignment: ["true", "false"]
 
         allow_failures:
           - false
