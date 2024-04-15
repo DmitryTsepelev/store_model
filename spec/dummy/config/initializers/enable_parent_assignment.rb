@@ -1,5 +1,5 @@
 if ENV.key?("ENABLE_PARENT_ASSIGNMENT")
-  enable_parent_assignment = case ENV.fetch("ENABLE_PARENT_ASSIGNMENT")
+  enable_parent_assignment = case ENV.fetch("ENABLE_PARENT_ASSIGNMENT").strip.downcase
   when "true"
     true
   when "false"
