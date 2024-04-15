@@ -182,7 +182,6 @@ RSpec.describe StoreModel::Model do
         else
           expect(subject.configuration.parent).to be_nil
         end
-
       end
 
       it "updates parent after assignment" do
