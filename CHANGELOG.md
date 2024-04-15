@@ -6,6 +6,10 @@
 
 ## master
 
+## 2.4.0 (2024-03-15)
+
+- [PR #168](https://github.com/DmitryTsepelev/store_model/pull/168) Optional parent tracking ([@paneq])
+
 ## 2.3.0 (2024-03-02)
 
 - [PR #164](https://github.com/DmitryTsepelev/store_model/pull/164) Manageable raising on invalid enum value ([@alexeevit])
@@ -214,3 +218,4 @@
 [@neilvcarvalho]: https://github.com/neilvcarvalho
 [@dush]: https://github.com/dush
 [@alexeevit]: https://github.com/alexeevit
+[@paneq]: https://github.com/paneq
