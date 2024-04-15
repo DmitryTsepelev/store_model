@@ -132,6 +132,7 @@ end
 4. [One of](./docs/one_of.md)
 4. [Alternatives](./docs/alternatives.md)
 5. [Defining custom types](./docs/defining_custom_types.md)
+6. [Disabling Parent Tracking](./docs/enable_parent_assignment.md)
 
 ## Credits
 

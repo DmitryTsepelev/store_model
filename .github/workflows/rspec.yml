@@ -16,6 +16,7 @@ jobs:
       CI: true
       ALLOW_FAILURES: "${{ matrix.allow_failures }}"
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+      ENABLE_PARENT_ASSIGNMENT: "${{ matrix.enable_parent_assignment }}"
 
     strategy:
       fail-fast: false
@@ -28,6 +29,8 @@ jobs:
           "gemfiles/rails_6_2.gemfile",
           "gemfiles/rails_7_0.gemfile"
         ]
+
+        enable_parent_assignment: ["true", "false"]
 
         allow_failures:
           - false

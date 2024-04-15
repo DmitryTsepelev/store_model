@@ -177,12 +177,20 @@ RSpec.describe StoreModel::Model do
 
     shared_examples "for singular type" do
       it "returns parent instance" do
-        expect(subject.configuration.parent).to eq(subject)
+        if StoreModel.config.enable_parent_assignment
+          expect(subject.configuration.parent).to eq(subject)
+        else
+          expect(subject.configuration.parent).to be_nil
+        end
       end
 
       it "updates parent after assignment" do
         subject.configuration = configuration
-        expect(configuration.parent).to eq(subject)
+        if StoreModel.config.enable_parent_assignment
+          expect(configuration.parent).to eq(subject)
+        else
+          expect(configuration.parent).to be_nil
+        end
       end
 
       it "uses defaults" do
@@ -192,12 +200,20 @@ RSpec.describe StoreModel::Model do
 
     shared_examples "for array type" do
       it "returns parent instance" do
-        expect(subject.configuration[0].parent).to eq(subject)
+        if StoreModel.config.enable_parent_assignment
+          expect(subject.configuration[0].parent).to eq(subject)
+        else
+          expect(subject.configuration[0].parent).to be_nil
+        end
       end
 
       it "updates parent after assignment" do
         subject.configuration = [configuration]
-        expect(configuration.parent).to eq(subject)
+        if StoreModel.config.enable_parent_assignment
+          expect(configuration.parent).to eq(subject)
+        else
+          expect(configuration.parent).to be_nil
+        end
       end
     end
 
