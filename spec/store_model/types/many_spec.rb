@@ -9,11 +9,19 @@ RSpec.describe StoreModel::Types::Many do
     [
       {
         color: "red",
-        disabled_at: Time.new(2019, 2, 22, 12, 30).utc
+        model: nil,
+        active: true,
+        disabled_at: Time.new(2019, 2, 22, 12, 30).utc,
+        encrypted_serial: nil,
+        type: "left"
       },
       {
         color: "green",
-        disabled_at: Time.new(2019, 3, 12, 8, 10).utc
+        model: nil,
+        active: false,
+        disabled_at: Time.new(2019, 3, 12, 8, 10).utc,
+        encrypted_serial: nil,
+        type: "right"
       }
     ]
   end
@@ -161,6 +169,28 @@ RSpec.describe StoreModel::Types::Many do
     context "when String is passed" do
       let(:value) { ActiveSupport::JSON.encode(attributes_array) }
       include_examples "serialize examples"
+    end
+
+    context "when Array of instances is passed" do
+      let(:value) { attributes_array.map { |attrs| Configuration.new(attrs) } }
+      include_examples "serialize examples"
+
+      context "with unknown attributes" do
+        before do
+          value.each_with_index { |v, index| v.unknown_attributes[:archived] = index.even? }
+        end
+
+        [true, false].each do |serialize_unknown_attributes|
+          it "always includes unknown attributes regardless of the serialize_unknown_attributes option" do
+            StoreModel.config.serialize_unknown_attributes = serialize_unknown_attributes
+            expect(subject).to eq(
+              attributes_array.map.with_index do |attrs, index|
+                attrs.merge(value[index].unknown_attributes)
+              end.to_json
+            )
+          end
+        end
+      end
     end
   end
 end
