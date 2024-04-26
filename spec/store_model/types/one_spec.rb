@@ -198,6 +198,19 @@ RSpec.describe StoreModel::Types::One do
       it { is_expected.to be_a(String) }
 
       it("is equal to attributes") { is_expected.to eq(attributes.merge(type: nil).to_json) }
+
+      context "with unknown attributes" do
+        before do
+          value.unknown_attributes[:archived] = true
+        end
+
+        [true, false].each do |serialize_unknown_attributes|
+          it "always includes unknown attributes regardless of the serialize_unknown_attributes option" do
+            StoreModel.config.serialize_unknown_attributes = serialize_unknown_attributes
+            expect(subject).to eq(attributes.merge(type: nil, **value.unknown_attributes).to_json)
+          end
+        end
+      end
     end
   end
 

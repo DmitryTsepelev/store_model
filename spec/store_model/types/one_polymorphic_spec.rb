@@ -249,6 +249,19 @@ RSpec.describe StoreModel::Types::OnePolymorphic do
     context "when Configuration instance is passed" do
       let(:value) { Configuration.new(attributes) }
       include_examples "serialize examples"
+
+      context "with unknown attributes" do
+        before do
+          value.unknown_attributes[:archived] = true
+        end
+
+        [true, false].each do |serialize_unknown_attributes|
+          it "always includes unknown attributes regardless of the serialize_unknown_attributes option" do
+            StoreModel.config.serialize_unknown_attributes = serialize_unknown_attributes
+            expect(subject).to eq(attributes.merge(value.unknown_attributes).to_json)
+          end
+        end
+      end
     end
   end
 end
