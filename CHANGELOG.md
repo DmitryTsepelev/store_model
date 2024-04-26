@@ -6,6 +6,8 @@
 
 ## master
 
+- [PR #169](https://github.com/DmitryTsepelev/store_model/pull/169) Restore behavior to always store unknown attributes in the database ([@osanay])
+  
 ## 2.4.0 (2024-03-15)
 
 - [PR #168](https://github.com/DmitryTsepelev/store_model/pull/168) Optional parent tracking ([@paneq])
@@ -219,3 +221,4 @@
 [@dush]: https://github.com/dush
 [@alexeevit]: https://github.com/alexeevit
 [@paneq]: https://github.com/paneq
+[@osanay]: https://github.com/osanay
