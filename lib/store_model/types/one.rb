@@ -46,8 +46,12 @@ module StoreModel
       # @return [String] serialized value
       def serialize(value)
         case value
-        when @model_klass, Hash
-          ActiveSupport::JSON.encode(value, serialize_unknown_attributes: true)
+        when @model_klass
+          ActiveSupport::JSON.encode(value,
+                                     serialize_unknown_attributes: value.serialize_unknown_attributes?,
+                                     serialize_enums_using_as_json: value.serialize_enums_using_as_json?)
+        when Hash
+          ActiveSupport::JSON.encode(value)
         else
           super
         end

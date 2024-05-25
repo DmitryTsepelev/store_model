@@ -11,7 +11,8 @@ RSpec.describe StoreModel::Types::One do
       model: nil,
       active: false,
       disabled_at: Time.new(2019, 2, 22, 12, 30).utc,
-      encrypted_serial: nil
+      encrypted_serial: nil,
+      type: "left"
     }
   end
 
@@ -197,7 +198,7 @@ RSpec.describe StoreModel::Types::One do
 
       it { is_expected.to be_a(String) }
 
-      it("is equal to attributes") { is_expected.to eq(attributes.merge(type: nil).to_json) }
+      it("is equal to attributes") { is_expected.to eq(attributes.to_json) }
 
       context "with unknown attributes" do
         before do
@@ -207,7 +208,37 @@ RSpec.describe StoreModel::Types::One do
         [true, false].each do |serialize_unknown_attributes|
           it "always includes unknown attributes regardless of the serialize_unknown_attributes option" do
             StoreModel.config.serialize_unknown_attributes = serialize_unknown_attributes
-            expect(subject).to eq(attributes.merge(type: nil, **value.unknown_attributes).to_json)
+            expect(subject).to eq(attributes.merge(value.unknown_attributes).to_json)
+          end
+        end
+
+        context "when serialize_unknown_attributes attribute of instance is set to true" do
+          it "includes unknown attributes by overriding the globally configured behavior" do
+            value.serialize_unknown_attributes = true
+            expect(subject).to eq(attributes.merge(value.unknown_attributes).to_json)
+          end
+        end
+
+        context "when serialize_unknown_attributes attribute of instance is set to false" do
+          it "does not include unknown attributes by overriding the globally configured behavior" do
+            value.serialize_unknown_attributes = false
+            expect(subject).to eq(attributes.to_json)
+          end
+        end
+      end
+
+      context "with enums" do
+        context "when serialize_enums_using_as_json attribute of instance is set to true" do
+          it "serializes enums by overriding the globally configured behavior" do
+            value.serialize_enums_using_as_json = true
+            expect(subject).to eq(attributes.merge(type: "left").to_json)
+          end
+        end
+
+        context "when serialize_enums_using_as_json attribute of instance is set to false" do
+          it "does not serialize enums by overriding the globally configured behavior" do
+            value.serialize_enums_using_as_json = false
+            expect(subject).to eq(attributes.merge(type: 1).to_json)
           end
         end
       end

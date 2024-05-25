@@ -67,6 +67,8 @@ RSpec.describe StoreModel::NestedAttributes do
 
           attribute :enc_val, Configuration::Encrypted.new
           attribute :non_enc_val
+
+          enum :status, in: { active: 1, inactive: 2, archived: 3 }
         end
         class Store
           include StoreModel::Model
@@ -74,6 +76,9 @@ RSpec.describe StoreModel::NestedAttributes do
           attribute :enc_val, Configuration::Encrypted.new
           attribute :non_enc_val
           attribute :nested, NestedStore.to_type
+          attribute :nested_array, NestedStore.to_array_type
+
+          enum :status, in: { active: 1, inactive: 2, archived: 3 }
         end
         attribute :store, Store.to_type, default: -> { {} }
       end
@@ -85,8 +90,20 @@ RSpec.describe StoreModel::NestedAttributes do
           non_enc_val: "public",
           nested: {
             enc_val: "nested secret",
-            non_enc_val: "nested public"
-          } }
+            non_enc_val: "nested public",
+            status: "inactive",
+            unknown: "nested unknown"
+          },
+          nested_array: [
+            {
+              enc_val: "nested array secret",
+              non_enc_val: "nested array public",
+              status: "archived",
+              unknown: "nested array unknown"
+            }
+          ],
+          status: "active",
+          unknown: "unknown" }
       end
 
       let(:store_encrypted) do
@@ -94,8 +111,20 @@ RSpec.describe StoreModel::NestedAttributes do
           non_enc_val: "public",
           nested: {
             enc_val: "LmvDmq vmhYmD",
-            non_enc_val: "nested public"
-          } }
+            non_enc_val: "nested public",
+            status: "inactive",
+            unknown: "nested unknown"
+          },
+          nested_array: [
+            {
+              enc_val: "LmvDmq MYYMb vmhYmD",
+              non_enc_val: "nested array public",
+              status: "archived",
+              unknown: "nested array unknown"
+            }
+          ],
+          status: "active",
+          unknown: "unknown" }
       end
 
       it "persists encrypted values" do
@@ -115,6 +144,64 @@ RSpec.describe StoreModel::NestedAttributes do
           Anything.where(id: record.id).select("id, json_extract(store,'$.nested.non_enc_val')").to_sql
         ).first
         expect(very_nested_value).to eq([record.id, "nested public"])
+      end
+
+      describe "unknown attributes in nested objects" do
+        [true, false].each do |serialize_unknown_attributes|
+          it "always stores unknown attributes regardless of the serialize_unknown_attributes option" do
+            StoreModel.config.serialize_unknown_attributes = serialize_unknown_attributes
+
+            record.save
+            query = Anything.where(id: record.id).select(:store).to_sql
+            persisted_store = JSON.parse(ActiveRecord::Base.connection.query(query)[0][0])
+
+            expect(persisted_store["unknown"]).to eq("unknown")
+            expect(persisted_store["nested"]["unknown"]).to eq("nested unknown")
+            expect(persisted_store["nested_array"][0]["unknown"]).to eq("nested array unknown")
+          end
+        end
+
+        context "when serialize_unknown_attributes option is true" do
+          it "includes unknown attributes, including in nested objects" do
+            serialized_store = record.store.as_json(serialize_unknown_attributes: true)
+
+            expect(serialized_store).to include("unknown" => "unknown")
+            expect(serialized_store["nested"]).to include("unknown" => "nested unknown")
+            expect(serialized_store["nested_array"][0]).to include("unknown" => "nested array unknown")
+          end
+        end
+
+        context "when serialize_unknown_attributes option is false" do
+          it "does not include unknown attributes, including in nested objects" do
+            serialized_store = record.store.as_json(serialize_unknown_attributes: false)
+
+            expect(serialized_store).not_to include("unknown" => "unknown")
+            expect(serialized_store["nested"]).not_to include("unknown" => "nested unknown")
+            expect(serialized_store["nested_array"][0]).not_to include("unknown" => "nested array unknown")
+          end
+        end
+      end
+
+      describe "enums in nested objects" do
+        context "when serialize_enums_using_as_json option is true" do
+          it "serializes enums, including in nested objects" do
+            serialized_store = record.store.as_json(serialize_enums_using_as_json: true)
+
+            expect(serialized_store).to include("status" => "active")
+            expect(serialized_store["nested"]).to include("status" => "inactive")
+            expect(serialized_store["nested_array"][0]).to include("status" => "archived")
+          end
+        end
+
+        context "when serialize_enums_using_as_json option is false" do
+          it "does not serialize enums, including in nested objects" do
+            serialized_store = record.store.as_json(serialize_enums_using_as_json: false)
+
+            expect(serialized_store).to include("status" => 1)
+            expect(serialized_store["nested"]).to include("status" => 2)
+            expect(serialized_store["nested_array"][0]).to include("status" => 3)
+          end
+        end
       end
     end
   end

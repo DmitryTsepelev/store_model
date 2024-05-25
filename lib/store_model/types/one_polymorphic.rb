@@ -52,7 +52,15 @@ module StoreModel
       def serialize(value)
         return super unless value.is_a?(Hash) || implements_model?(value.class)
 
-        ActiveSupport::JSON.encode(value, serialize_unknown_attributes: true)
+        if value.is_a?(StoreModel::Model)
+          ActiveSupport::JSON.encode(
+            value,
+            serialize_unknown_attributes: value.serialize_unknown_attributes?,
+            serialize_enums_using_as_json: value.serialize_enums_using_as_json?
+          )
+        else
+          ActiveSupport::JSON.encode(value)
+        end
       end
 
       protected
