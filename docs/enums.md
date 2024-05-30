@@ -74,7 +74,7 @@ You can use the `:raise_on_invalid_values` options when you need to allow the en
 class Review
   include StoreModel::Model
 
-  enum status: [:active, :archived], raise_on_invalid_values: false
+  enum :status, [:active, :archived], raise_on_invalid_values: false
 
   validate_inclusion_of :status, in: ['active', 'archived']
 end
