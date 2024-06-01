@@ -22,6 +22,7 @@ module StoreModel
     end
 
     attr_accessor :parent
+    attr_writer :serialize_unknown_attributes, :serialize_enums_using_as_json
 
     delegate :each_value, to: :attributes
 
@@ -45,7 +46,9 @@ module StoreModel
                                       end
 
       result = @attributes.keys.each_with_object({}) do |key, values|
-        values[key] = serialized_attribute(key)
+        attr = @attributes.fetch(key)
+        assign_serialization_options(attr, serialize_unknown_attributes, serialize_enums_using_as_json)
+        values[key] = serialized_attribute(attr)
       end.with_indifferent_access
 
       result.merge!(unknown_attributes) if serialize_unknown_attributes
@@ -178,6 +181,38 @@ module StoreModel
       @unknown_attributes ||= {}
     end
 
+    # Returns the value of the `@serialize_unknown_attributes` instance
+    # variable. In the current specification, unknown attributes must be
+    # persisted in the database regardless of the globally configured
+    # `serialize_unknown_attributes` option. Therefore, it returns the
+    # default value `true` if the instance variable is `nil`.
+    #
+    # This method is used to ensure that the `serialize_unknown_attributes`
+    # option is correctly applied to nested StoreModel::Model objects when
+    # the `as_json` method is called.
+    #
+    # @return [Boolean]
+    def serialize_unknown_attributes?
+      @serialize_unknown_attributes.nil? ? true : @serialize_unknown_attributes
+    end
+
+    # Returns the value of the `@serialize_enums_using_as_json` instance
+    # variable. The default value is the value of the globally configured
+    # `serialize_enums_using_as_json` option.
+    #
+    # This method is used to determine whether enums should be serialized
+    # when the `as_json` method is called in nested StoreModel::Model
+    # objects.
+    #
+    # @return [Boolean]
+    def serialize_enums_using_as_json?
+      if @serialize_enums_using_as_json.nil?
+        StoreModel.config.serialize_enums_using_as_json || false
+      else
+        @serialize_enums_using_as_json
+      end
+    end
+
     private
 
     def attribute?(attribute)
@@ -200,14 +235,31 @@ module StoreModel
       end
     end
 
-    def serialized_attribute(attr_name)
-      attr = @attributes.fetch(attr_name)
+    def serialized_attribute(attr)
       if attr.value.is_a? StoreModel::Model
         Types::RawJSONEncoder.new(attr.value_for_database)
       elsif attr.value.is_a? Array
-        attr.value.as_json
+        serialize_array_attribute(attr.value)
       else
         attr.value_for_database
+      end
+    end
+
+    def serialize_array_attribute(array)
+      return array.as_json unless array.all? { |value| value.is_a?(StoreModel::Model) }
+
+      array.as_json(
+        serialize_unknown_attributes: array.first.serialize_unknown_attributes?,
+        serialize_enums_using_as_json: array.first.serialize_enums_using_as_json?
+      )
+    end
+
+    def assign_serialization_options(attr, serialize_unknown_attributes, serialize_enums_using_as_json)
+      return unless Array(attr.value).all? { |value| value.is_a?(StoreModel::Model) }
+
+      Array(attr.value).each do |value|
+        value.serialize_unknown_attributes = serialize_unknown_attributes
+        value.serialize_enums_using_as_json = serialize_enums_using_as_json
       end
     end
   end

@@ -40,7 +40,11 @@ module StoreModel
       def serialize(value)
         case value
         when Array
-          ActiveSupport::JSON.encode(value, serialize_unknown_attributes: true)
+          return ActiveSupport::JSON.encode(value) unless value.all? { |v| v.is_a?(StoreModel::Model) }
+
+          ActiveSupport::JSON.encode(value,
+                                     serialize_unknown_attributes: value.first.serialize_unknown_attributes?,
+                                     serialize_enums_using_as_json: value.first.serialize_enums_using_as_json?)
         else
           super
         end

@@ -23,6 +23,11 @@ RSpec.configure do |config|
   config.formatter = :documentation
   config.color = true
 
+  config.before(:all) do
+    # Set to `true` because it is initially `nil` in the first test.
+    StoreModel.config.serialize_enums_using_as_json = true
+  end
+
   config.after(:each) do
     StoreModel.remove_instance_variable(:@config) if StoreModel.instance_variable_defined?(:@config)
     StoreModel.config.serialize_enums_using_as_json = true

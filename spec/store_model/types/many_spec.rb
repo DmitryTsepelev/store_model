@@ -190,6 +190,48 @@ RSpec.describe StoreModel::Types::Many do
             )
           end
         end
+
+        context "when serialize_unknown_attributes attribute of instances is set to true" do
+          it "includes unknown attributes by overriding the globally configured behavior" do
+            value.each { |v| v.serialize_unknown_attributes = true }
+            expect(subject).to eq(
+              attributes_array.map.with_index do |attrs, index|
+                attrs.merge(value[index].unknown_attributes)
+              end.to_json
+            )
+          end
+        end
+
+        context "when serialize_unknown_attributes attribute of instances is set to false" do
+          it "does not include unknown attributes by overriding the globally configured behavior" do
+            value.each { |v| v.serialize_unknown_attributes = false }
+            expect(subject).to eq(attributes_array.to_json)
+          end
+        end
+      end
+
+      context "with enums" do
+        context "when serialize_enums_using_as_json attribute of instances is set to true" do
+          it "serializes enums by overriding the globally configured behavior" do
+            value.each { |v| v.serialize_enums_using_as_json = true }
+            expect(subject).to eq(
+              attributes_array.map do |attrs|
+                attrs.merge(type: attrs[:type])
+              end.to_json
+            )
+          end
+        end
+
+        context "when serialize_enums_using_as_json attribute of instances is set to false" do
+          it "does not serialize enums by overriding the globally configured behavior" do
+            value.each { |v| v.serialize_enums_using_as_json = false }
+            expect(subject).to eq(
+              attributes_array.map do |attrs|
+                attrs.merge(type: Configuration.types[attrs[:type].to_sym])
+              end.to_json
+            )
+          end
+        end
       end
     end
   end
