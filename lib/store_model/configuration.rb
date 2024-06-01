@@ -27,6 +27,7 @@ module StoreModel
     def initialize
       @serialize_unknown_attributes = true
       @enable_parent_assignment = true
+      @serialize_enums_using_as_json = true
     end
   end
 end

@@ -1,13 +1,13 @@
 # Change log
 
-## 3.0.0 (eventually)
-
-- Make `StoreModel.config.serialize_enums_using_as_json = true` default
-
 ## master
 
+## 3.0.0 (2024-06-01)
+
+- Make `StoreModel.config.serialize_enums_using_as_json = true` default
+- [PR #171](https://github.com/DmitryTsepelev/store_model/pull/171) Fix issue with serialization options not applied to nested objects ([@osanay])
 - [PR #169](https://github.com/DmitryTsepelev/store_model/pull/169) Restore behavior to always store unknown attributes in the database ([@osanay])
-  
+
 ## 2.4.0 (2024-03-15)
 
 - [PR #168](https://github.com/DmitryTsepelev/store_model/pull/168) Optional parent tracking ([@paneq])
