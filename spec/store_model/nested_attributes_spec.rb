@@ -77,6 +77,7 @@ RSpec.describe StoreModel::NestedAttributes do
           attribute :non_enc_val
           attribute :nested, NestedStore.to_type
           attribute :nested_array, NestedStore.to_array_type
+          attribute :empty_nested_array, NestedStore.to_array_type, default: []
 
           enum :status, in: { active: 1, inactive: 2, archived: 3 }
         end
@@ -102,6 +103,7 @@ RSpec.describe StoreModel::NestedAttributes do
               unknown: "nested array unknown"
             }
           ],
+          empty_nested_array: [],
           status: "active",
           unknown: "unknown" }
       end
@@ -123,6 +125,7 @@ RSpec.describe StoreModel::NestedAttributes do
               unknown: "nested array unknown"
             }
           ],
+          empty_nested_array: [],
           status: "active",
           unknown: "unknown" }
       end
@@ -144,6 +147,16 @@ RSpec.describe StoreModel::NestedAttributes do
           Anything.where(id: record.id).select("id, json_extract(store,'$.nested.non_enc_val')").to_sql
         ).first
         expect(very_nested_value).to eq([record.id, "nested public"])
+      end
+
+      describe "empty nested array" do
+        it "persists empty nested array" do
+          record.save
+          query = Anything.where(id: record.id).select(:store).to_sql
+          persisted_store = JSON.parse(ActiveRecord::Base.connection.query(query)[0][0])
+
+          expect(persisted_store["empty_nested_array"]).to eq([])
+        end
       end
 
       describe "unknown attributes in nested objects" do

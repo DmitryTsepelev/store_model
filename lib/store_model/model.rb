@@ -246,7 +246,7 @@ module StoreModel
     end
 
     def serialize_array_attribute(array)
-      return array.as_json unless array.all? { |value| value.is_a?(StoreModel::Model) }
+      return array.as_json unless array.any? && array.all? { |value| value.is_a?(StoreModel::Model) }
 
       array.as_json(
         serialize_unknown_attributes: array.first.serialize_unknown_attributes?,
