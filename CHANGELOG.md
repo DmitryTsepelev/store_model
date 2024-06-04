@@ -2,6 +2,10 @@
 
 ## master
 
+## 3.0.1 (2024-06-04)
+
+- [PR #173](https://github.com/DmitryTsepelev/store_model/pull/173) Fixed issue for empty nested array ([@manuelvanrijn])
+
 ## 3.0.0 (2024-06-01)
 
 - Make `StoreModel.config.serialize_enums_using_as_json = true` default
@@ -222,3 +226,4 @@
 [@alexeevit]: https://github.com/alexeevit
 [@paneq]: https://github.com/paneq
 [@osanay]: https://github.com/osanay
+[@manuelvanrijn]: https://github.com/manuelvanrijn
