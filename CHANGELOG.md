@@ -2,6 +2,10 @@
 
 ## master
 
+## 3.0.2 (2024-06-05)
+
+- [PR #176](https://github.com/DmitryTsepelev/store_model/pull/176) fix: serialize empty has-many array ([@bf4])
+
 ## 3.0.1 (2024-06-04)
 
 - [PR #173](https://github.com/DmitryTsepelev/store_model/pull/173) Fixed issue for empty nested array ([@manuelvanrijn])
@@ -227,3 +231,4 @@
 [@paneq]: https://github.com/paneq
 [@osanay]: https://github.com/osanay
 [@manuelvanrijn]: https://github.com/manuelvanrijn
+[@bf4]: https://github.com/bf4
