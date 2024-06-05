@@ -166,6 +166,12 @@ RSpec.describe StoreModel::Types::Many do
       include_examples "serialize examples"
     end
 
+    context "when any empty Array is passed" do
+      let(:value) { [] }
+
+      it { is_expected.to eq("[]") }
+    end
+
     context "when String is passed" do
       let(:value) { ActiveSupport::JSON.encode(attributes_array) }
       include_examples "serialize examples"
