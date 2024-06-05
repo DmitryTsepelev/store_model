@@ -168,8 +168,9 @@ RSpec.describe StoreModel::Types::Many do
 
     context "when any empty Array is passed" do
       let(:value) { [] }
+      let(:attributes_array) { [] }
 
-      it { is_expected.to eq("[]") }
+      include_examples "serialize examples"
     end
 
     context "when String is passed" do
