@@ -14,8 +14,8 @@ RSpec.describe StoreModel::NestedAttributes do
     end
   end
 
-  let(:supplier1) { { title: "First" } }
-  let(:supplier2) { { title: "Second" } }
+  let(:supplier1) { { title: "First", address: nil } }
+  let(:supplier2) { { title: "Second", address: nil } }
   let(:attributes) { { color: "red", suppliers: [supplier1, supplier2] } }
 
   subject { configuration_class.new(attributes) }
@@ -424,6 +424,30 @@ RSpec.describe StoreModel::NestedAttributes do
         expect(subject.suppliers).to contain_exactly(
           have_attributes(present_supplier)
         )
+      end
+    end
+
+    context "partial update" do
+      let(:configuration_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :color, :string
+          attribute :supplier, Supplier.to_type
+
+          accepts_nested_attributes_for :supplier, update_only: true
+        end
+      end
+
+      let(:old_supplier_attributes) { { "title" => "foo", "address" => "First Street" } }
+      let(:new_supplier_attributes) { { "address" => "Second Street" } }
+      let(:supplier_attributes) { old_supplier_attributes }
+
+      subject { configuration_class.new(supplier_attributes: supplier_attributes) }
+
+      it "rejects any attributes hash that has all blank values" do
+        subject.assign_attributes(color: "black", supplier_attributes: { address: "Second Street" })
+        expect(subject.supplier.attributes).to eq("title" => "foo", "address" => "Second Street")
       end
     end
   end

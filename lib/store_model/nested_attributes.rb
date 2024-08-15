@@ -67,12 +67,17 @@ module StoreModel
         end
       end
 
-      def define_store_model_attr_accessors(attribute, options)
+      def define_store_model_attr_accessors(attribute, options) # rubocop:disable Metrics/MethodLength
         case nested_attribute_type(attribute)
         when Types::OneBase
           define_association_setter_for_single(attribute, options)
           define_method "#{attribute}_attributes=" do |*args, **kwargs|
-            send("#{attribute}=", *args, **kwargs)
+            existing_model = send(attribute)
+            if existing_model && options[:update_only]
+              existing_model.assign_attributes(*args, **kwargs)
+            else
+              send("#{attribute}=", *args, **kwargs)
+            end
           end
         when Types::ManyBase
           define_association_setter_for_many(attribute, options)
