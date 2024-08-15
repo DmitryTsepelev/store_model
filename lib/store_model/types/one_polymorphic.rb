@@ -29,11 +29,13 @@ module StoreModel
       # @param value [Object] a value to cast
       #
       # @return StoreModel::Model
-      def cast_value(value)
-        case value
-        when String then decode_and_initialize(value)
-        when Hash then extract_model_klass(value).new(value)
-        when nil then value
+      def cast_value(value) # rubocop:disable Metrics/MethodLength
+        return nil if value.nil?
+
+        if value.is_a?(String)
+          decode_and_initialize(value)
+        elsif value.respond_to?(:to_h) # Hash itself included
+          extract_model_klass(value).new(value.to_h)
         else
           raise_cast_error(value) unless value.class.ancestors.include?(StoreModel::Model)
 
