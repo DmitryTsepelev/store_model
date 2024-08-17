@@ -27,12 +27,17 @@ module StoreModel
       # @param value [Object] a value to cast
       #
       # @return StoreModel::Model
-      def cast_value(value)
-        case value
-        when String then decode_and_initialize(value)
-        when Hash then model_instance(value)
-        when @model_klass, nil then value
-        else raise_cast_error(value)
+      def cast_value(value) # rubocop:disable Metrics/MethodLength
+        return nil if value.nil?
+
+        if value.is_a?(String)
+          decode_and_initialize(value)
+        elsif value.is_a?(@model_klass)
+          value
+        elsif value.respond_to?(:to_h) # Hash itself included
+          model_instance(value.to_h)
+        else
+          raise_cast_error(value)
         end
       rescue ActiveModel::UnknownAttributeError => e
         handle_unknown_attribute(value, e)

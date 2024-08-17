@@ -42,6 +42,39 @@ RSpec.describe StoreModel::Model do
 
       it("assigns attributes") { is_expected.to have_attributes(attributes) }
     end
+
+    context "when hash-like other class passed" do
+      subject do
+        class Product < ActiveRecord::Base
+          attribute :configuration, Configuration.to_type
+        end
+
+        Product.new(configuration: attributes)
+      end
+
+      let(:attributes) do
+        class NotHash
+          def initialize(attrs)
+            @attrs = attrs
+          end
+
+          def to_h
+            @attrs
+          end
+        end
+        NotHash.new(
+          color: "red",
+          model: nil,
+          active: false,
+          disabled_at: Time.new(2019, 2, 10, 12).utc,
+          encrypted_serial: "111-222"
+        )
+      end
+
+      it("assigns attributes") do
+        expect(subject.configuration).to have_attributes(attributes.to_h)
+      end
+    end
   end
 
   describe "#fetch" do

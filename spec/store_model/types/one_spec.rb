@@ -58,12 +58,12 @@ RSpec.describe StoreModel::Types::One do
     end
 
     context "when instance of illegal class is passed" do
-      let(:value) { [] }
+      let(:value) { 1 }
 
       it "raises exception" do
         expect { type.cast_value(value) }.to raise_error(
           StoreModel::Types::CastError,
-          "failed casting [], only String, Hash or Configuration instances are allowed"
+          "failed casting 1, only String, Hash or Configuration instances are allowed"
         )
       end
     end

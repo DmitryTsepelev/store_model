@@ -58,12 +58,12 @@ RSpec.describe StoreModel::Types::OnePolymorphic do
     end
 
     context "when instance of illegal class is passed" do
-      let(:value) { [] }
+      let(:value) { 1 }
 
       it "raises exception" do
         expect { type.cast_value(value) }.to raise_error(
           StoreModel::Types::CastError,
-          "failed casting [], only String, Hash or instances which " \
+          "failed casting 1, only String, Hash or instances which " \
           "implement StoreModel::Model are allowed"
         )
       end
