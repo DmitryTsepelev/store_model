@@ -228,7 +228,7 @@ module StoreModel
             .attribute_types
             .select { |_, type| type.is_a?(StoreModel::Types::EnumType) }
 
-      enum_mappings.each do |name, _|
+      enum_mappings.each_key do |name|
         next unless json.key?(name)
 
         json[name] = public_send(name).as_json unless json[name].nil?

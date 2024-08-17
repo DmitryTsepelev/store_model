@@ -8,11 +8,11 @@ class Configuration
     ENCODING = "MOhqm0PnycUZeLdK8YvDCgNfb7FJtiHT52BrxoAkas9RWlXpEujSGI64VzQ31w"
 
     def serialize(value)
-      value&.tr(ALPHABET, ENCODING) if value
+      value&.tr(ALPHABET, ENCODING)
     end
 
     def deserialize(value)
-      value&.tr(ENCODING, ALPHABET) if value
+      value&.tr(ENCODING, ALPHABET)
     end
   end
 

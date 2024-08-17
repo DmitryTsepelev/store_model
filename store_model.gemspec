@@ -16,11 +16,11 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  spec.required_ruby_version = ">= 2.6"
+  spec.required_ruby_version = ">= 3.0"
 
-  spec.add_dependency "activerecord", ">= 5.2"
+  spec.add_dependency "activerecord", ">= 7.0"
 
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rspec-rails"
-  spec.add_development_dependency "rubocop", "0.64.0"
+  spec.add_development_dependency "rubocop", "1.65.1"
 end

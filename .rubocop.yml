@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.0
   Include:
     - 'lib/**/*.rb'
     - 'spec/**/*.rb'
@@ -22,5 +22,11 @@ Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
 
+Metrics/CyclomaticComplexity:
+  Max: 8
+
 Style/NumericLiterals:
+  Enabled: false
+
+Lint/ConstantDefinitionInBlock:
   Enabled: false

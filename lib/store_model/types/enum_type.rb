@@ -14,6 +14,7 @@ module StoreModel
       def initialize(mapping, raise_on_invalid_values)
         @mapping = mapping
         @raise_on_invalid_values = raise_on_invalid_values
+        super()
       end
 
       # Returns type

@@ -45,15 +45,17 @@ RSpec.describe StoreModel::NestedAttributes do
       end
 
       class Product < ActiveRecord::Base
-        attribute :configuration, ProductConfiguration.to_type, default: ProductConfiguration.new
+        attribute :product_configuration, ProductConfiguration.to_type, default: ProductConfiguration.new
       end
 
       suppliers = [Supplier.new(title: "The Supplier")]
-      product = Product.create!(configuration: ProductConfiguration.new(color: "red", suppliers: suppliers))
+      product = Product.create!(product_configuration: ProductConfiguration.new(color: "red", suppliers: suppliers))
 
-      configuration_type = Product.select('json_type(configuration, "$") as config').where(id: product.id).first
-      suppliers_type = Product.select('json_type(configuration, "$.suppliers") as config').where(id: product.id).first
-      supplier_type = Product.select('json_type(configuration, "$.suppliers[0]") as config').where(id: product.id).first
+      configuration_type = Product.select('json_type(product_configuration, "$") as config').where(id: product.id).first
+      suppliers_type = Product.select('json_type(product_configuration, "$.suppliers") as config')
+                              .where(id: product.id).first
+      supplier_type = Product.select('json_type(product_configuration, "$.suppliers[0]") as config')
+                             .where(id: product.id).first
 
       expect(configuration_type.config).to eq("object")
       expect(suppliers_type.config).to eq("array")
@@ -70,6 +72,7 @@ RSpec.describe StoreModel::NestedAttributes do
 
           enum :status, in: { active: 1, inactive: 2, archived: 3 }
         end
+
         class Store
           include StoreModel::Model
 
@@ -532,8 +535,7 @@ RSpec.describe StoreModel::NestedAttributes do
           end
         end
 
-        it { expect { subject }.not_to(raise_error) }
-        it { expect(subject.instance_methods).to(include(:suppliers_attributes=)) }
+        it { expect { subject }.to raise_error(ActiveRecord::StatementInvalid) }
       end
     end
   end

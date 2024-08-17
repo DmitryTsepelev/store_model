@@ -14,6 +14,7 @@ module StoreModel
       # @return [StoreModel::Types::Many]
       def initialize(model_klass)
         @model_klass = model_klass
+        super()
       end
 
       # Returns type
