@@ -15,6 +15,7 @@ module StoreModel
       # @return [StoreModel::Types::OnePolymorphic ]
       def initialize(model_wrapper)
         @model_wrapper = model_wrapper
+        super()
       end
 
       # Returns type

@@ -13,6 +13,7 @@ module StoreModel
       # @return [StoreModel::Types::One]
       def initialize(model_klass)
         @model_klass = model_klass
+        super()
       end
 
       # Returns type

@@ -2,6 +2,12 @@
 
 ## master
 
+## 4.0.0 (TBD)
+
+- [PR #182](https://github.com/DmitryTsepelev/store_model/pull/182) Update Ruby and Rails versions, raise an error when database is not available (cause private API we use is deprecated https://github.com/rails/rails/commit/e0a55b038f7f2f50d1467876558be183be6cedaa) ([@DmitryTsepelev])
+- [PR #181](https://github.com/DmitryTsepelev/store_model/pull/181) Treat all Hash-like input as a Hash ([@ql])
+- [PR #180](https://github.com/DmitryTsepelev/store_model/pull/180) Add update_only option to StoreModel#accepts_nested_attributes_for ([@ql])
+
 ## 3.0.2 (2024-06-05)
 
 - [PR #176](https://github.com/DmitryTsepelev/store_model/pull/176) fix: serialize empty has-many array ([@bf4])
@@ -232,3 +238,4 @@
 [@osanay]: https://github.com/osanay
 [@manuelvanrijn]: https://github.com/manuelvanrijn
 [@bf4]: https://github.com/bf4
+[@ql]: https://github.com/ql

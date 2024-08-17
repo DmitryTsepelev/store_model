@@ -21,13 +21,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # TODO: unlock jruby when https://github.com/jruby/jruby/issues/8116 is fixed
-        ruby: ["jruby-9.4.5.0", "3.0", 3.1, 3.2]
+        ruby: ["jruby-9.4.8.0", "3.0", 3.1, 3.2]
 
         gemfile: [
           "gemfiles/jruby.gemfile",
-          "gemfiles/rails_6_2.gemfile",
-          "gemfiles/rails_7_0.gemfile"
+          "gemfiles/rails_7_0.gemfile",
+          "gemfiles/rails_7_1.gemfile",
+          "gemfiles/rails_7_2.gemfile"
         ]
 
         enable_parent_assignment: ["true", "false"]
@@ -36,12 +36,17 @@ jobs:
           - false
 
         exclude:
-          - ruby: "jruby-9.4.5.0"
-            gemfile: gemfiles/rails_6_2.gemfile
-          - ruby: "jruby-9.4.5.0"
+          - ruby: "jruby-9.4.8.0"
             gemfile: gemfiles/rails_7_0.gemfile
-          - ruby: "jruby-9.4.5.0"
+          - ruby: "jruby-9.4.8.0"
+            gemfile: gemfiles/rails_7_1.gemfile
+          - ruby: "jruby-9.4.8.0"
+            gemfile: gemfiles/rails_7_2.gemfile
+          - ruby: "jruby-9.4.8.0"
             gemfile: gemfiles/railsmaster.gemfile
+
+          - ruby: "3.0"
+            gemfile: gemfiles/rails_7_2.gemfile
 
           - ruby: "3.0"
             gemfile: gemfiles/jruby.gemfile

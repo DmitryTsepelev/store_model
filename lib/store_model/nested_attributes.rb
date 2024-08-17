@@ -60,11 +60,7 @@ module StoreModel
       # If schema loaded the attribute_types already populated and we can safely use it
       # See ActiveRecord::ModelSchema#load_schema!
       def nested_attribute_type(attribute)
-        if self < ActiveRecord::Base && !schema_loaded?
-          attributes_to_define_after_schema_loads[attribute.to_s]&.first
-        else
-          attribute_types[attribute.to_s]
-        end
+        attribute_types[attribute.to_s]
       end
 
       def define_store_model_attr_accessors(attribute, options) # rubocop:disable Metrics/MethodLength
@@ -104,7 +100,7 @@ module StoreModel
         return unless options&.dig(:allow_destroy)
 
         define_method "#{association}=" do |attributes|
-          if ActiveRecord::Type::Boolean.new.cast(attributes.stringify_keys.dig("_destroy"))
+          if ActiveRecord::Type::Boolean.new.cast(attributes.stringify_keys["_destroy"])
             super(nil)
           else
             super(attributes)
@@ -121,7 +117,7 @@ module StoreModel
 
       if options&.dig(:allow_destroy)
         attributes.reject! do |attribute|
-          ActiveRecord::Type::Boolean.new.cast(attribute.stringify_keys.dig("_destroy"))
+          ActiveRecord::Type::Boolean.new.cast(attribute.stringify_keys["_destroy"])
         end
       end
 

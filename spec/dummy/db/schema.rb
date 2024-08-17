@@ -5,6 +5,7 @@ ActiveRecord::Schema.define(version: 2019_02_216_153105) do
     t.string :name
     t.references :store, null: true
     t.json :configuration, default: {}
+    t.json :product_configuration, default: {}
   end
 
   create_table :stores do |t|
