@@ -22,6 +22,8 @@ class Product < ApplicationRecord
 end
 ```
 
+You can support my open–source work [here](https://boosty.to/dmitry_tsepelev).
+
 ## Why should I wrap my JSON columns?
 
 Imagine that you have a model `Product` with a `jsonb` column called `configuration`. This is how you likely gonna work with this column:
