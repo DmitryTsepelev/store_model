@@ -1,5 +1,9 @@
 # Change log
 
+# 5.0.0 (eventually)
+
+- TODO: change parent tracking default (https://github.com/DmitryTsepelev/store_model/issues/183
+
 ## master
 
 ## 4.0.0 (2024-09-06)
