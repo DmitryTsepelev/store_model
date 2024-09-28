@@ -6,6 +6,8 @@
 
 ## master
 
+- [PR #186](https://github.com/DmitryTsepelev/store_model/pull/186) Allow using floats as enum values ([@zabil-maooz])
+
 ## 4.0.0 (2024-09-06)
 
 - [PR #182](https://github.com/DmitryTsepelev/store_model/pull/182) Update Ruby and Rails versions, raise an error when database is not available (cause private API we use is deprecated https://github.com/rails/rails/commit/e0a55b038f7f2f50d1467876558be183be6cedaa) ([@DmitryTsepelev])
@@ -243,3 +245,4 @@
 [@manuelvanrijn]: https://github.com/manuelvanrijn
 [@bf4]: https://github.com/bf4
 [@ql]: https://github.com/ql
+[@zabil-maooz]: https://github.com/zabil-maooz
