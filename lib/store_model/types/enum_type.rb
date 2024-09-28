@@ -34,7 +34,7 @@ module StoreModel
 
         case value
         when String, Symbol then cast_symbol_value(value)
-        when Integer then cast_integer_value(value)
+        when Integer, Float then cast_integer_value(value)
         else
           raise StoreModel::Types::CastError,
                 "failed casting #{value.inspect}, only String, Symbol or " \
