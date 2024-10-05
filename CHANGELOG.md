@@ -6,6 +6,8 @@
 
 ## master
 
+## 4.1.0 (2024-10-05)
+
 - [PR #186](https://github.com/DmitryTsepelev/store_model/pull/186) Allow using floats as enum values ([@zabil-maooz])
 
 ## 4.0.0 (2024-09-06)
