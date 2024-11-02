@@ -42,6 +42,24 @@ For instance, try to find a way to validate `:model` value to be required. Despi
 
 > 📖 Read more about the motivation in the [Wrapping JSON-based ActiveRecord attributes with classes](https://evilmartians.com/chronicles/wrapping-json-based-active-record-attributes-with-classes) post
 
+## Installation
+
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'store_model'
+```
+
+And then execute:
+```bash
+$ bundle
+```
+
+Or install it yourself as:
+```bash
+$ gem install store_model
+```
+
 ## Getting started
 
 Start with creating a class for representing the hash as an object:
@@ -124,14 +142,13 @@ end
 
 ## Documentation
 
-1. [Installation](./docs/installation.md)
-2. StoreModel::Model API:
+1. StoreModel::Model API:
   * [Validations](./docs/validations.md)
   * [Enums](./docs/enums.md)
   * [Nested models](./docs/nested_models.md)
   * [Unknown attributes](./docs/unknown_attributes.md)
-3. [Array of stored models](./docs/array_of_stored_models.md)
-4. [One of](./docs/one_of.md)
+2. [Array of stored models](./docs/array_of_stored_models.md)
+3. [One of](./docs/one_of.md)
 4. [Alternatives](./docs/alternatives.md)
 5. [Defining custom types](./docs/defining_custom_types.md)
 6. [Disabling Parent Tracking](./docs/enable_parent_assignment.md)
