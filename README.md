@@ -111,7 +111,7 @@ Resulting in:
 In the controller:
 ```ruby
 def create
-  @supplier = Supplier.new(supplier_params)
+  @supplier = Supplier.from_value(supplier_params)
   @supplier.save
 end
 
@@ -126,6 +126,7 @@ end
 
 1. [Installation](./docs/installation.md)
 2. StoreModel::Model API:
+  * [Instantiation](./docs/installation.md)
   * [Validations](./docs/validations.md)
   * [Enums](./docs/enums.md)
   * [Nested models](./docs/nested_models.md)
