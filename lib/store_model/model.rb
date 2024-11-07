@@ -19,6 +19,19 @@ module StoreModel
       base.extend StoreModel::TypeBuilders
 
       base.attribute_method_suffix "?"
+
+      base.extend(ClassMethods)
+    end
+
+    # Class methods for StoreModel::Model
+    module ClassMethods
+      def from_value(value)
+        to_type.cast_value(value)
+      end
+
+      def from_values(values)
+        to_array_type.cast_value(values)
+      end
     end
 
     attr_accessor :parent

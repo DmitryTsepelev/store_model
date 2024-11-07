@@ -14,6 +14,24 @@ RSpec.describe StoreModel::Model do
     }
   end
 
+  describe ".from_value" do
+    context "when unknown attributes are provided" do
+      it "adds unknown attributes" do
+        config = Configuration.from_value(attributes.merge(foo: "bar"))
+        expect(config.unknown_attributes).to include("foo" => "bar")
+      end
+    end
+  end
+
+  describe ".from_values" do
+    context "when unknown attributes are provided" do
+      it "adds unknown attributes" do
+        config = Configuration.from_values([attributes.merge(foo: "bar")])
+        expect(config[0].unknown_attributes).to include("foo" => "bar")
+      end
+    end
+  end
+
   describe "#initialize" do
     context "when symbolized hash is passed" do
       subject { Configuration.new(attributes) }
