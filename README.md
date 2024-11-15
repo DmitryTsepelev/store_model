@@ -126,7 +126,7 @@ end
 
 1. [Installation](./docs/installation.md)
 2. StoreModel::Model API:
-  * [Instantiation](./docs/installation.md)
+  * [Instantiation](./docs/instantiation.md)
   * [Validations](./docs/validations.md)
   * [Enums](./docs/enums.md)
   * [Nested models](./docs/nested_models.md)
