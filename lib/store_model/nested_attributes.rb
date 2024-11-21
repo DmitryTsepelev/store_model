@@ -13,6 +13,12 @@ module StoreModel
         @store_model_attribute_types ||= {}
       end
 
+      # add storemodel type of attribute if it is storemodel type
+      def attribute(name, type=nil, **)
+        store_model_attribute_types[name.to_s] = type if type.is_a?(Types::Base)
+        super
+      end
+
       # Enables handling of nested StoreModel::Model attributes
       #
       # @param associations [Array] list of associations and options to define attributes, for example:
@@ -57,13 +63,16 @@ module StoreModel
       # when db connection is not available, it becomes impossible to read attributes types from
       # ActiveModel::AttributeRegistration::ClassMethods.attribute_types, because activerecord
       # overrides _default_attributes and triggers db connection.
-      # in order to avoid dirty hacks we say goodbye to rails attribute_types and rely on
-      # @store_model_attribute_types object, that we populate ourselves.
+      # for activerecord model only use attribute_types if it has db connected
       #
       # @param attribute [String, Symbol]
       # @return [StoreModel::Types::Base, nil]
       def nested_attribute_type(attribute)
-        store_model_attribute_types[attribute.to_s]
+        if self < ActiveRecord::Base && !schema_loaded?
+          store_model_attribute_types[attribute.to_s]
+        else
+          attribute_types[attribute.to_s]
+        end
       end
 
       def define_store_model_attr_accessors(attribute, options) # rubocop:disable Metrics/MethodLength
@@ -109,15 +118,6 @@ module StoreModel
             super(attributes)
           end
         end
-      end
-
-      private
-
-      # marked in activemodel/attribute_registration as a method for modules to override
-      # add storemodel type of attribute if it is storemodel type
-      def hook_attribute_type(name, type)
-        store_model_attribute_types[name.to_s] = type if type.is_a?(Types::Base)
-        super
       end
     end
 
