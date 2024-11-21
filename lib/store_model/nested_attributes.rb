@@ -14,7 +14,7 @@ module StoreModel
       end
 
       # add storemodel type of attribute if it is storemodel type
-      def attribute(name, type=nil, **)
+      def attribute(name, type = nil, **)
         store_model_attribute_types[name.to_s] = type if type.is_a?(Types::Base)
         super
       end
