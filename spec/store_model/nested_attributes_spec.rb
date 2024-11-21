@@ -535,7 +535,8 @@ RSpec.describe StoreModel::NestedAttributes do
           end
         end
 
-        it { expect { subject }.to raise_error(ActiveRecord::StatementInvalid) }
+        it { expect { subject }.not_to(raise_error) }
+        it { expect(subject.instance_methods).to(include(:suppliers_attributes=)) }
       end
     end
   end

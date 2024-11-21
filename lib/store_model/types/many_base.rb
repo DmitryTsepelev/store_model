@@ -4,18 +4,8 @@ require "active_model"
 
 module StoreModel
   module Types
-    # Implements ActiveModel::Type::Value type for handling an array of
-    # StoreModel::Model
-    class ManyBase < ActiveModel::Type::Value
-      attr_reader :model_klass
-
-      # Returns type
-      #
-      # @return [Symbol]
-      def type
-        raise NotImplementedError
-      end
-
+    # Implements type for handling an array of StoreModel::Model
+    class ManyBase < Base
       # Casts +value+ from DB or user to StoreModel::Model instance
       #
       # @param value [Object] a value to cast
@@ -67,10 +57,6 @@ module StoreModel
       end
 
       def cast_model_type_value(_value)
-        raise NotImplementedError
-      end
-
-      def raise_cast_error(_value)
         raise NotImplementedError
       end
 
