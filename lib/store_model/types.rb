@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "store_model/types/polymorphic_helper"
+require "store_model/types/base"
 
 require "store_model/types/one_base"
 require "store_model/types/one"

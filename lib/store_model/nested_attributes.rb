@@ -8,6 +8,17 @@ module StoreModel
     end
 
     module ClassMethods # :nodoc:
+      # gather storemodel attribute types on the class-level
+      def store_model_attribute_types
+        @store_model_attribute_types ||= {}
+      end
+
+      # add storemodel type of attribute if it is storemodel type
+      def attribute(name, type = nil, **)
+        store_model_attribute_types[name.to_s] = type if type.is_a?(Types::Base)
+        super
+      end
+
       # Enables handling of nested StoreModel::Model attributes
       #
       # @param associations [Array] list of associations and options to define attributes, for example:
@@ -38,8 +49,7 @@ module StoreModel
         options = attributes.extract_options!
 
         attributes.each do |attribute|
-          case nested_attribute_type(attribute)
-          when Types::OneBase, Types::ManyBase
+          if nested_attribute_type(attribute).is_a?(Types::Base)
             options.reverse_merge!(allow_destroy: false, update_only: false)
             define_store_model_attr_accessors(attribute, options)
           else
@@ -50,17 +60,19 @@ module StoreModel
 
       private
 
-      # If attribute defined in ActiveRecord model but you dont yet have database created
-      # you cannot access attribute types.
-      # To handle this case, we can use ActiveRecord::Attributes 'attributes_to_define_after_schema_loads'
-      # which stores information about custom defined attributes.
-      # See ActiveRecord::Attributes#atribute
-      # If #accepts_nested_attributes_for is used inside active model instance
-      # schema is not required to determine attribute type so we can still use attribute_types
-      # If schema loaded the attribute_types already populated and we can safely use it
-      # See ActiveRecord::ModelSchema#load_schema!
+      # when db connection is not available, it becomes impossible to read attributes types from
+      # ActiveModel::AttributeRegistration::ClassMethods.attribute_types, because activerecord
+      # overrides _default_attributes and triggers db connection.
+      # for activerecord model only use attribute_types if it has db connected
+      #
+      # @param attribute [String, Symbol]
+      # @return [StoreModel::Types::Base, nil]
       def nested_attribute_type(attribute)
-        attribute_types[attribute.to_s]
+        if self < ActiveRecord::Base && !schema_loaded?
+          store_model_attribute_types[attribute.to_s]
+        else
+          attribute_types[attribute.to_s]
+        end
       end
 
       def define_store_model_attr_accessors(attribute, options) # rubocop:disable Metrics/MethodLength
