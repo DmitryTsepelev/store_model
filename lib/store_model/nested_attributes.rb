@@ -133,12 +133,16 @@ module StoreModel
         end
       end
 
-      attributes.reject! { |attribute| call_reject_if(attribute, options[:reject_if]) } if options&.dig(:reject_if)
+      if options&.dig(:reject_if)
+        attributes.reject! do |attribute|
+          call_store_model_reject_if(attribute, options[:reject_if])
+        end
+      end
 
       send("#{association}=", attributes)
     end
 
-    def call_reject_if(attributes, callback)
+    def call_store_model_reject_if(attributes, callback)
       callback = ActiveRecord::NestedAttributes::ClassMethods::REJECT_ALL_BLANK_PROC if callback == :all_blank
 
       case callback
