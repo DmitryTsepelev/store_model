@@ -133,11 +133,7 @@ module StoreModel
         end
       end
 
-      if options&.dig(:reject_if)
-        attributes.reject! do |attribute|
-          call_store_model_reject_if(attribute, options[:reject_if])
-        end
-      end
+      attributes.reject! { call_store_model_reject_if(_1, options[:reject_if]) } if options&.dig(:reject_if)
 
       send("#{association}=", attributes)
     end
