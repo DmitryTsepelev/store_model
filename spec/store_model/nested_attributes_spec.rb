@@ -517,6 +517,28 @@ RSpec.describe StoreModel::NestedAttributes do
         it { is_expected.to respond_to(:bicycles_attributes=) }
       end
 
+      context "with nested attributes for an AR association and a reject_if proc" do
+        class Product < ActiveRecord::Base
+          include StoreModel::NestedAttributes
+
+          attribute :suppliers, Supplier.to_array_type
+
+          belongs_to :store
+
+          accepts_nested_attributes_for(:store, reject_if: ->(_) { true })
+
+          accepts_nested_attributes_for(:suppliers, allow_destroy: true)
+        end
+
+        subject { Product.new }
+
+        it "rejects blank nested AR attributes" do
+          subject.update(store_attributes: { bicycles: "" })
+
+          expect(subject.reload.store).to be_nil
+        end
+      end
+
       context "when db is not connected" do
         subject do
           model_class.accepts_nested_attributes_for(:suppliers, allow_destroy: true)
