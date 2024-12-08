@@ -4,12 +4,12 @@
 
 - TODO: change parent tracking default (https://github.com/DmitryTsepelev/store_model/issues/183
 
-## master
+## 4.1.0 (2024-12-08)
 
 - [PR #192](https://github.com/DmitryTsepelev/store_model/pull/192) Add convenience methods to instantiate model from type ([@bengladwell])
 - [PR #194](https://github.com/DmitryTsepelev/store_model/pull/194) Fix accepts_nested_attributes_for triggering db connection in rails 7.2 ([@balbesina])
 - [PR #196](https://github.com/DmitryTsepelev/store_model/pull/196) Fix for AR association accepts_nested_attributes_for and a raise_if proc ([@evaniainbrooks])
-  
+
 ## 4.1.0 (2024-10-05)
 
 - [PR #186](https://github.com/DmitryTsepelev/store_model/pull/186) Allow using floats as enum values ([@zabil-maooz])
