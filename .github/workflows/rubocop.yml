@@ -12,6 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Install SQLite
+      run: sudo apt-get install libsqlite3-dev
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.0
