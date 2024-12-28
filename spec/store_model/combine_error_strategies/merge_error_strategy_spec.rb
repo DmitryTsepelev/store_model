@@ -49,10 +49,7 @@ RSpec.describe StoreModel::CombineErrorsStrategies::MergeErrorStrategy do
     it "keeps parent validation messages" do
       described_class.new.call(:configuration, record.errors, record.configuration.errors)
 
-      if Rails::VERSION::MAJOR < 6 || Rails::VERSION::MAJOR == 6 && Rails::VERSION::MINOR.zero?
-        expect(record.errors.messages).to eq(name: ["can't be blank"], color: ["can't be blank"])
-        expect(record.errors.full_messages).to eq(["Name can't be blank", "Color can't be blank"])
-      elsif Rails::VERSION::MAJOR == 7
+      if Rails::VERSION::MAJOR == 7 || Rails::VERSION::MAJOR == 8
         expect(record.errors.messages).to eq(
           name: ["can't be blank"], configuration: ["is invalid", "Color can't be blank"]
         )
