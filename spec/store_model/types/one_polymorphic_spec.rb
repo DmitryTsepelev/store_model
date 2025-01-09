@@ -51,6 +51,18 @@ RSpec.describe StoreModel::Types::OnePolymorphic do
       include_examples "for known attributes"
     end
 
+    context "when Configuration instance responds to #to_h" do
+      let(:value) { Configuration.new(attributes) }
+
+      before { value.instance_eval { def to_h; end } }
+
+      include_examples "for known attributes"
+
+      it "does not call #to_h and returns the original instance" do
+        expect(subject).to be(value)
+      end
+    end
+
     context "when nil is passed" do
       let(:value) { nil }
 

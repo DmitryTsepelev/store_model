@@ -35,12 +35,12 @@ module StoreModel
 
         if value.is_a?(String)
           decode_and_initialize(value)
+        elsif value.class.ancestors.include?(StoreModel::Model)
+          value
         elsif value.respond_to?(:to_h) # Hash itself included
           extract_model_klass(value).new(value.to_h)
         else
-          raise_cast_error(value) unless value.class.ancestors.include?(StoreModel::Model)
-
-          value
+          raise_cast_error(value)
         end
       rescue ActiveModel::UnknownAttributeError => e
         handle_unknown_attribute(value, e)
