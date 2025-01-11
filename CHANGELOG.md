@@ -4,6 +4,10 @@
 
 - TODO: change parent tracking default (https://github.com/DmitryTsepelev/store_model/issues/183
 
+## master
+
+- [PR #200](https://github.com/DmitryTsepelev/store_model/pull/200) Don't use #to_h on store model instances in OnePolymorphic types ([@23tux])
+  
 ## 4.2.0 (2024-12-08)
 
 - [PR #192](https://github.com/DmitryTsepelev/store_model/pull/192) Add convenience methods to instantiate model from type ([@bengladwell])
@@ -255,3 +259,4 @@
 [@bengladwell]: https://github.com/bengladwell
 [@balbesina]: https://github.com/balbesina
 [@evaniainbrooks]: https://github.com/evaniainbrooks
+[@23tux]: https://github.com/23tux
