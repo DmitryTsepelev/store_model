@@ -6,8 +6,10 @@
 
 ## master
 
+## 4.2.1 (2025-02-01)
+
 - [PR #200](https://github.com/DmitryTsepelev/store_model/pull/200) Don't use #to_h on store model instances in OnePolymorphic types ([@23tux])
-  
+
 ## 4.2.0 (2024-12-08)
 
 - [PR #192](https://github.com/DmitryTsepelev/store_model/pull/192) Add convenience methods to instantiate model from type ([@bengladwell])
