@@ -249,4 +249,36 @@ RSpec.describe StoreModel::Model do
       end
     end
   end
+
+  describe "persistance" do
+    class ProductConfiguration
+      include StoreModel::Model
+
+      enum :color, in: { red: "ee0000", green: "00ee00", blue: "0000ee" }
+    end
+
+    class Product < ActiveRecord::Base
+      attribute :product_configuration, ProductConfiguration.to_type, default: ProductConfiguration.new
+    end
+
+    before do
+      Product.create!(product_configuration: { color: color })
+    end
+
+    context "when key is used" do
+      let(:color) { :green }
+
+      specify do
+        expect(Product.last.product_configuration).to be_green
+      end
+    end
+
+    context "when value is used" do
+      let(:color) { "00ee00" }
+
+      specify do
+        expect(Product.last.product_configuration).to be_green
+      end
+    end
+  end
 end

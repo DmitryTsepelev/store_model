@@ -45,7 +45,10 @@ module StoreModel
       private
 
       def cast_symbol_value(value)
-        raise_invalid_value!(value) if @raise_on_invalid_values && !@mapping.key?(value.to_sym)
+        raise_invalid_value!(value) if @raise_on_invalid_values &&
+                                       !@mapping.key?(value.to_sym) &&
+                                       !@mapping.values.include?(value)
+
         @mapping[value.to_sym] || value
       end
 
