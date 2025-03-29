@@ -6,6 +6,8 @@
 
 ## master
 
+- [PR #205](https://github.com/DmitryTsepelev/store_model/pull/205) Fix value handling for enums ([@DmitryTsepelev])
+
 ## 4.2.1 (2025-02-01)
 
 - [PR #200](https://github.com/DmitryTsepelev/store_model/pull/200) Don't use #to_h on store model instances in OnePolymorphic types ([@23tux])
