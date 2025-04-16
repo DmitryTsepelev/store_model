@@ -38,7 +38,7 @@ module StoreModel
         elsif value.class.ancestors.include?(StoreModel::Model)
           value
         elsif value.respond_to?(:to_h) # Hash itself included
-          extract_model_klass(value).new(value.to_h)
+          extract_model_klass(value).to_type.cast_value(value.to_h)
         else
           raise_cast_error(value)
         end
