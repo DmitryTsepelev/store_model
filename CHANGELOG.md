@@ -6,6 +6,8 @@
 
 ## master
 
+## 4.2.2 (2025-06-07)
+
 - [PR #208](https://github.com/DmitryTsepelev/store_model/pull/208) Allow OnePolymorphic member models to handle missing attrs ([@bengladwell])
 
 ## 4.2.1 (2025-02-01)
