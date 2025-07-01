@@ -227,6 +227,16 @@ RSpec.describe StoreModel::Types::One do
         end
       end
 
+      context "when empty serialize_empty_attributes is off" do
+        before do
+          StoreModel.config.serialize_empty_attributes = false
+        end
+
+        it "does not serialize empty attributes" do
+          expect(subject).to eq(attributes.except(:model, :encrypted_serial).to_json)
+        end
+      end
+
       context "with enums" do
         context "when serialize_enums_using_as_json attribute of instance is set to true" do
           it "serializes enums by overriding the globally configured behavior" do
