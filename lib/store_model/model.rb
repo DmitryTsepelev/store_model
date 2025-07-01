@@ -45,7 +45,7 @@ module StoreModel
     # @param options [Hash]
     #
     # @return [Hash]
-    def as_json(options = {}) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def as_json(options = {}) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
       serialize_unknown_attributes = if options.key?(:serialize_unknown_attributes)
                                        options[:serialize_unknown_attributes]
                                      else
@@ -61,7 +61,8 @@ module StoreModel
       result = @attributes.keys.each_with_object({}) do |key, values|
         attr = @attributes.fetch(key)
         assign_serialization_options(attr, serialize_unknown_attributes, serialize_enums_using_as_json)
-        values[key] = serialized_attribute(attr)
+        serialized = serialized_attribute(attr)
+        values[key] = serialized unless serialized.nil?
       end.with_indifferent_access
 
       result.merge!(unknown_attributes) if serialize_unknown_attributes
