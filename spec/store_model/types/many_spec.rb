@@ -217,6 +217,20 @@ RSpec.describe StoreModel::Types::Many do
         end
       end
 
+      context "when empty serialize_empty_attributes is off" do
+        before do
+          StoreModel.config.serialize_empty_attributes = false
+        end
+
+        let(:expected_attributes_array) do
+          attributes_array.map { |attrs| attrs.except(:model, :encrypted_serial) }
+        end
+
+        it "does not serialize empty attributes" do
+          expect(subject).to eq(expected_attributes_array.to_json)
+        end
+      end
+
       context "with enums" do
         context "when serialize_enums_using_as_json attribute of instances is set to true" do
           it "serializes enums by overriding the globally configured behavior" do

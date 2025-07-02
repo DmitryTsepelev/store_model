@@ -15,6 +15,10 @@ module StoreModel
     # @return [Boolean]
     attr_accessor :serialize_unknown_attributes
 
+    # Controls if the result of `as_json` will contain the nulls attributes of the model
+    # @return [Boolean]
+    attr_accessor :serialize_empty_attributes
+
     # Controls if the result of `as_json` will serialize enum fields using `as_json`
     # @return [Boolean]
     attr_accessor :serialize_enums_using_as_json
@@ -28,6 +32,7 @@ module StoreModel
       @serialize_unknown_attributes = true
       @enable_parent_assignment = true
       @serialize_enums_using_as_json = true
+      @serialize_empty_attributes = true
     end
   end
 end

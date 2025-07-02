@@ -204,6 +204,14 @@ RSpec.describe StoreModel::Model do
         include_examples "with unknown attributes"
       end
     end
+
+    context "when serialize_empty_attributes is off" do
+      before do
+        StoreModel.config.serialize_empty_attributes = false
+      end
+
+      it("returns correct JSON") { is_expected.to eq(attributes.except(:model, :encrypted_serial).as_json) }
+    end
   end
 
   describe "#blank?" do
