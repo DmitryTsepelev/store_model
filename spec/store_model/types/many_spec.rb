@@ -178,6 +178,14 @@ RSpec.describe StoreModel::Types::Many do
       include_examples "serialize examples"
     end
 
+    context "when nil is passed" do
+      subject { type.serialize(nil) }
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
     context "when Array of instances is passed" do
       let(:value) { attributes_array.map { |attrs| Configuration.new(attrs) } }
       include_examples "serialize examples"

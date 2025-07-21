@@ -437,6 +437,126 @@ RSpec.describe StoreModel::Model do
     end
   end
 
+  describe ".to_hash_type" do
+    subject { custom_product_class.new }
+
+    let(:custom_product_class) do
+      build_custom_product_class do
+        attribute :configuration, Configuration.to_hash_type
+      end
+    end
+
+    it "configures type using field name" do
+      expect(subject.configuration).to be_a_kind_of(Hash)
+    end
+
+    it "allows setting and getting values by key" do
+      config = Configuration.new(color: "red", model: "spaceship")
+      subject.configuration["primary"] = config
+
+      expect(subject.configuration["primary"]).to eq(config)
+      expect(subject.configuration["primary"].color).to eq("red")
+      expect(subject.configuration["primary"].model).to eq("spaceship")
+    end
+
+    it "serializes and deserializes correctly" do
+      subject.configuration["primary"] = Configuration.new(color: "red")
+      subject.configuration["secondary"] = Configuration.new(color: "blue")
+
+      subject.save!
+      subject.reload
+
+      expect(subject.configuration["primary"].color).to eq("red")
+      expect(subject.configuration["secondary"].color).to eq("blue")
+    end
+  end
+
+  describe ".to_hash_type with StoreModel.one_of" do
+    subject { custom_product_class.new }
+
+    let(:configuration_v1) do
+      Class.new do
+        include StoreModel::Model
+        attribute :version, :string, default: "v1"
+        attribute :color, :string
+      end
+    end
+
+    let(:configuration_v2) do
+      Class.new do
+        include StoreModel::Model
+        attribute :version, :string, default: "v2"
+        attribute :color, :string
+        attribute :size, :string
+      end
+    end
+
+    let(:custom_product_class) do
+      config_v1 = configuration_v1
+      config_v2 = configuration_v2
+
+      build_custom_product_class do
+        attribute :configuration, StoreModel.one_of { |json|
+          (json[:version] || json["version"]) == "v2" ? config_v2 : config_v1
+        }.to_hash_type
+      end
+    end
+
+    it "configures polymorphic hash type" do
+      expect(subject.configuration).to be_a_kind_of(Hash)
+    end
+
+    it "allows setting different model types by key" do
+      config_v1 = configuration_v1.new(version: "v1", color: "red")
+      config_v2 = configuration_v2.new(version: "v2", color: "blue", size: "large")
+
+      subject.configuration["old"] = config_v1
+      subject.configuration["new"] = config_v2
+
+      expect(subject.configuration["old"]).to eq(config_v1)
+      expect(subject.configuration["old"]).to be_a(configuration_v1)
+      expect(subject.configuration["old"].color).to eq("red")
+
+      expect(subject.configuration["new"]).to eq(config_v2)
+      expect(subject.configuration["new"]).to be_a(configuration_v2)
+      expect(subject.configuration["new"].color).to eq("blue")
+      expect(subject.configuration["new"].size).to eq("large")
+    end
+
+    it "serializes and deserializes polymorphic models correctly" do
+      subject.configuration["v1_config"] = configuration_v1.new(version: "v1", color: "green")
+      subject.configuration["v2_config"] = configuration_v2.new(version: "v2", color: "yellow", size: "medium")
+
+      subject.save!
+      subject.reload
+
+      v1_config = subject.configuration["v1_config"]
+      expect(v1_config.class.ancestors).to include(StoreModel::Model)
+      expect(v1_config.version).to eq("v1")
+      expect(v1_config.color).to eq("green")
+
+      v2_config = subject.configuration["v2_config"]
+      expect(v2_config.class.ancestors).to include(StoreModel::Model)
+      expect(v2_config.version).to eq("v2")
+      expect(v2_config.color).to eq("yellow")
+      expect(v2_config.size).to eq("medium")
+    end
+
+    it "casts hash values when assigning whole attribute" do
+      subject.configuration = {
+        "v1_item" => { version: "v1", color: "red" },
+        "v2_item" => { version: "v2", color: "blue", size: "small" }
+      }
+
+      expect(subject.configuration["v1_item"]).to be_a(configuration_v1)
+      expect(subject.configuration["v1_item"].color).to eq("red")
+
+      expect(subject.configuration["v2_item"]).to be_a(configuration_v2)
+      expect(subject.configuration["v2_item"].color).to eq("blue")
+      expect(subject.configuration["v2_item"].size).to eq("small")
+    end
+  end
+
   describe "#has_attribute?" do
     let(:attribute) { :color }
     subject { Configuration.new.has_attribute?(attribute) }

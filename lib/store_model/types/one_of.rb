@@ -18,6 +18,10 @@ module StoreModel
       def to_array_type
         Types::ManyPolymorphic.new(@block)
       end
+
+      def to_hash_type
+        Types::HashPolymorphic.new(@block)
+      end
     end
   end
 end

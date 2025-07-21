@@ -53,7 +53,7 @@ module StoreModel
       #
       # @return [String] serialized value
       def serialize(value)
-        return super unless value.is_a?(Hash) || implements_model?(value.class)
+        return super unless value.is_a?(::Hash) || implements_model?(value.class)
 
         if value.is_a?(StoreModel::Model)
           ActiveSupport::JSON.encode(
