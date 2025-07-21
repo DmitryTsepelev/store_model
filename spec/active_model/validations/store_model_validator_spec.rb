@@ -468,4 +468,296 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
       end
     end
   end
+
+  context "with a hash type" do
+    context "with store_model validator" do
+      let(:custom_product_class) do
+        build_custom_product_class do
+          attribute :configurations, Configuration.to_hash_type
+          validates :configurations, store_model: true
+        end
+      end
+
+      context "when hash is empty" do
+        let(:attributes) { { configurations: {} } }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when all hash values are valid" do
+        let(:attributes) do
+          {
+            configurations: {
+              "primary" => Configuration.new(color: "red"),
+              "secondary" => Configuration.new(color: "blue")
+            }
+          }
+        end
+
+        it { is_expected.to be_valid }
+
+        it "returns correct error messages" do
+          expect(subject.errors.messages).to eq({})
+          expect(subject.errors.full_messages).to eq([])
+        end
+      end
+
+      context "when some hash values are invalid" do
+        let(:attributes) do
+          {
+            configurations: {
+              "primary" => Configuration.new(color: "red"),
+              "secondary" => Configuration.new
+            }
+          }
+        end
+
+        it { is_expected.to be_invalid }
+
+        it "returns correct error messages" do
+          expect(subject.errors.messages).to eq(configurations: ["is invalid"])
+          expect(subject.errors.full_messages).to eq(["Configurations is invalid"])
+
+          expect(subject.configurations["secondary"].errors.messages).to eq(color: ["can't be blank"])
+          expect(subject.configurations["secondary"].errors.full_messages).to eq(["Color can't be blank"])
+        end
+      end
+
+      context "when multiple hash values are invalid" do
+        let(:attributes) do
+          {
+            configurations: {
+              "primary" => Configuration.new,
+              "secondary" => Configuration.new,
+              "tertiary" => Configuration.new
+            }
+          }
+        end
+
+        it { is_expected.to be_invalid }
+
+        it "returns correct error messages" do
+          expect(subject.errors.messages).to eq(configurations: ["is invalid"])
+          expect(subject.errors.full_messages).to eq(["Configurations is invalid"])
+
+          expect(subject.configurations["primary"].errors.messages).to eq(color: ["can't be blank"])
+          expect(subject.configurations["secondary"].errors.messages).to eq(color: ["can't be blank"])
+          expect(subject.configurations["tertiary"].errors.messages).to eq(color: ["can't be blank"])
+        end
+      end
+
+      context "when hash is nil" do
+        let(:attributes) { { configurations: nil } }
+
+        it { is_expected.to be_invalid }
+
+        it "is invalid because configurations is blank" do
+          expect(subject.errors.messages).to eq(configurations: ["can't be blank"])
+          expect(subject.errors.full_messages).to eq(["Configurations can't be blank"])
+        end
+      end
+
+      context "with merge_hash_errors: true" do
+        let(:custom_product_class) do
+          build_custom_product_class do
+            attribute :configurations, Configuration.to_hash_type
+            validates :configurations, store_model: { merge_hash_errors: true }
+          end
+        end
+
+        context "when some hash values are invalid" do
+          let(:attributes) do
+            {
+              configurations: {
+                "primary" => Configuration.new(color: "red"),
+                "secondary" => Configuration.new
+              }
+            }
+          end
+
+          it { is_expected.to be_invalid }
+
+          it "returns correct error messages" do
+            expect(subject.errors.messages).to eq(
+              configurations: [
+                "[secondary] Color can't be blank"
+              ]
+            )
+            expect(subject.errors.full_messages).to eq(
+              [
+                "Configurations [secondary] Color can't be blank"
+              ]
+            )
+          end
+        end
+
+        context "when multiple hash values are invalid" do
+          let(:attributes) do
+            {
+              configurations: {
+                "primary" => Configuration.new,
+                "secondary" => Configuration.new,
+                "tertiary" => Configuration.new
+              }
+            }
+          end
+
+          it { is_expected.to be_invalid }
+
+          it "returns correct error messages" do
+            expect(subject.errors.messages).to eq(
+              configurations: [
+                "[primary] Color can't be blank",
+                "[secondary] Color can't be blank",
+                "[tertiary] Color can't be blank"
+              ]
+            )
+            expect(subject.errors.full_messages).to eq(
+              [
+                "Configurations [primary] Color can't be blank",
+                "Configurations [secondary] Color can't be blank",
+                "Configurations [tertiary] Color can't be blank"
+              ]
+            )
+          end
+        end
+      end
+    end
+
+    context "with allow_nil: true" do
+      let(:custom_product_class) do
+        build_custom_product_class do
+          attribute :configurations, Configuration.to_hash_type
+          validates :configurations, allow_nil: true, store_model: true
+        end
+      end
+
+      context "when hash is empty" do
+        let(:attributes) { { configurations: {} } }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when hash is nil" do
+        let(:attributes) { { configurations: nil } }
+
+        it { is_expected.to be_valid }
+      end
+    end
+  end
+
+  context "with a polymorphic hash type" do
+    context "with store_model validator" do
+      let(:custom_product_class) do
+        build_custom_product_class do
+          attribute :configurations, StoreModel.one_of { |_json| Configuration }.to_hash_type
+          validates :configurations, store_model: true
+        end
+      end
+
+      context "when hash is empty" do
+        let(:attributes) { { configurations: {} } }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when all hash values are valid" do
+        let(:attributes) do
+          {
+            configurations: {
+              "primary" => Configuration.new(color: "red"),
+              "secondary" => Configuration.new(color: "blue")
+            }
+          }
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when some hash values are invalid" do
+        let(:attributes) do
+          {
+            configurations: {
+              "primary" => Configuration.new(color: "red"),
+              "secondary" => Configuration.new
+            }
+          }
+        end
+
+        it { is_expected.to be_invalid }
+
+        it "returns correct error messages" do
+          expect(subject.errors.messages).to eq(configurations: ["is invalid"])
+          expect(subject.errors.full_messages).to eq(["Configurations is invalid"])
+        end
+      end
+
+      context "when hash is nil" do
+        let(:attributes) { { configurations: nil } }
+
+        it { is_expected.to be_invalid }
+
+        it "is invalid because configurations is blank" do
+          expect(subject.errors.messages).to eq(configurations: ["can't be blank"])
+          expect(subject.errors.full_messages).to eq(["Configurations can't be blank"])
+        end
+      end
+
+      context "with merge_hash_errors: true" do
+        let(:custom_product_class) do
+          build_custom_product_class do
+            attribute :configurations, StoreModel.one_of { |_json| Configuration }.to_hash_type
+            validates :configurations, store_model: { merge_hash_errors: true }
+          end
+        end
+
+        context "when some hash values are invalid" do
+          let(:attributes) do
+            {
+              configurations: {
+                "primary" => Configuration.new(color: "red"),
+                "secondary" => Configuration.new
+              }
+            }
+          end
+
+          it { is_expected.to be_invalid }
+
+          it "returns correct error messages" do
+            expect(subject.errors.messages).to eq(
+              configurations: [
+                "[secondary] Color can't be blank"
+              ]
+            )
+            expect(subject.errors.full_messages).to eq(
+              [
+                "Configurations [secondary] Color can't be blank"
+              ]
+            )
+          end
+        end
+      end
+    end
+
+    context "with allow_nil: true" do
+      let(:custom_product_class) do
+        build_custom_product_class do
+          attribute :configurations, StoreModel.one_of { |_json| Configuration }.to_hash_type
+          validates :configurations, allow_nil: true, store_model: true
+        end
+      end
+
+      context "when hash is empty" do
+        let(:attributes) { { configurations: {} } }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when hash is nil" do
+        let(:attributes) { { configurations: nil } }
+
+        it { is_expected.to be_valid }
+      end
+    end
+  end
 end

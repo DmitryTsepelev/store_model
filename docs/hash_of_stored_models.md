@@ -97,7 +97,26 @@ end
 product = Product.new
 product.configurations["invalid"] = Configuration.new(color: nil)
 product.valid? # => false
-product.errors.full_messages # => ["Configurations[invalid] color can't be blank"]
+product.errors.full_messages # => ["Configurations is invalid"]
+```
+
+#### Using merge_hash_errors
+
+By default, hash validation errors are reported generically. You can use the `merge_hash_errors` option to get more detailed error messages that include the hash key:
+
+```ruby
+class Product < ApplicationRecord
+  attribute :configurations, Configuration.to_hash_type
+  validates :configurations, store_model: { merge_hash_errors: true }
+end
+
+product = Product.new
+product.configurations["primary"] = Configuration.new(color: nil)
+product.configurations["secondary"] = Configuration.new(color: nil)
+product.valid? # => false
+product.errors.full_messages 
+# => ["Configurations [primary] Color can't be blank", 
+#     "Configurations [secondary] Color can't be blank"]
 ```
 
 ### Important Notes
