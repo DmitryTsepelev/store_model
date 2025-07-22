@@ -6,6 +6,7 @@ ActiveRecord::Schema.define(version: 2019_02_216_153105) do
     t.references :store, null: true
     t.json :configuration, default: {}
     t.json :product_configuration, default: {}
+    t.json :union_test, default: nil
   end
 
   create_table :stores do |t|
