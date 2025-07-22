@@ -131,6 +131,7 @@ end
   * [Enums](./docs/enums.md)
   * [Nested models](./docs/nested_models.md)
   * [Unknown attributes](./docs/unknown_attributes.md)
+  * [Empty attributes](./docs/empty_attributes.md)
 3. [Array of stored models](./docs/array_of_stored_models.md)
 4. [One of](./docs/one_of.md)
 4. [Alternatives](./docs/alternatives.md)
