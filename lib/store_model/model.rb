@@ -37,7 +37,7 @@ module StoreModel
       # @param discriminator [Symbol, String] attribute name (default: :type)
       # @param type [Symbol, String] attribute type (default: :string)
       # @param value [String] the discriminator value
-      def discriminator_attribute(discriminator = "type", type: :string, value:)
+      def discriminator_attribute(discriminator = "type", value:, type: :string)
         attribute discriminator, type, default: value
       end
     end

@@ -232,6 +232,108 @@ RSpec.describe "StoreModel.union ActiveRecord Integration" do
     end
   end
 
+  describe "array of union types" do
+    before do
+      stub_const("DogPet", Class.new do
+        include StoreModel::Model
+
+        discriminator_attribute :animal_type, value: "dog"
+        attribute :breed, :string
+        attribute :good_boy, :boolean, default: true
+      end)
+
+      stub_const("CatPet", Class.new do
+        include StoreModel::Model
+
+        discriminator_attribute :animal_type, value: "cat"
+        attribute :color, :string
+        attribute :indoor, :boolean, default: true
+      end)
+
+      stub_const("BirdPet", Class.new do
+        include StoreModel::Model
+
+        discriminator_attribute :animal_type, value: "bird"
+        attribute :species, :string
+        attribute :can_fly, :boolean, default: true
+      end)
+    end
+
+    let(:pet_union) { StoreModel.union([DogPet, CatPet, BirdPet], discriminator: "animal_type") }
+
+    let(:store_class) do
+      union = pet_union
+      Class.new(Store) do
+        attribute :bicycles, union.to_array_type
+      end
+    end
+
+    it "handles array of mixed union types" do
+      pets_data = [
+        { animal_type: "dog", breed: "Golden Retriever", good_boy: true },
+        { animal_type: "cat", color: "orange", indoor: false },
+        { animal_type: "bird", species: "Parrot", can_fly: true },
+        { animal_type: "dog", breed: "Poodle", good_boy: false }
+      ]
+
+      store = store_class.create!(bicycles: pets_data)
+      reloaded = store_class.find(store.id)
+
+      expect(reloaded.bicycles.size).to eq(4)
+
+      expect(reloaded.bicycles[0]).to be_a(DogPet)
+      expect(reloaded.bicycles[0].breed).to eq("Golden Retriever")
+      expect(reloaded.bicycles[0].good_boy).to eq(true)
+
+      expect(reloaded.bicycles[1]).to be_a(CatPet)
+      expect(reloaded.bicycles[1].color).to eq("orange")
+      expect(reloaded.bicycles[1].indoor).to eq(false)
+
+      expect(reloaded.bicycles[2]).to be_a(BirdPet)
+      expect(reloaded.bicycles[2].species).to eq("Parrot")
+      expect(reloaded.bicycles[2].can_fly).to eq(true)
+
+      expect(reloaded.bicycles[3]).to be_a(DogPet)
+      expect(reloaded.bicycles[3].breed).to eq("Poodle")
+      expect(reloaded.bicycles[3].good_boy).to eq(false)
+    end
+
+    it "handles empty array" do
+      store = store_class.create!(bicycles: [])
+      reloaded = store_class.find(store.id)
+
+      expect(reloaded.bicycles).to eq([])
+    end
+
+    it "handles array with StoreModel instances" do
+      pets = [
+        DogPet.new(breed: "Husky"),
+        CatPet.new(color: "black"),
+        BirdPet.new(species: "Eagle", can_fly: true)
+      ]
+
+      store = store_class.create!(bicycles: pets)
+      reloaded = store_class.find(store.id)
+
+      expect(reloaded.bicycles.size).to eq(3)
+      expect(reloaded.bicycles[0]).to be_a(DogPet)
+      expect(reloaded.bicycles[0].breed).to eq("Husky")
+      expect(reloaded.bicycles[1]).to be_a(CatPet)
+      expect(reloaded.bicycles[1].color).to eq("black")
+      expect(reloaded.bicycles[2]).to be_a(BirdPet)
+      expect(reloaded.bicycles[2].species).to eq("Eagle")
+    end
+
+    it "raises error for unknown discriminator in array" do
+      expect do
+        store_class.create!(bicycles: [
+                              { animal_type: "dog", breed: "Lab" },
+                              { animal_type: "unknown_animal", name: "Mystery" }
+                            ])
+      end.to raise_error(ArgumentError, "Unknown discriminator value for union: unknown_animal")
+    end
+  end
+
   describe "missing discriminator validation" do
     it "raises error when discriminator attribute is not defined" do
       stub_const("NoDiscriminator", Class.new do
