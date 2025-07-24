@@ -32,6 +32,14 @@ module StoreModel
       def from_values(values)
         to_array_type.cast_value(values)
       end
+
+      # Defines a discriminator attribute with a value
+      # @param discriminator [Symbol, String] attribute name (default: :type)
+      # @param type [Symbol, String] attribute type (default: :string)
+      # @param value [String] the discriminator value
+      def discriminator_attribute(discriminator = "type", value:, type: :string)
+        attribute discriminator, type, default: value
+      end
     end
 
     attr_accessor :parent
