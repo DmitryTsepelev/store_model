@@ -6,6 +6,12 @@
 
 ## master
 
+## 4.3.0 (2025-07-26)
+
+- [PR #214](https://github.com/DmitryTsepelev/store_model/pull/214) Union types: Convenience layer over OneOf ([@mikebaldry])
+- [PR #213](https://github.com/DmitryTsepelev/store_model/pull/213) Add hash type support for storing keyed collections of StoreModel objects ([@mikebaldry])
+- [PR #212](https://github.com/DmitryTsepelev/store_model/pull/212) Skip missing attributes ([@dmitrytrager])
+
 ## 4.2.2 (2025-06-07)
 
 - [PR #208](https://github.com/DmitryTsepelev/store_model/pull/208) Allow OnePolymorphic member models to handle missing attrs ([@bengladwell])
@@ -266,3 +272,5 @@
 [@balbesina]: https://github.com/balbesina
 [@evaniainbrooks]: https://github.com/evaniainbrooks
 [@23tux]: https://github.com/23tux
+[@mikebaldry]: https://github.com/mikebaldry
+[@dmitrytrager]: https://github.com/dmitrytrager
