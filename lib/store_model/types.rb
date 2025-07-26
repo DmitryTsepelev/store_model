@@ -11,6 +11,10 @@ require "store_model/types/many_base"
 require "store_model/types/many"
 require "store_model/types/many_polymorphic"
 
+require "store_model/types/hash_base"
+require "store_model/types/hash"
+require "store_model/types/hash_polymorphic"
+
 require "store_model/types/enum_type"
 
 require "store_model/types/one_of"

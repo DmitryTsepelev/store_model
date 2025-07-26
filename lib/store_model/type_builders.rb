@@ -14,5 +14,11 @@ module StoreModel
     def to_array_type
       Types::Many.new(self)
     end
+
+    # Converts StoreModel::Model to Types::Hash
+    # @return [Types::Hash]
+    def to_hash_type
+      Types::Hash.new(self)
+    end
   end
 end

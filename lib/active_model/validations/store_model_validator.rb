@@ -14,6 +14,7 @@ module ActiveModel
       # @param record [ApplicationRecord] object to validate
       # @param attribute [String] name of the validated attribute
       # @param value [Object] value of the validated attribute
+      # rubocop:disable Metrics/MethodLength
       def validate_each(record, attribute, value)
         if value.nil?
           record.errors.add(attribute, :blank)
@@ -25,8 +26,11 @@ module ActiveModel
           call_json_strategy(record, attribute, value)
         when :array, :polymorphic_array
           call_array_strategy(record, attribute, value)
+        when :hash, :polymorphic_hash
+          call_hash_strategy(record, attribute, value)
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       private
 
@@ -39,12 +43,21 @@ module ActiveModel
         array_strategy.call(attribute, record.errors, value) if any_invalid
       end
 
+      def call_hash_strategy(record, attribute, value)
+        invalid_values = value.select { |_k, v| v.invalid?(record.validation_context) }
+        hash_strategy.call(attribute, record.errors, invalid_values) if invalid_values.present?
+      end
+
       def strategy
         @strategy ||= StoreModel::CombineErrorsStrategies.configure(options)
       end
 
       def array_strategy
         @array_strategy ||= StoreModel::CombineErrorsStrategies.configure_array(options)
+      end
+
+      def hash_strategy
+        @hash_strategy ||= StoreModel::CombineErrorsStrategies.configure_hash(options)
       end
     end
   end

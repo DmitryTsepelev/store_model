@@ -56,7 +56,7 @@ module StoreModel
           ActiveSupport::JSON.encode(value,
                                      serialize_unknown_attributes: value.serialize_unknown_attributes?,
                                      serialize_enums_using_as_json: value.serialize_enums_using_as_json?)
-        when Hash
+        when ::Hash
           ActiveSupport::JSON.encode(value)
         else
           super
@@ -75,7 +75,7 @@ module StoreModel
         when String
           payload = ActiveSupport::JSON.decode(value) rescue {}
           model_instance(deserialize_by_types(payload))
-        when Hash
+        when ::Hash
           model_instance(deserialize_by_types(value))
         when nil
           nil

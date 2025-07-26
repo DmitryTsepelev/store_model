@@ -11,6 +11,10 @@ module StoreModel
     # @return [Boolean]
     attr_accessor :merge_array_errors
 
+    # Controls usage of MergeHashErrorStrategy
+    # @return [Boolean]
+    attr_accessor :merge_hash_errors
+
     # Controls if the result of `as_json` will contain the unknown attributes of the model
     # @return [Boolean]
     attr_accessor :serialize_unknown_attributes

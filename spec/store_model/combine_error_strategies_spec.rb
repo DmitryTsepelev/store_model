@@ -75,4 +75,38 @@ RSpec.describe StoreModel::CombineErrorsStrategies do
       it { is_expected.to eq(LAMBDA_FHTAGN_STRATEGY) }
     end
   end
+
+  describe ".configure_hash" do
+    subject { described_class.configure_hash(options) }
+
+    context "when empty hash is passed" do
+      let(:options) { {} }
+
+      it { is_expected.to be_a(StoreModel::CombineErrorsStrategies::MarkInvalidErrorStrategy) }
+    end
+
+    context "when true is passed" do
+      let(:options) { { merge_hash_errors: true } }
+
+      it { is_expected.to be_a(StoreModel::CombineErrorsStrategies::MergeHashErrorStrategy) }
+    end
+
+    context "when custom strategy class name is passed" do
+      let(:options) { { merge_hash_errors: :fhtagn_error_strategy } }
+
+      it { is_expected.to be_a(FhtagnErrorStrategy) }
+    end
+
+    context "when instance of custom strategy class is passed" do
+      let(:options) { { merge_hash_errors: FhtagnErrorStrategy.new } }
+
+      it { is_expected.to be_a(FhtagnErrorStrategy) }
+    end
+
+    context "when labmda is passed" do
+      let(:options) { { merge_hash_errors: LAMBDA_FHTAGN_STRATEGY } }
+
+      it { is_expected.to eq(LAMBDA_FHTAGN_STRATEGY) }
+    end
+  end
 end

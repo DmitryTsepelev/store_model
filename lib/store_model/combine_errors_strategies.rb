@@ -3,6 +3,7 @@
 require "store_model/combine_errors_strategies/mark_invalid_error_strategy"
 require "store_model/combine_errors_strategies/merge_error_strategy"
 require "store_model/combine_errors_strategies/merge_array_error_strategy"
+require "store_model/combine_errors_strategies/merge_hash_error_strategy"
 
 module StoreModel
   # Module with built-in strategies for combining errors.
@@ -34,6 +35,20 @@ module StoreModel
       get_configured_strategy(
         configured_strategy,
         StoreModel::CombineErrorsStrategies::MergeArrayErrorStrategy
+      )
+    end
+
+    # Finds a hash strategy based on +options+ and global config.
+    #
+    # @param options [Hash]
+    #
+    # @return [Object] strategy
+    def configure_hash(options)
+      configured_strategy = options[:merge_hash_errors] || StoreModel.config.merge_hash_errors
+
+      get_configured_strategy(
+        configured_strategy,
+        StoreModel::CombineErrorsStrategies::MergeHashErrorStrategy
       )
     end
 
