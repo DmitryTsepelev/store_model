@@ -125,7 +125,7 @@ end
 ## Documentation
 
 1. [Installation](./docs/installation.md)
-2. StoreModel::Model API:
+2. `StoreModel::Model` API:
   * [Instantiation](./docs/instantiation.md)
   * [Validations](./docs/validations.md)
   * [Enums](./docs/enums.md)
