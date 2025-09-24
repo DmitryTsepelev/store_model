@@ -276,6 +276,25 @@ RSpec.describe StoreModel::Model do
       end
     end
 
+    shared_examples "for hash type" do
+      it "returns parent instance" do
+        if StoreModel.config.enable_parent_assignment
+          expect(subject.configuration[:foo].parent).to eq(subject)
+        else
+          expect(subject.configuration[:foo].parent).to be_nil
+        end
+      end
+
+      it "updates parent after assignment" do
+        subject.configuration = { "foo" => configuration }
+        if StoreModel.config.enable_parent_assignment
+          expect(configuration.parent).to eq(subject)
+        else
+          expect(configuration.parent).to be_nil
+        end
+      end
+    end
+
     context "json" do
       subject { custom_parent_class.new }
 
@@ -327,6 +346,32 @@ RSpec.describe StoreModel::Model do
         end
 
         include_examples "for array type"
+      end
+    end
+
+    context "hash" do
+      subject { custom_parent_class.new(configuration: { foo: { bar: :baz } }) }
+
+      context "activerecord model parent" do
+        let(:custom_parent_class) do
+          build_custom_product_class do
+            attribute :configuration, Configuration.to_hash_type
+          end
+        end
+
+        include_examples "for hash type"
+      end
+
+      context "store model parent" do
+        let(:custom_parent_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :configuration, Configuration.to_hash_type
+          end
+        end
+
+        include_examples "for hash type"
       end
     end
   end
