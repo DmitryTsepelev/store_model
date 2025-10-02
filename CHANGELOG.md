@@ -6,6 +6,8 @@
 
 ## master
 
+- [PR #218](https://github.com/DmitryTsepelev/store_model/pull/218) Handle hash types on parent assignment ([@MatheusRich])
+
 ## 4.3.0 (2025-07-26)
 
 - [PR #214](https://github.com/DmitryTsepelev/store_model/pull/214) Union types: Convenience layer over OneOf ([@mikebaldry])
@@ -274,3 +276,4 @@
 [@23tux]: https://github.com/23tux
 [@mikebaldry]: https://github.com/mikebaldry
 [@dmitrytrager]: https://github.com/dmitrytrager
+[@MatheusRich]: https://github.com/MatheusRich
