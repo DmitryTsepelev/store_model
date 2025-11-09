@@ -23,13 +23,19 @@ class Product < ApplicationRecord
 end
 ```
 
-When attribute is invalid, errors are not copied to the parent model by default:
+When attribute is invalid, error messaes are not copied to the parent model by default:
 
 ```ruby
 product = Product.new
 puts product.valid? # => false
 puts product.errors.messages # => { configuration: ["is invalid"] }
 puts product.configuration.errors.messages # => { color: ["can't be blank"] }
+```
+
+The errors object itself is still available in the error's details:
+
+```ruby
+puts product.errors.details[:configuration].first.messages # => { color: ["can't be blank"] }
 ```
 
 You can change this behavior to have these errors on the root level (instead of `["is invalid"]`):

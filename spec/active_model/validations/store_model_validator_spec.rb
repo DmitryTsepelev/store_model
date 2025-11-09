@@ -10,6 +10,10 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
 
       expect(subject.configuration.errors.messages).to eq(color: ["can't be blank"])
       expect(subject.configuration.errors.full_messages).to eq(["Color can't be blank"])
+
+      details = subject.errors.details[:configuration].first
+      expect(details[:errors]).to be_a ActiveModel::Errors
+      expect(details[:errors].messages).to eq(color: ["can't be blank"])
     end
   end
 
