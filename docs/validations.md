@@ -23,7 +23,7 @@ class Product < ApplicationRecord
 end
 ```
 
-When attribute is invalid, error messaes are not copied to the parent model by default:
+When attribute is invalid, error messages are not copied to the parent model by default:
 
 ```ruby
 product = Product.new
