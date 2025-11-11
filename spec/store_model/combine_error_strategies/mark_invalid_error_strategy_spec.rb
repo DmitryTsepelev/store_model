@@ -24,5 +24,9 @@ RSpec.describe StoreModel::CombineErrorsStrategies::MarkInvalidErrorStrategy do
 
     expect(record.configuration.errors.messages).to eq(color: ["can't be blank"])
     expect(record.configuration.errors.full_messages).to eq(["Color can't be blank"])
+
+    details = record.errors.details[:configuration].first
+    expect(details[:errors]).to be_a ActiveModel::Errors
+    expect(details[:errors].messages).to eq(color: ["can't be blank"])
   end
 end

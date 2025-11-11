@@ -7,6 +7,7 @@
 ## master
 
 - [PR #218](https://github.com/DmitryTsepelev/store_model/pull/218) Handle hash types on parent assignment ([@MatheusRich])
+- [PR #219](https://github.com/DmitryTsepelev/store_model/pull/219) Add nested errors object as error's options/details ([@zverok])
 
 ## 4.3.0 (2025-07-26)
 
@@ -277,3 +278,4 @@
 [@mikebaldry]: https://github.com/mikebaldry
 [@dmitrytrager]: https://github.com/dmitrytrager
 [@MatheusRich]: https://github.com/MatheusRich
+[@zverok]: https://github.com/zverok
