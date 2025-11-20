@@ -93,6 +93,16 @@ RSpec.describe StoreModel::Model do
         expect(subject.configuration).to have_attributes(attributes.to_h)
       end
     end
+
+    if ActiveModel::VERSION::MAJOR >= 8 && ActiveModel::VERSION::MINOR >= 1
+      context "when normalization available" do
+        subject { Bicycle.new(sku: "foobar") }
+
+        it("calls given normalizer") do
+          expect(subject.sku).to eq("FOOBAR")
+        end
+      end
+    end
   end
 
   describe "#fetch" do
