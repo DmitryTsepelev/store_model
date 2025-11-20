@@ -8,12 +8,17 @@ require "store_model/nested_attributes"
 module StoreModel
   # When included into class configures it to handle JSON column
   module Model # rubocop:disable Metrics/ModuleLength
+    # rubocop:disable Metrics/MethodLength
     def self.included(base) # :nodoc:
       base.include ActiveModel::Model
       base.include ActiveModel::Attributes
       base.include ActiveRecord::AttributeMethods::BeforeTypeCast
       base.include ActiveModel::AttributeMethods
       base.include StoreModel::NestedAttributes
+
+      if ActiveModel::VERSION::MAJOR >= 8 && ActiveModel::VERSION::MINOR >= 1
+        base.include ActiveModel::Attributes::Normalization
+      end
 
       base.extend StoreModel::Enum
       base.extend StoreModel::TypeBuilders
@@ -22,6 +27,7 @@ module StoreModel
 
       base.extend(ClassMethods)
     end
+    # rubocop:enable Metrics/MethodLength
 
     # Class methods for StoreModel::Model
     module ClassMethods
