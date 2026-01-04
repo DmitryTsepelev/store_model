@@ -19,5 +19,5 @@ jobs:
         ruby-version: 3.0
     - name: Lint Ruby code with RuboCop
       run: |
-        bundle install --gemfile gemfiles/rails_7_0.gemfile --jobs 4 --retry 3
-        bundle exec --gemfile gemfiles/rails_7_0.gemfile rubocop
+        bundle install --gemfile gemfiles/rails_8_0.gemfile --jobs 4 --retry 3
+        bundle exec --gemfile gemfiles/rails_8_0.gemfile rubocop
