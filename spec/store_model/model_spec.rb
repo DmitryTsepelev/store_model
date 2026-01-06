@@ -719,7 +719,7 @@ RSpec.describe StoreModel::Model do
 
   describe ".before_validation and .after_validation" do
     subject do
-      class CustomConfiguration
+      class ValidationHooksConfiguration
         include StoreModel::Model
 
         attribute :motion, :string
@@ -741,14 +741,14 @@ RSpec.describe StoreModel::Model do
       end
 
       class Product < ActiveRecord::Base
-        attribute :configuration, CustomConfiguration.to_type
-        validates :configuration, store_model: true
+        attribute :validation_hooks_configuration, ValidationHooksConfiguration.to_type
+        validates :validation_hooks_configuration, store_model: true
       end
 
-      configuration = CustomConfiguration.new(motion: motion)
-      product = Product.create!(configuration: configuration)
+      configuration = ValidationHooksConfiguration.new(motion: motion)
+      product = Product.create!(validation_hooks_configuration: configuration)
 
-      product.configuration.motion
+      product.validation_hooks_configuration.motion
     end
 
     let(:motion_result) { motion.strip.capitalize }
