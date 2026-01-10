@@ -140,3 +140,33 @@ class Product < ApplicationRecord
   validates :configuration, store_model: true, allow_nil: true
 end
 ```
+
+Can add `before_validation` and `after_validation` hooks:
+```ruby
+class Configuration
+  include StoreModel::Model
+
+  attribute :motion, :string
+
+  validates :motion, presence: true
+
+  before_validation :set_before_motion
+  after_validation :set_after_motion
+
+  private
+
+  def set_before_motion
+    self.motion = motion&.strip
+  end
+
+  def set_after_motion
+    self.motion = motion&.capitalize
+  end
+end
+
+class Product < ActiveRecord::Base
+  attribute :configuration, Configuration.to_type
+
+  validates :configuration, store_model: true
+end
+```

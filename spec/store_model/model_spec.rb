@@ -716,4 +716,53 @@ RSpec.describe StoreModel::Model do
       it { is_expected.to eq(false) }
     end
   end
+
+  describe ".before_validation and .after_validation" do
+    subject do
+      class ValidationHooksConfiguration
+        include StoreModel::Model
+
+        attribute :motion, :string
+
+        validates :motion, presence: true
+
+        before_validation :set_before_motion
+        after_validation :set_after_motion
+
+        private
+
+        def set_before_motion
+          self.motion = motion&.strip
+        end
+
+        def set_after_motion
+          self.motion = motion&.capitalize
+        end
+      end
+
+      class Product < ActiveRecord::Base
+        attribute :validation_hooks_configuration, ValidationHooksConfiguration.to_type
+        validates :validation_hooks_configuration, store_model: true
+      end
+
+      configuration = ValidationHooksConfiguration.new(motion: motion)
+      product = Product.create!(validation_hooks_configuration: configuration)
+
+      product.validation_hooks_configuration.motion
+    end
+
+    let(:motion_result) { motion.strip.capitalize }
+
+    context "when motion string has whitespaces at the beginning and ending" do
+      let(:motion) { "  Run, Forrest, Run!  " }
+
+      it { is_expected.to eq(motion_result) }
+    end
+
+    context "when motion string has not whitespaces at the beginning and ending" do
+      let(:motion) { "Some motion" }
+
+      it { is_expected.to eq(motion_result) }
+    end
+  end
 end
