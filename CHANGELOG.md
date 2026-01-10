@@ -2,9 +2,11 @@
 
 # 5.0.0 (eventually)
 
-- TODO: change parent tracking default (https://github.com/DmitryTsepelev/store_model/issues/183
+- TODO: change parent tracking default (https://github.com/DmitryTsepelev/store_model/issues/183)
 
 ## master
+
+- [PR #223](https://github.com/DmitryTsepelev/store_model/pull/223) Add before and after validation hooks ([@killondark])
 
 ## 4.4.0 (2025-12-13 🎄)
 
@@ -283,3 +285,4 @@
 [@MatheusRich]: https://github.com/MatheusRich
 [@zverok]: https://github.com/zverok
 [@ixti]: https://github.com/ixti
+[@killondark]: https://github.com/killondark
