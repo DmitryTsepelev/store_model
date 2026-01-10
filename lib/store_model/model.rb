@@ -154,6 +154,14 @@ module StoreModel
       attributes.values.all?(&:blank?)
     end
 
+    # Always returns true for StoreModel instances.
+    # This is needed for compatibility with form builders like ActiveAdmin's has_many.
+    #
+    # @return [Boolean]
+    def new_record?
+      true
+    end
+
     # String representation of the object.
     #
     # @return [String]

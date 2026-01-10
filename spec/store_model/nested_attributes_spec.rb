@@ -562,4 +562,75 @@ RSpec.describe StoreModel::NestedAttributes do
       end
     end
   end
+
+  describe ".reflect_on_association" do
+    let(:model_class) do
+      Class.new(ActiveRecord::Base) do
+        include StoreModel::NestedAttributes
+
+        self.table_name = "products"
+
+        attribute :suppliers, Supplier.to_array_type
+        accepts_nested_attributes_for :suppliers
+      end
+    end
+
+    context "when association is a StoreModel array type" do
+      subject { model_class.reflect_on_association(:suppliers) }
+
+      it "returns a Reflection object" do
+        expect(subject).to be_a(StoreModel::NestedAttributes::Reflection)
+      end
+
+      it "returns the correct klass" do
+        expect(subject.klass).to eq(Supplier)
+      end
+
+      it "returns the correct name" do
+        expect(subject.name).to eq(:suppliers)
+      end
+
+      it "returns true for collection?" do
+        expect(subject.collection?).to eq(true)
+      end
+    end
+
+    context "when association is not registered" do
+      subject { model_class.reflect_on_association(:unknown) }
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "when accessing via symbol or string" do
+      it "works with symbol" do
+        expect(model_class.reflect_on_association(:suppliers)).to be_a(StoreModel::NestedAttributes::Reflection)
+      end
+
+      it "works with string" do
+        expect(model_class.reflect_on_association("suppliers")).to be_a(StoreModel::NestedAttributes::Reflection)
+      end
+    end
+  end
+
+  describe ".store_model_reflections" do
+    let(:model_class) do
+      Class.new(ActiveRecord::Base) do
+        include StoreModel::NestedAttributes
+
+        self.table_name = "products"
+
+        attribute :suppliers, Supplier.to_array_type
+        accepts_nested_attributes_for :suppliers
+      end
+    end
+
+    subject { model_class.store_model_reflections }
+
+    it "returns hash of reflections" do
+      expect(subject).to be_a(Hash)
+      expect(subject[:suppliers]).to be_a(StoreModel::NestedAttributes::Reflection)
+    end
+  end
 end
