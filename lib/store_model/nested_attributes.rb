@@ -7,6 +7,25 @@ module StoreModel
       base.extend ClassMethods
     end
 
+    # Reflection class for StoreModel associations.
+    # This provides compatibility with form builders like ActiveAdmin's has_many
+    # that expect ActiveRecord-style reflection objects.
+    class Reflection
+      attr_reader :klass, :name
+
+      # @param name [Symbol] association name
+      # @param klass [Class] the StoreModel class
+      def initialize(name, klass)
+        @name = name
+        @klass = klass
+      end
+
+      # @return [Boolean] always true for array types
+      def collection?
+        true
+      end
+    end
+
     module ClassMethods # :nodoc:
       # gather storemodel attribute types on the class-level
       def store_model_attribute_types
@@ -52,13 +71,37 @@ module StoreModel
           if nested_attribute_type(attribute).is_a?(Types::Base)
             options.reverse_merge!(allow_destroy: false, update_only: false)
             define_store_model_attr_accessors(attribute, options)
+            register_store_model_reflection(attribute)
           else
             super(*attribute, options)
           end
         end
       end
 
+      # Returns reflection for the given association name.
+      # This provides compatibility with form builders like ActiveAdmin's has_many.
+      #
+      # @param name [Symbol, String] association name
+      # @return [StoreModel::NestedAttributes::Reflection, nil]
+      def reflect_on_association(name)
+        store_model_reflections[name.to_sym] || super
+      end
+
+      # Returns hash of registered StoreModel reflections.
+      #
+      # @return [Hash{Symbol => StoreModel::NestedAttributes::Reflection}]
+      def store_model_reflections
+        @store_model_reflections ||= {}
+      end
+
       private
+
+      def register_store_model_reflection(attribute)
+        type = nested_attribute_type(attribute)
+        return unless type.is_a?(Types::ManyBase)
+
+        store_model_reflections[attribute.to_sym] = Reflection.new(attribute.to_sym, type.model_klass)
+      end
 
       # when db connection is not available, it becomes impossible to read attributes types from
       # ActiveModel::AttributeRegistration::ClassMethods.attribute_types, because activerecord

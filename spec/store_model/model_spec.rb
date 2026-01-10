@@ -716,4 +716,12 @@ RSpec.describe StoreModel::Model do
       it { is_expected.to eq(false) }
     end
   end
+
+  describe "#new_record?" do
+    subject { Configuration.new(attributes).new_record? }
+
+    it "returns true for form builder compatibility" do
+      is_expected.to eq(true)
+    end
+  end
 end
