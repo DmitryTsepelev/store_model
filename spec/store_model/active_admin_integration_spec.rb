@@ -125,5 +125,4 @@ RSpec.describe "ActiveAdmin Integration" do
       expect(supplier.new_record?).to be true
     end
   end
-
 end
