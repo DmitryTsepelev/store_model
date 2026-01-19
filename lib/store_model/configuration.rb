@@ -32,11 +32,19 @@ module StoreModel
     # @return [Boolean]
     attr_accessor :enable_parent_assignment
 
+    # Controls if ActiveAdmin compatibility patches are applied.
+    # When enabled, adds methods like `new_record?` and `reflect_on_association`
+    # that are expected by ActiveAdmin's form builders.
+    # Default: false
+    # @return [Boolean]
+    attr_accessor :active_admin_compatibility
+
     def initialize
       @serialize_unknown_attributes = true
       @enable_parent_assignment = true
       @serialize_enums_using_as_json = true
       @serialize_empty_attributes = true
+      @active_admin_compatibility = false
     end
   end
 end
