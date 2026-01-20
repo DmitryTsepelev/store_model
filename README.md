@@ -122,6 +122,48 @@ def supplier_params
 end
 ```
 
+### ActiveAdmin Integration
+
+If you're using [ActiveAdmin](https://activeadmin.info/), enable compatibility mode to make the `has_many` form helper work with StoreModel attributes:
+
+```ruby
+# config/initializers/store_model.rb
+StoreModel.config.active_admin_compatibility = true
+```
+
+Example usage:
+
+```ruby
+# app/models/supplier.rb
+class Supplier
+  include StoreModel::Model
+
+  attribute :title, :string
+  attribute :address, :string
+end
+
+# app/models/product.rb
+class Product < ApplicationRecord
+  include StoreModel::NestedAttributes
+
+  attribute :suppliers, Supplier.to_array_type
+  accepts_nested_attributes_for :suppliers, allow_destroy: true
+end
+
+# app/admin/products.rb
+ActiveAdmin.register Product do
+  permit_params suppliers_attributes: [:title, :address, :_destroy]
+
+  form do |f|
+    f.has_many :suppliers, allow_destroy: true do |s|
+      s.input :title
+      s.input :address
+    end
+    f.actions
+  end
+end
+```
+
 ## Documentation
 
 1. [Installation](./docs/installation.md)
