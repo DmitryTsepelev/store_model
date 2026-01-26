@@ -765,4 +765,156 @@ RSpec.describe StoreModel::Model do
       it { is_expected.to eq(motion_result) }
     end
   end
+
+  describe "frozen instances" do
+    let(:attributes) do
+      {
+        color: "red",
+        model: "spaceship",
+        active: true,
+        disabled_at: Time.new(2019, 2, 10, 12).utc,
+        type: "left"
+      }
+    end
+    let(:instance) { Configuration.new(attributes) }
+
+    before { instance.freeze }
+
+    describe "#as_json" do
+      subject { instance.as_json }
+
+      it "returns correct JSON without raising an error" do
+        expect { subject }.not_to raise_error
+        expect(subject).to be_a(Hash)
+        expect(subject["color"]).to eq("red")
+        expect(subject["model"]).to eq("spaceship")
+        expect(subject["active"]).to eq(true)
+      end
+
+      context "with options" do
+        subject { instance.as_json(only: %i[color model]) }
+
+        it "returns correct JSON with options applied" do
+          expect { subject }.not_to raise_error
+          expect(subject).to be_a(Hash)
+          expect(subject["color"]).to eq("red")
+          expect(subject["model"]).to eq("spaceship")
+          expect(subject.keys).to match_array(%w[color model])
+        end
+      end
+    end
+
+    describe "#attributes" do
+      subject { instance.attributes }
+
+      it "returns attributes hash without raising an error" do
+        expect { subject }.not_to raise_error
+        expect(subject).to be_a(Hash)
+        expect(subject["color"]).to eq("red")
+        expect(subject["model"]).to eq("spaceship")
+      end
+    end
+
+    describe "#inspect" do
+      subject { instance.inspect }
+
+      it "returns string representation without raising an error" do
+        expect { subject }.not_to raise_error
+        expect(subject).to be_a(String)
+        expect(subject).to include("Configuration")
+        expect(subject).to include("color: \"red\"")
+      end
+    end
+
+    describe "#[]" do
+      subject { instance[:color] }
+
+      it "allows attribute access without raising an error" do
+        expect { subject }.not_to raise_error
+        expect(subject).to eq("red")
+      end
+    end
+
+    describe "comparison methods" do
+      let(:other_instance) { Configuration.new(attributes) }
+
+      it "allows == comparison without raising an error" do
+        expect { instance == other_instance }.not_to raise_error
+        expect(instance == other_instance).to be true
+      end
+
+      it "allows eql? comparison without raising an error" do
+        expect { instance.eql?(other_instance) }.not_to raise_error
+        expect(instance.eql?(other_instance)).to be true
+      end
+
+      it "allows hash method without raising an error" do
+        expect { instance.hash }.not_to raise_error
+        expect(instance.hash).to eq(other_instance.hash)
+      end
+    end
+  end
+
+  describe "#as_json with frozen nested objects" do
+    let(:nested_model_class) do
+      Class.new do
+        include StoreModel::Model
+        attribute :value, :string
+      end
+    end
+
+    let(:parent_model_class) do
+      nested = nested_model_class
+      Class.new do
+        include StoreModel::Model
+        attribute :nested_items, nested.to_array_type
+      end
+    end
+
+    it "handles frozen nested objects gracefully" do
+      frozen_nested = nested_model_class.new(value: "test").freeze
+      parent = parent_model_class.new(nested_items: [frozen_nested])
+
+      # Should not raise FrozenError
+      expect { parent.as_json }.not_to raise_error
+
+      # Should still serialize correctly
+      result = parent.as_json
+      expect(result["nested_items"]).to eq([{ "value" => "test" }])
+    end
+
+    it "propagates serialization options to unfrozen nested objects" do
+      unfrozen_nested = nested_model_class.new(value: "test")
+      parent = parent_model_class.new(nested_items: [unfrozen_nested])
+
+      parent.as_json(serialize_unknown_attributes: true)
+
+      # Verify options were propagated to unfrozen object
+      expect(unfrozen_nested.instance_variable_get(:@serialize_unknown_attributes)).to eq(true)
+    end
+
+    it "skips option propagation for frozen nested objects" do
+      frozen_nested = nested_model_class.new(value: "test").freeze
+      parent = parent_model_class.new(nested_items: [frozen_nested])
+
+      # Should not raise error even though we can't set options
+      expect { parent.as_json(serialize_unknown_attributes: true) }.not_to raise_error
+    end
+
+    it "handles mixed frozen and unfrozen nested objects" do
+      frozen_nested = nested_model_class.new(value: "frozen").freeze
+      unfrozen_nested = nested_model_class.new(value: "unfrozen")
+      parent = parent_model_class.new(nested_items: [frozen_nested, unfrozen_nested])
+
+      # Should not raise error with serialization options
+      expect { parent.as_json(serialize_enums_using_as_json: false) }.not_to raise_error
+
+      # Should serialize both correctly
+      result = parent.as_json
+      expect(result["nested_items"]).to eq([
+        { "value" => "frozen" },
+        { "value" => "unfrozen" }
+      ])
+    end
+  end
 end

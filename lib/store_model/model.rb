@@ -216,7 +216,10 @@ module StoreModel
     #
     # @return [Hash]
     def unknown_attributes
-      @unknown_attributes ||= {}
+      return @unknown_attributes if defined?(@unknown_attributes)
+      return {}.freeze if frozen?
+
+      @unknown_attributes = {}
     end
 
     # Returns the value of the `@serialize_unknown_attributes` instance
@@ -314,6 +317,10 @@ module StoreModel
       return unless Array(attr.value).all? { |value| value.is_a?(StoreModel::Model) }
 
       Array(attr.value).each do |value|
+        # Skip frozen objects - they cannot have instance variables modified
+        # but will still serialize correctly with their existing settings
+        next if value.frozen?
+
         value.serialize_unknown_attributes = serialize_unknown_attributes
         value.serialize_enums_using_as_json = serialize_enums_using_as_json
         value.serialize_empty_attributes = serialize_empty_attributes
