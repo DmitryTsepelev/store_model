@@ -6,6 +6,8 @@
 
 ## master
 
+## 4.5.0 (2026-02-07)
+
 - [PR #223](https://github.com/DmitryTsepelev/store_model/pull/223) Add before and after validation hooks ([@killondark])
 - [PR #224](https://github.com/DmitryTsepelev/store_model/pull/224) Support ActiveAdmin usecases ([@dtaniwaki])
 
