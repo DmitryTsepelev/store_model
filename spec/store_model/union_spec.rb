@@ -186,6 +186,15 @@ RSpec.describe "StoreModel.union ActiveRecord Integration" do
       reloaded = product_class.find(product.id)
       expect(reloaded.union_test).to be_nil
     end
+
+    it "handles column_defaults with empty hash default without raising (issue #221)" do
+      union = config_union
+      klass = build_custom_product_class do
+        attribute :configuration, union.to_type
+      end
+
+      expect { klass.column_defaults }.not_to raise_error
+    end
   end
 
   describe "duplicate discriminator validation" do
