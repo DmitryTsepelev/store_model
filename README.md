@@ -22,7 +22,10 @@ class Product < ApplicationRecord
 end
 ```
 
-You can support my open–source work [here](https://boosty.to/dmitry_tsepelev).
+## Professional Support
+
+Working on a complex Rails application and need an experienced eye?
+I'm available for consulting — [get in touch](https://dmitrytsepelev.dev/consulting).
 
 ## Why should I wrap my JSON columns?
 
