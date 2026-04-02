@@ -453,6 +453,56 @@ RSpec.describe StoreModel::NestedAttributes do
         expect(subject.supplier.attributes).to eq("title" => "foo", "address" => "Second Street")
       end
     end
+
+    context "global update_only config" do
+      context "when StoreModel.config.update_only is true" do
+        before { StoreModel.config.nested_attributes_update_only = true }
+
+        let(:configuration_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :color, :string
+            attribute :supplier, Supplier.to_type
+
+            accepts_nested_attributes_for :supplier
+          end
+        end
+
+        let(:supplier_attributes) { { "title" => "foo", "address" => "First Street" } }
+
+        subject { configuration_class.new(supplier_attributes: supplier_attributes) }
+
+        it "uses update_only behavior without explicit per-model option" do
+          subject.assign_attributes(color: "black", supplier_attributes: { address: "Second Street" })
+          expect(subject.supplier.attributes).to eq("title" => "foo", "address" => "Second Street")
+        end
+      end
+
+      context "when StoreModel.config.update_only is true but overridden per-model with false" do
+        before { StoreModel.config.nested_attributes_update_only = true }
+
+        let(:configuration_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :color, :string
+            attribute :supplier, Supplier.to_type
+
+            accepts_nested_attributes_for :supplier, update_only: false
+          end
+        end
+
+        let(:supplier_attributes) { { "title" => "foo", "address" => "First Street" } }
+
+        subject { configuration_class.new(supplier_attributes: supplier_attributes) }
+
+        it "replaces the model when per-model update_only: false overrides the global config" do
+          subject.assign_attributes(color: "black", supplier_attributes: { address: "Second Street" })
+          expect(subject.supplier.attributes).to eq("title" => nil, "address" => "Second Street")
+        end
+      end
+    end
   end
 
   describe "#valid?" do

@@ -50,7 +50,8 @@ module StoreModel
 
         attributes.each do |attribute|
           if nested_attribute_type(attribute).is_a?(Types::Base)
-            options.reverse_merge!(allow_destroy: false, update_only: false)
+            options.reverse_merge!(allow_destroy: false, update_only: StoreModel.config.nested_attributes_update_only)
+            puts "options: #{options.inspect}"
             define_store_model_attr_accessors(attribute, options)
           else
             super(*attribute, options)
