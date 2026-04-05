@@ -39,12 +39,19 @@ module StoreModel
     # @return [Boolean]
     attr_accessor :active_admin_compatibility
 
+    # Controls whether nested attributes updates preserve existing model instances by default.
+    # When true, acts like `update_only: true` for all singular nested attributes unless overridden.
+    # Default: false
+    # @return [Boolean]
+    attr_accessor :nested_attributes_update_only
+
     def initialize
       @serialize_unknown_attributes = true
       @enable_parent_assignment = true
       @serialize_enums_using_as_json = true
       @serialize_empty_attributes = true
       @active_admin_compatibility = false
+      @nested_attributes_update_only = false
     end
   end
 end
