@@ -13,7 +13,10 @@ module StoreModel
     end
 
     def assign_parent_to_singular_store_model(item)
-      item.parent = self if item.is_a?(StoreModel::Model)
+      return unless item.is_a?(StoreModel::Model)
+      return if item.frozen?
+
+      item.parent = self
     end
   end
 end
