@@ -8,14 +8,25 @@ module StoreModel
     include ParentAssignment
 
     def _read_attribute(*)
-      super.tap do |attribute|
-        assign_parent_to_store_model_relation(attribute)
-      end
+      value = super
+      assign_parent_to_store_model_relation(value) if store_model_attribute?(value)
+      value
     end
 
     def _write_attribute(*)
-      super.tap do |attribute|
-        assign_parent_to_store_model_relation(attribute)
+      value = super
+      assign_parent_to_store_model_relation(value) if store_model_attribute?(value)
+      value
+    end
+
+    private
+
+    def store_model_attribute?(value)
+      case value
+      when StoreModel::Model then true
+      when Array then value.first.is_a?(StoreModel::Model)
+      when Hash then value.each_value.any? { |v| v.is_a?(StoreModel::Model) }
+      else false
       end
     end
   end
