@@ -7,12 +7,13 @@ module StoreModel
     # Implements ActiveModel::Type::Value type for handling an array of
     # StoreModel::Model
     class OneOf
-      def initialize(&block)
+      def initialize(union: false, &block)
         @block = block
+        @union = union
       end
 
       def to_type
-        Types::OnePolymorphic.new(@block)
+        Types::OnePolymorphic.new(@block, union: @union)
       end
 
       def to_array_type

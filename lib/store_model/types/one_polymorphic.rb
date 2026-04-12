@@ -13,8 +13,9 @@ module StoreModel
       # @param model_wrapper [Proc] class to handle
       #
       # @return [StoreModel::Types::OnePolymorphic ]
-      def initialize(model_wrapper)
+      def initialize(model_wrapper, union: false)
         @model_wrapper = model_wrapper
+        @union = union
         super()
       end
 
@@ -30,8 +31,9 @@ module StoreModel
       # @param value [Object] a value to cast
       #
       # @return StoreModel::Model
-      def cast_value(value) # rubocop:disable Metrics/MethodLength
+      def cast_value(value) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
         return nil if value.nil?
+        return nil if @union && value.respond_to?(:empty?) && value.empty?
 
         if value.is_a?(String)
           decode_and_initialize(value)
@@ -86,6 +88,18 @@ module StoreModel
               "failed casting #{value.inspect}, only String, " \
               "Hash or instances which implement StoreModel::Model are allowed"
       end
+
+      # rubocop:disable Style/RescueModifier
+      def decode_and_initialize(value)
+        decoded = ActiveSupport::JSON.decode(value) rescue nil
+        return nil if decoded.nil?
+        return nil if @union && decoded.respond_to?(:empty?) && decoded.empty?
+
+        model_instance(decoded)
+      rescue ActiveModel::UnknownAttributeError => e
+        handle_unknown_attribute(decoded, e)
+      end
+      # rubocop:enable Style/RescueModifier
 
       def model_instance(value)
         extract_model_klass(value).new(value)

@@ -58,7 +58,7 @@ module StoreModel # :nodoc:
     end
 
     def union_one_of(discriminator, class_map)
-      Types::OneOf.new do |attributes|
+      Types::OneOf.new(union: true) do |attributes|
         next nil unless attributes
 
         discriminator_value = attributes.with_indifferent_access[discriminator]
