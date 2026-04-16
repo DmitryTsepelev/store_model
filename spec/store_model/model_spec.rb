@@ -912,9 +912,9 @@ RSpec.describe StoreModel::Model do
       # Should serialize both correctly
       result = parent.as_json
       expect(result["nested_items"]).to eq([
-        { "value" => "frozen" },
-        { "value" => "unfrozen" }
-      ])
+                                             { "value" => "frozen" },
+                                             { "value" => "unfrozen" }
+                                           ])
     end
   end
 end
