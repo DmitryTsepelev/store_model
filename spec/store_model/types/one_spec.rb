@@ -266,6 +266,14 @@ RSpec.describe StoreModel::Types::One do
       it("is equal to an empty model") { is_expected.to eq(Configuration.new) }
     end
 
+    describe "when a null encoded json value is passed" do
+      let(:value) { "null" }
+
+      subject { type.deserialize(value) }
+
+      it { is_expected.to be_nil }
+    end
+
     describe "when a malformed JSON string is passed" do
       let(:value) { "{/sdfgsdfre}" }
 
