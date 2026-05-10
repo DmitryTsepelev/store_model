@@ -6,6 +6,8 @@
 
 ## master
 
+## 4.6.0 (2026-05-10)
+
 - [PR #226](https://github.com/DmitryTsepelev/store_model/pull/226) Handle frozen StoreModel instances gracefully ([@segiddins])
 - [PR #229](https://github.com/DmitryTsepelev/store_model/pull/229) Skip parent assignment in _read_attribute for non-StoreModel values ([@ryanbuzzanca])
 - [PR #228](https://github.com/DmitryTsepelev/store_model/pull/228) Add configuration for setting accepts_nested_attributes_for update only behavior ([@danielvdao])
