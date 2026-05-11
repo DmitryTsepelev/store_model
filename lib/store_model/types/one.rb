@@ -74,7 +74,7 @@ module StoreModel
         case value
         when String
           payload = ActiveSupport::JSON.decode(value) rescue {}
-          model_instance(deserialize_by_types(payload))
+          model_instance(deserialize_by_types(payload)) unless payload.nil?
         when ::Hash
           model_instance(deserialize_by_types(value))
         when nil
