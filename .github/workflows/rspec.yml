@@ -68,6 +68,7 @@ jobs:
           - ruby: ruby-head
             gemfile: gemfiles/railsmaster.gemfile
             allow_failures: true
+            bundler: latest
 
     steps:
     - uses: actions/checkout@v2
@@ -78,6 +79,6 @@ jobs:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
         cache-version: 6
-        bundler: 2.5.15
+        bundler: ${{ matrix.bundler || '2.5.15' }}
     - name: Run RSpec
       run: bundle exec rake spec || $ALLOW_FAILURES
