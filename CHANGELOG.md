@@ -6,6 +6,8 @@
 
 ## master
 
+- [PR #231](https://github.com/DmitryTsepelev/store_model/pull/231) fix: support decoding a null JSON value ([@HoneyryderChuck])
+
 ## 4.6.0 (2026-05-10)
 
 - [PR #226](https://github.com/DmitryTsepelev/store_model/pull/226) Handle frozen StoreModel instances gracefully ([@segiddins])
@@ -299,3 +301,4 @@
 [@dtaniwaki]: https://github.com/dtaniwaki
 [@ryanbuzzanca]: https://github.com/ryanbuzzanca
 [@segiddins]: https://github.com/segiddins
+[@HoneyryderChuck]: https://github.com/HoneyryderChuck
