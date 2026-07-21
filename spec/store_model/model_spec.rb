@@ -222,6 +222,30 @@ RSpec.describe StoreModel::Model do
 
       it("returns correct JSON") { is_expected.to eq(attributes.except(:model, :encrypted_serial).as_json) }
     end
+
+    context "with a plain :json attribute" do
+      let(:model_class) do
+        Class.new do
+          include StoreModel::Model
+          # equivalent to `attribute :json_value, :json` in an ActiveRecord-backed context
+          attribute :json_value, ActiveRecord::Type::Json.new
+        end
+      end
+
+      let(:instance) { model_class.new(json_value: { "foo" => "bar", "nested" => { "baz" => 1 } }) }
+
+      it "serializes the hash value as-is without double-encoding" do
+        expect(instance.as_json).to eq("json_value" => { "foo" => "bar", "nested" => { "baz" => 1 } })
+      end
+
+      context "when the value is nil" do
+        let(:instance) { model_class.new(json_value: nil) }
+
+        it "serializes nil" do
+          expect(instance.as_json).to eq("json_value" => nil)
+        end
+      end
+    end
   end
 
   describe "#blank?" do

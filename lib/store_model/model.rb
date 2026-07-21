@@ -294,10 +294,13 @@ module StoreModel
     end
 
     def serialized_attribute(attr)
-      if attr.value.is_a? StoreModel::Model
+      case attr.value
+      when StoreModel::Model
         Types::RawJSONEncoder.new(attr.value_for_database)
-      elsif attr.value.is_a? Array
+      when Array
         serialize_array_attribute(attr.value)
+      when Hash # attribute :smth, json
+        attr.value
       else
         attr.value_for_database
       end
