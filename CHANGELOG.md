@@ -6,6 +6,7 @@
 
 ## master
 
+- [PR #233](https://github.com/DmitryTsepelev/store_model/pull/233) fix: support raw hash serialization ([@HoneyryderChuck])
 - [PR #231](https://github.com/DmitryTsepelev/store_model/pull/231) fix: support decoding a null JSON value ([@HoneyryderChuck])
 
 ## 4.6.0 (2026-05-10)
