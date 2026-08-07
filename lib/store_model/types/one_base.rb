@@ -43,13 +43,20 @@ module StoreModel
       # rubocop:enable Style/RescueModifier
 
       def handle_unknown_attribute(value, exception)
-        attribute = exception.attribute.to_sym
-        value_symbolized = value.symbolize_keys
-        value_symbolized = value_symbolized[:attributes] if value_symbolized.key?(:attributes)
+        attributes = unwrap_attributes(value.to_h)
+        key = unknown_attribute_key(attributes, exception.attribute)
 
-        cast_value(value_symbolized.except(attribute)).tap do |configuration|
-          configuration.unknown_attributes[attribute.to_s] = value_symbolized[attribute]
+        cast_value(attributes.except(key)).tap do |configuration|
+          configuration.unknown_attributes[exception.attribute.to_s] = attributes[key]
         end
+      end
+
+      def unwrap_attributes(value)
+        value.fetch(:attributes) { value.fetch("attributes", value) }
+      end
+
+      def unknown_attribute_key(attributes, attribute)
+        attributes.key?(attribute.to_s) ? attribute.to_s : attribute.to_sym
       end
     end
   end

@@ -69,6 +69,27 @@ RSpec.describe StoreModel::Types::OnePolymorphic do
       it { is_expected.to be_nil }
     end
 
+    context "when a JSON string carries an unknown attribute" do
+      let(:seen_keys) { [] }
+      let(:type) do
+        described_class.new(proc { |attributes|
+          seen_keys << attributes.keys.map(&:class).uniq
+          Configuration
+        })
+      end
+      let(:value) { ActiveSupport::JSON.encode(attributes.merge(unknown_attribute: "value")) }
+
+      it "hands the block string keys on every pass" do
+        type.cast_value(value)
+
+        expect(seen_keys.flatten.uniq).to eq([String])
+      end
+
+      it "records the unknown attribute" do
+        expect(type.cast_value(value).unknown_attributes).to eq("unknown_attribute" => "value")
+      end
+    end
+
     context "when instance of illegal class is passed" do
       let(:value) { 1 }
 
