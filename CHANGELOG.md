@@ -6,6 +6,8 @@
 
 ## master
 
+- [PR #238](https://github.com/DmitryTsepelev/store_model/pull/238) simplifying parent assignment ([@HoneyryderChuck])
+
 ## 4.6.1 (2026-08-02)
 
 - [PR #233](https://github.com/DmitryTsepelev/store_model/pull/233) fix: support raw hash serialization ([@HoneyryderChuck])
