@@ -246,6 +246,202 @@ RSpec.describe StoreModel::Model do
         end
       end
     end
+
+    context "with nested models" do
+      let(:nested_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :color, :string
+          attribute :model, :string
+
+          enum :kind, in: { left: 1, right: 2 }
+        end
+      end
+
+      let(:model_class) do
+        nested = nested_class
+
+        Class.new do
+          include StoreModel::Model
+
+          attribute :color, :string
+          attribute :model, :string
+          attribute :one, nested.to_type
+          attribute :many, nested.to_array_type
+          attribute :hashed, nested.to_hash_type
+          attribute :poly, StoreModel.one_of { nested }.to_type
+        end
+      end
+
+      let(:nested_attributes) { { color: "red", model: nil, kind: "left" } }
+      let(:nested_json) { { "color" => "red", "model" => nil, "kind" => "left" } }
+
+      let(:instance) do
+        model_class.new(
+          color: "red",
+          model: "spaceship",
+          one: nested_attributes,
+          many: [nested_attributes],
+          hashed: { "primary" => nested_attributes },
+          poly: nested_attributes
+        )
+      end
+
+      # The same payload, built out of plain hashes and arrays, so that the
+      # serialization can be compared to the one Rails performs on them
+      let(:equivalent_hash) do
+        {
+          "color" => "red",
+          "model" => "spaceship",
+          "one" => nested_json,
+          "many" => [nested_json],
+          "hashed" => { "primary" => nested_json },
+          "poly" => nested_json
+        }.with_indifferent_access
+      end
+
+      it("returns correct JSON") { expect(instance.as_json).to eq(equivalent_hash.as_json) }
+
+      [
+        { only: %i[color one] },
+        { only: %i[one] },
+        { only: %i[color model one many hashed primary poly] },
+        { except: %i[model] },
+        { except: %i[kind primary] },
+        { except: %i[one many hashed poly] }
+      ].each do |options|
+        it "passes #{options.inspect} downstream, just like Hash#as_json does" do
+          expect(instance.as_json(options)).to eq(equivalent_hash.as_json(options))
+        end
+
+        it "passes #{options.inspect} downstream when encoding JSON" do
+          expect(instance.to_json(options)).to eq(equivalent_hash.to_json(options))
+        end
+      end
+
+      it "applies :only to nested attributes" do
+        expect(instance.as_json(only: %i[color one])).to eq(
+          "color" => "red",
+          "one" => { "color" => "red" }
+        )
+      end
+
+      it "applies :except to nested attributes" do
+        expect(instance.as_json(except: %i[model])).to eq(
+          "color" => "red",
+          "one" => { "color" => "red", "kind" => "left" },
+          "many" => [{ "color" => "red", "kind" => "left" }],
+          "hashed" => { "primary" => { "color" => "red", "kind" => "left" } },
+          "poly" => { "color" => "red", "kind" => "left" }
+        )
+      end
+
+      it "does not reuse the serialization of a previous call with different options" do
+        expect(instance.as_json(except: %i[color])["one"]).to eq("model" => nil, "kind" => "left")
+        expect(instance.as_json["one"]).to eq(nested_json)
+      end
+
+      it "passes serialize_empty_attributes downstream" do
+        expect(instance.as_json(serialize_empty_attributes: false)).to eq(
+          "color" => "red",
+          "model" => "spaceship",
+          "one" => { "color" => "red", "kind" => "left" },
+          "many" => [{ "color" => "red", "kind" => "left" }],
+          "hashed" => { "primary" => { "color" => "red", "kind" => "left" } },
+          "poly" => { "color" => "red", "kind" => "left" }
+        )
+      end
+
+      it "passes serialize_enums_using_as_json downstream" do
+        expect(instance.as_json(serialize_enums_using_as_json: false)).to eq(
+          equivalent_hash.merge(
+            "one" => nested_json.merge("kind" => 1),
+            "many" => [nested_json.merge("kind" => 1)],
+            "hashed" => { "primary" => nested_json.merge("kind" => 1) },
+            "poly" => nested_json.merge("kind" => 1)
+          ).as_json
+        )
+      end
+
+      context "with unknown attributes" do
+        let(:instance) do
+          model_class.from_value(
+            color: "red",
+            one: nested_attributes.merge(archived: true),
+            many: [nested_attributes.merge(archived: true)],
+            hashed: { "primary" => nested_attributes.merge(archived: true) },
+            poly: nested_attributes.merge(archived: true)
+          )
+        end
+
+        it "passes serialize_unknown_attributes: true downstream" do
+          json = instance.as_json(serialize_unknown_attributes: true)
+
+          expect(json["one"]).to include("archived" => true)
+          expect(json["many"].first).to include("archived" => true)
+          expect(json["hashed"]["primary"]).to include("archived" => true)
+          expect(json["poly"]).to include("archived" => true)
+        end
+
+        it "passes serialize_unknown_attributes: false downstream" do
+          json = instance.as_json(serialize_unknown_attributes: false)
+
+          expect(json["one"]).not_to include("archived")
+          expect(json["many"].first).not_to include("archived")
+          expect(json["hashed"]["primary"]).not_to include("archived")
+          expect(json["poly"]).not_to include("archived")
+        end
+
+        it "does not reuse the serialization of a previous call with different options" do
+          instance.as_json(serialize_unknown_attributes: false)
+
+          expect(instance.as_json(serialize_unknown_attributes: true)["one"]).to include("archived" => true)
+        end
+      end
+
+      # ActiveModel::Dirty#as_json, which is inserted before StoreModel::Model#as_json in the
+      # ancestors chain since ActiveModel 8.1, does not accept nil options itself.
+      if ActiveModel.version < Gem::Version.new("8.1")
+        context "when nil options are passed" do
+          it("returns correct JSON") { expect(instance.as_json(nil)).to eq(equivalent_hash.as_json) }
+        end
+      end
+
+      context "when a nested attribute has a custom type" do
+        let(:model_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :configuration, Configuration.to_type
+            attribute :configurations, Configuration.to_array_type
+          end
+        end
+
+        let(:instance) do
+          model_class.new(
+            configuration: { encrypted_serial: "111-222" },
+            configurations: [{ encrypted_serial: "111-222" }]
+          )
+        end
+
+        let(:encrypted_serial) { Configuration::Encrypted.new.serialize("111-222") }
+
+        it "serializes nested attributes using their database representation" do
+          json = instance.as_json
+
+          expect(json["configuration"]["encrypted_serial"]).to eq(encrypted_serial)
+          expect(json["configurations"].first["encrypted_serial"]).to eq(encrypted_serial)
+        end
+
+        it "keeps the database representation when options are passed" do
+          json = instance.as_json(only: %i[configuration configurations encrypted_serial])
+
+          expect(json["configuration"]).to eq("encrypted_serial" => encrypted_serial)
+          expect(json["configurations"]).to eq([{ "encrypted_serial" => encrypted_serial }])
+        end
+      end
+    end
   end
 
   describe "#blank?" do

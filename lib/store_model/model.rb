@@ -60,32 +60,30 @@ module StoreModel
     # @param options [Hash]
     #
     # @return [Hash]
-    def as_json(options = {}) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-      serialize_unknown_attributes = if options.key?(:serialize_unknown_attributes)
+    def as_json(options = nil) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+      serialize_unknown_attributes = if options&.key?(:serialize_unknown_attributes)
                                        options[:serialize_unknown_attributes]
                                      else
                                        StoreModel.config.serialize_unknown_attributes
                                      end
 
-      serialize_enums_using_as_json = if options.key?(:serialize_enums_using_as_json)
+      serialize_enums_using_as_json = if options&.key?(:serialize_enums_using_as_json)
                                         options[:serialize_enums_using_as_json]
                                       else
                                         StoreModel.config.serialize_enums_using_as_json
                                       end
 
-      serialize_empty_attributes = if options.key?(:serialize_empty_attributes)
+      serialize_empty_attributes = if options&.key?(:serialize_empty_attributes)
                                      options[:serialize_empty_attributes]
                                    else
                                      StoreModel.config.serialize_empty_attributes
                                    end
 
-      # If the model is nested, we need to ensure that the serialization
-
       result = @attributes.keys.each_with_object({}) do |key, values|
         attr = @attributes.fetch(key)
         assign_serialization_options(attr, serialize_unknown_attributes, serialize_enums_using_as_json,
                                      serialize_empty_attributes)
-        serialized = serialized_attribute(attr)
+        serialized = serialized_attribute(attr, options)
         values[key] = serialized if serialize_empty_attributes || !serialized.nil?
       end.with_indifferent_access
 
@@ -293,27 +291,29 @@ module StoreModel
       end
     end
 
-    def serialized_attribute(attr)
+    def serialized_attribute(attr, options)
       case attr.value
       when StoreModel::Model
-        Types::RawJSONEncoder.new(attr.value_for_database)
+        attr.value.as_json(options)
       when Array
-        serialize_array_attribute(attr.value)
+        serialize_array_attribute(attr.value, options)
       when Hash # attribute :smth, json
-        attr.value
+        serialize_hash_attribute(attr.value, options)
       else
         attr.value_for_database
       end
     end
 
-    def serialize_array_attribute(array)
+    def serialize_array_attribute(array, options)
       return array.as_json unless array.any? && array.all? { |value| value.is_a?(StoreModel::Model) }
 
-      array.as_json(
-        serialize_unknown_attributes: array.first.serialize_unknown_attributes?,
-        serialize_enums_using_as_json: array.first.serialize_enums_using_as_json?,
-        serialize_empty_attributes: array.first.serialize_empty_attributes?
-      )
+      array.as_json(options)
+    end
+
+    def serialize_hash_attribute(hash, options)
+      return hash unless hash.any? && hash.values.all? { |value| value.nil? || value.is_a?(StoreModel::Model) }
+
+      hash.transform_values { |value| value&.as_json(options) }
     end
 
     def assign_serialization_options(attr, serialize_unknown_attributes, serialize_enums_using_as_json, serialize_empty_attributes) # rubocop:disable Layout/LineLength
