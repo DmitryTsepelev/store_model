@@ -7,6 +7,8 @@
 ## master
 
 - [PR #234](https://github.com/DmitryTsepelev/store_model/pull/234) fix: pass `#as_json` options downstream to nested attributes ([@HoneyryderChuck])
+- [PR #238](https://github.com/DmitryTsepelev/store_model/pull/238) simplifying parent assignment ([@HoneyryderChuck])
+
 
 ## 4.6.1 (2026-08-02)
 
