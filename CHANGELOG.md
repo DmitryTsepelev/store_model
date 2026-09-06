@@ -6,6 +6,7 @@
 
 ## master
 
+- [PR #237](https://github.com/DmitryTsepelev/store_model/pull/237) Preserve the payload's key type when recovering from an unknown attribute ([@ClayShentrup])
 - [PR #234](https://github.com/DmitryTsepelev/store_model/pull/234) fix: pass `#as_json` options downstream to nested attributes ([@HoneyryderChuck])
 - [PR #238](https://github.com/DmitryTsepelev/store_model/pull/238) simplifying parent assignment ([@HoneyryderChuck])
 
@@ -309,3 +310,5 @@
 [@ryanbuzzanca]: https://github.com/ryanbuzzanca
 [@segiddins]: https://github.com/segiddins
 [@HoneyryderChuck]: https://github.com/HoneyryderChuck
+[@ClayShentrup]: https://github.com/ClayShentrup
+
