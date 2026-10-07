@@ -4,6 +4,7 @@ require "store_model/types"
 require "store_model/enum"
 require "store_model/type_builders"
 require "store_model/nested_attributes"
+require "store_model/unknown_attribute_assignment"
 
 module StoreModel
   # When included into class configures it to handle JSON column
@@ -25,6 +26,9 @@ module StoreModel
       base.extend StoreModel::TypeBuilders
 
       base.attribute_method_suffix "?"
+
+      # Included last so it takes precedence over ActiveModel::AttributeAssignment.
+      base.include StoreModel::UnknownAttributeAssignment
 
       base.extend(ClassMethods)
     end

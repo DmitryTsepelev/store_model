@@ -28,7 +28,7 @@ module StoreModel
       # @param value [Object] a value to cast
       #
       # @return StoreModel::Model
-      def cast_value(value) # rubocop:disable Metrics/MethodLength
+      def cast_value(value)
         return nil if value.nil?
 
         if value.is_a?(String)
@@ -40,8 +40,6 @@ module StoreModel
         else
           raise_cast_error(value)
         end
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(value, e)
       end
 
       # Casts a value from the ruby type to a type that the database knows how
@@ -93,9 +91,7 @@ module StoreModel
       end
 
       def model_instance(value)
-        @model_klass.new(value)
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(value, e)
+        StoreModel::UnknownAttributeAssignment.collect_for(@model_klass) { @model_klass.new(value) }
       end
 
       def deserialize_by_types(hash)
