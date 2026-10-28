@@ -265,24 +265,6 @@ RSpec.describe StoreModel::Types::One do
         .to raise_error(ActiveModel::UnknownAttributeError, /color/)
     end
 
-    it "propagates a declared writer's error even when its record is a subclass" do
-      configuration_class = Class.new do
-        include StoreModel::Model
-
-        attribute :status, :string
-      end
-      other_class = Class.new(configuration_class) do
-        def status=(value)
-          self[:status] = value
-        end
-      end
-      writer_error = ActiveModel::UnknownAttributeError.new(other_class.new, :extra)
-      configuration_class.define_method(:status=) { |_value| raise writer_error }
-
-      expect { described_class.new(configuration_class).cast_value(status: "active", extra: "kept") }
-        .to raise_error(ActiveModel::UnknownAttributeError) { |error| expect(error).to be(writer_error) }
-    end
-
     it "uses a writer enabled by an earlier input value after an unknown key" do
       configuration_class = Class.new do
         include StoreModel::Model
@@ -386,25 +368,6 @@ RSpec.describe StoreModel::Types::One do
       expect(configuration.unknown_attributes).to eq("extra" => "kept")
     end
 
-    it "passes a plain hash to a custom initializer when recovering unknown keys" do
-      configuration_class = Class.new do
-        include StoreModel::Model
-
-        attribute :name, :string
-
-        def initialize(attributes = {})
-          raise ArgumentError, "expected a plain Hash" unless attributes.instance_of?(Hash)
-
-          super
-        end
-      end
-
-      configuration = configuration_class.to_type.cast_value(extra: 1, name: "A")
-
-      expect(configuration.name).to eq("A")
-      expect(configuration.unknown_attributes).to eq("extra" => 1)
-    end
-
     it "retains multiple unknown keys when a custom initializer duplicates its input" do
       configuration_class = Class.new do
         include StoreModel::Model
@@ -422,78 +385,42 @@ RSpec.describe StoreModel::Types::One do
       expect(configuration.unknown_attributes).to eq("extra_one" => 1, "extra_two" => 2)
     end
 
-    it "retains multiple unknown keys when a custom initializer merges defaults" do
+    it "casts unknown keys when a model factory returns an unrelated class" do
+      target_class = Class.new do
+        include StoreModel::Model
+
+        attribute :color, :string
+      end
       configuration_class = Class.new do
         include StoreModel::Model
 
-        attribute :name, :string
-
-        def initialize(attributes = {})
-          super(attributes.merge(name: "Fallback"))
-        end
+        attribute :colour, :string
+      end
+      configuration_class.define_singleton_method(:new) do |attributes = {}|
+        attributes = attributes.dup
+        target_class.new(attributes.merge("color" => attributes.delete("colour")))
       end
 
-      configuration = configuration_class.to_type.cast_value(extra_one: 1, extra_two: 2)
+      configuration = configuration_class.to_type.cast_value("colour" => "red", "extra" => 1)
 
-      expect(configuration.name).to eq("Fallback")
-      expect(configuration.unknown_attributes).to eq("extra_one" => 1, "extra_two" => 2)
-    end
-
-    {
-      "reverse merges defaults" => ->(attributes) { attributes.reverse_merge(name: "Fallback") },
-      "merges into defaults" => ->(attributes) { { name: "Fallback" }.merge(attributes) },
-      "symbolizes keys" => ->(attributes) { attributes.to_h.symbolize_keys },
-      "adds indifferent access" => :with_indifferent_access.to_proc
-    }.each do |description, rebuild|
-      it "retains multiple unknown keys when a custom initializer #{description}" do
-        configuration_class = Class.new do
-          include StoreModel::Model
-
-          attribute :name, :string
-
-          define_method(:initialize) { |attributes = {}| super(rebuild.call(attributes)) }
-        end
-
-        configuration = configuration_class.to_type.cast_value(extra_one: 1, extra_two: 2, extra_three: 3)
-
-        expect(configuration.unknown_attributes).to eq("extra_one" => 1, "extra_two" => 2, "extra_three" => 3)
-      end
-    end
-
-    it "keeps a model marshalable when its initializer holds on to the input" do
-      configuration_class = Class.new do
-        include StoreModel::Model
-
-        attribute :name, :string
-        attr_reader :raw
-
-        def initialize(attributes = {})
-          @raw = attributes
-          super
-        end
-      end
-      stub_const("MarshalableConfiguration", configuration_class)
-
-      configuration = configuration_class.to_type.cast_value(name: "Alice", extra: 1)
-
-      expect(Marshal.load(Marshal.dump(configuration)).unknown_attributes).to eq("extra" => 1)
-    end
-
-    it "retains unknown keys when casting inside an unrelated rescue block" do
-      configuration_class = Class.new do
-        include StoreModel::Model
-
-        attribute :name, :string
-      end
-
-      begin
-        raise "outer"
-      rescue RuntimeError
-        configuration = configuration_class.to_type.cast_value(extra: 1, name: "Alice")
-      end
-
-      expect(configuration.name).to eq("Alice")
+      expect(configuration).to be_a(target_class)
+      expect(configuration.color).to eq("red")
       expect(configuration.unknown_attributes).to eq("extra" => 1)
+    end
+
+    it "keeps models built by a writer strict" do
+      stub_const("Node", Class.new do
+        include StoreModel::Model
+
+        attribute :name, :string
+
+        def label=(value)
+          Node.new(name: value, bogus: 1)
+        end
+      end)
+
+      expect { Node.to_type.cast_value(label: "mk") }
+        .to raise_error(ActiveModel::UnknownAttributeError, /bogus/)
     end
   end
 

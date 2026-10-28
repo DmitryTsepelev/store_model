@@ -93,14 +93,9 @@ module StoreModel
         return nil if decoded.nil?
         return nil if @union && decoded.respond_to?(:empty?) && decoded.empty?
 
-        model_instance(decoded)
+        extract_model_klass(decoded).to_type.cast_value(decoded)
       end
       # rubocop:enable Style/RescueModifier
-
-      def model_instance(value)
-        model_klass = extract_model_klass(value)
-        StoreModel::UnknownAttributeAssignment.collect_for(model_klass) { model_klass.new(value) }
-      end
     end
   end
 end

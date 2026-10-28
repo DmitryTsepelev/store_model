@@ -4,35 +4,38 @@ module StoreModel
   # Keeps input keys without a writer in #unknown_attributes while a StoreModel
   # type builds the model, instead of raising ActiveModel::UnknownAttributeError.
   module UnknownAttributeAssignment
-    COLLECTING_KEY = :store_model_collecting_unknown_attributes_for
+    COLLECTING_KEY = :store_model_collect_unknown_attributes
 
-    def self.collect_for(model_class)
+    # Only the next StoreModel instance initialized inside the block collects
+    # unknown keys, so models built by its writers stay strict.
+    def self.collect
       previous = Thread.current[COLLECTING_KEY]
-      Thread.current[COLLECTING_KEY] = model_class
+      Thread.current[COLLECTING_KEY] = true
       yield
     ensure
       Thread.current[COLLECTING_KEY] = previous
     end
 
-    def attribute_writer_missing(name, value)
-      model_class = Thread.current[COLLECTING_KEY]
-      raise ActiveModel::UnknownAttributeError.new(self, name) unless model_class && is_a?(model_class)
-
-      unknown_attributes[name] = value
+    def initialize(attributes = {})
+      @collecting_unknown_attributes = Thread.current[COLLECTING_KEY]
+      Thread.current[COLLECTING_KEY] = nil
+      super
+    ensure
+      @collecting_unknown_attributes = nil
     end
 
-    if ActiveModel::VERSION::MAJOR < 8
+    private
 
-      private
+    # Checking for the writer up front avoids raising NoMethodError per unknown key,
+    # which goes through ActiveModel's method_missing and casts every attribute.
+    def _assign_attribute(key, value)
+      return super unless @collecting_unknown_attributes
 
-      # Backport of ActiveModel 8.0, which added the attribute_writer_missing hook.
-      def _assign_attribute(key, value)
-        setter = :"#{key}="
+      setter = :"#{key}="
+      if respond_to_without_attributes?(setter)
         public_send(setter, value)
-      rescue NoMethodError
-        raise if respond_to?(setter)
-
-        attribute_writer_missing(key.to_s, value)
+      else
+        unknown_attributes[key.to_s] = value
       end
     end
   end

@@ -91,7 +91,7 @@ module StoreModel
       end
 
       def model_instance(value)
-        StoreModel::UnknownAttributeAssignment.collect_for(@model_klass) { @model_klass.new(value) }
+        StoreModel::UnknownAttributeAssignment.collect { @model_klass.new(value) }
       end
 
       def deserialize_by_types(hash)
