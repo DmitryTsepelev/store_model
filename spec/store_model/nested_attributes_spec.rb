@@ -452,6 +452,20 @@ RSpec.describe StoreModel::NestedAttributes do
         subject.assign_attributes(color: "black", supplier_attributes: { address: "Second Street" })
         expect(subject.supplier.attributes).to eq("title" => "foo", "address" => "Second Street")
       end
+
+      it "keeps unknown keys when the type casts into an existing model" do
+        configuration = configuration_class.to_type.cast_value(
+          supplier: { title: "foo" }, supplier_attributes: { address: "Second Street", extra: 1 }
+        )
+
+        expect(configuration.supplier).to have_attributes(title: "foo", address: "Second Street")
+        expect(configuration.supplier.unknown_attributes).to eq("extra" => 1)
+      end
+
+      it "raises for unknown keys assigned directly to an existing model" do
+        expect { subject.assign_attributes(supplier_attributes: { extra: 1 }) }
+          .to raise_error(ActiveModel::UnknownAttributeError, /extra/)
+      end
     end
 
     context "global update_only config" do
