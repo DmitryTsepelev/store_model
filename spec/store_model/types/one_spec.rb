@@ -422,6 +422,56 @@ RSpec.describe StoreModel::Types::One do
       expect { Node.to_type.cast_value(label: "mk") }
         .to raise_error(ActiveModel::UnknownAttributeError, /bogus/)
     end
+
+    it "assigns declared attributes whose writers are served by method_missing" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :name, :string
+        attribute_method_suffix "_label"
+      end
+
+      configuration = configuration_class.to_type.cast_value("name" => "old", "extra" => 1)
+
+      expect(configuration.name).to eq("old")
+      expect(configuration.unknown_attributes).to eq("extra" => 1)
+    end
+
+    context "when a custom initializer builds another model before super" do
+      let(:address_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :city, :string
+        end
+      end
+
+      def customer_class(address_attributes)
+        address_class = self.address_class
+        Class.new do
+          include StoreModel::Model
+
+          attribute :name, :string
+          attribute :address, address_class.to_type
+
+          define_method(:initialize) do |attributes = {}|
+            super({ address: address_class.new(address_attributes) }.merge(attributes))
+          end
+        end
+      end
+
+      it "keeps unknown keys on the model being cast" do
+        customer = customer_class(city: "n/a").to_type.cast_value(name: "a", extra: 1)
+
+        expect(customer.address.city).to eq("n/a")
+        expect(customer.unknown_attributes).to eq("extra" => 1)
+      end
+
+      it "keeps the other model strict" do
+        expect { customer_class(city: "n/a", bogus: 1).to_type.cast_value(name: "a") }
+          .to raise_error(ActiveModel::UnknownAttributeError, /bogus/)
+      end
+    end
   end
 
   describe "#serialize" do
