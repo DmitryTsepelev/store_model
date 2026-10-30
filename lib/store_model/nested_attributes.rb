@@ -82,7 +82,7 @@ module StoreModel
           define_method "#{attribute}_attributes=" do |*args, **kwargs|
             existing_model = send(attribute)
             if existing_model && options[:update_only]
-              existing_model.assign_attributes(*args, **kwargs)
+              update_nested_model(existing_model, *args, **kwargs)
             else
               send("#{attribute}=", *args, **kwargs)
             end
@@ -136,6 +136,14 @@ module StoreModel
       attributes.reject! { call_store_model_reject_if(_1, options[:reject_if]) } if options&.dig(:reject_if)
 
       send("#{association}=", attributes)
+    end
+
+    # A parent collecting unknown keys during a cast (see UnknownAttributeAssignment)
+    # lets the nested model it updates in place collect them too.
+    def update_nested_model(model, *args, **kwargs)
+      return model.assign_attributes(*args, **kwargs) unless @collecting_unknown_attributes
+
+      model.collecting_unknown_attributes { model.assign_attributes(*args, **kwargs) }
     end
 
     def call_store_model_reject_if(attributes, callback)
