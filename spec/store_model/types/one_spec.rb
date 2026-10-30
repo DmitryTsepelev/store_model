@@ -118,9 +118,7 @@ RSpec.describe StoreModel::Types::One do
           it("assigns attributes") { is_expected.to have_attributes(color: "red") }
 
           it "assigns unknown_attributes" do
-            expect(subject.suppliers.first.unknown_attributes).to eq(
-              "unknown_attribute" => "something"
-            )
+            expect(subject.suppliers.first.unknown_attributes).to eq(expected_unknown_attributes)
           end
         end
 
@@ -138,6 +136,7 @@ RSpec.describe StoreModel::Types::One do
         let(:type) { described_class.new(configuration_class) }
 
         let(:supplier) { { unknown_attribute: "something" } }
+        let(:expected_unknown_attributes) { { "unknown_attribute" => "something" } }
         let(:attributes) { { color: "red", suppliers: [supplier] } }
 
         context "when Hash is passed" do
@@ -156,8 +155,11 @@ RSpec.describe StoreModel::Types::One do
           let(:supplier) do
             {
               attributes: { unknown_attribute: "something" },
-              other_unknown_attribute: "will be entirely ignored"
+              other_unknown_attribute: "kept"
             }
+          end
+          let(:expected_unknown_attributes) do
+            { "unknown_attribute" => "something", "other_unknown_attribute" => "kept" }
           end
           include_examples "for unknown nested attributes"
         end
@@ -166,6 +168,308 @@ RSpec.describe StoreModel::Types::One do
           let(:value) { ActiveSupport::JSON.encode(attributes) }
           include_examples "for unknown nested attributes"
         end
+      end
+    end
+
+    it "keeps nested models and thousands of unknown JSON attributes" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :suppliers, Supplier.to_array_type
+      end
+      unknown_attributes = (1..5_000).to_h { |index| ["extra_#{index}", index] }
+      payload = { "suppliers" => [{ "title" => "first" }, { "title" => "second" }] }.merge(unknown_attributes)
+
+      configuration = described_class.new(configuration_class).cast_value(payload.to_json)
+
+      aggregate_failures do
+        expect(configuration.suppliers.map(&:title)).to eq(%w[first second])
+        expect(configuration.unknown_attributes).to eq(unknown_attributes)
+        expect(configuration.as_json).to include("extra_1" => 1, "extra_5000" => 5_000)
+      end
+    end
+
+    it "stores unknown symbol and string keys with their original values" do
+      configuration = type.cast_value(color: "red", symbol_key: 1, "string_key" => { "nested" => true })
+
+      expect(configuration.color).to eq("red")
+      expect(configuration.unknown_attributes).to eq(
+        "symbol_key" => 1, "string_key" => { "nested" => true }
+      )
+    end
+
+    it "keeps the last value when both key forms name the same unknown attribute" do
+      string_first = type.cast_value("extra" => "string", extra: "symbol")
+      symbol_first = type.cast_value(extra: "symbol", "extra" => "string")
+
+      expect(string_first.unknown_attributes).to eq("extra" => "symbol")
+      expect(symbol_first.unknown_attributes).to eq("extra" => "string")
+    end
+
+    it "uses declared aliases and custom writers on either side of an unknown key" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :title, :string
+        attribute :tone, :string
+        alias_attribute :heading, :title
+
+        def tone=(value)
+          self[:tone] = value.upcase
+        end
+      end
+      type = described_class.new(configuration_class)
+
+      first = type.cast_value(heading: "first", extra: "kept", tone: "warm")
+      second = type.cast_value(tone: "cool", extra: "kept", heading: "second")
+
+      expect(first).to have_attributes(title: "first", tone: "WARM")
+      expect(second).to have_attributes(title: "second", tone: "COOL")
+      expect(first.unknown_attributes).to eq("extra" => "kept")
+      expect(second.unknown_attributes).to eq("extra" => "kept")
+    end
+
+    it "runs a declared writer's side effect once on either side of an unknown key" do
+      writes = []
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :name, :string
+
+        define_method(:name=) do |value|
+          writes << value
+          self[:name] = value
+        end
+      end
+
+      type = described_class.new(configuration_class)
+
+      type.cast_value(extra: "unknown", name: "Alice")
+      type.cast_value(name: "Bob", extra: "unknown")
+
+      expect(writes).to eq(%w[Alice Bob])
+    end
+
+    it "raises an unknown attribute error from inside a declared writer" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :color, :string
+
+        def color=(_value)
+          raise ActiveModel::UnknownAttributeError.new(self, :color)
+        end
+      end
+
+      expect { described_class.new(configuration_class).cast_value(extra: "kept", color: "red") }
+        .to raise_error(ActiveModel::UnknownAttributeError, /color/)
+    end
+
+    it "uses a writer enabled by an earlier input value after an unknown key" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :mode, :string
+        attr_reader :late_value
+
+        def mode=(value)
+          self[:mode] = value
+          singleton_class.attr_accessor(:late_value) if value == "enabled"
+        end
+      end
+
+      configuration = described_class.new(configuration_class).cast_value(
+        extra: "kept", mode: "enabled", late_value: "assigned"
+      )
+
+      expect(configuration.mode).to eq("enabled")
+      expect(configuration.late_value).to eq("assigned")
+      expect(configuration.unknown_attributes).to eq("extra" => "kept")
+    end
+
+    it "preserves values assigned before a duplicate key disables their writer" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :mode, :string
+        attr_reader :late_value
+
+        def mode=(value)
+          self[:mode] = value
+          if value == "on"
+            singleton_class.define_method(:late_value=) { |late| @late_value = late }
+          elsif singleton_class.instance_methods(false).include?(:late_value=)
+            singleton_class.remove_method(:late_value=)
+          end
+        end
+      end
+      payload = { mode: "on", late_value: "first", "mode" => "off", "late_value" => "second" }
+
+      configuration = described_class.new(configuration_class).cast_value(payload)
+
+      expect(configuration.mode).to eq("off")
+      expect(configuration.late_value).to eq("first")
+      expect(configuration.unknown_attributes).to eq("late_value" => "second")
+    end
+
+    it "finishes custom initialization when casting an unknown key" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :color, :string
+        attr_reader :completed_initialization
+
+        def initialize(attributes = {})
+          super
+          @completed_initialization = true
+        end
+      end
+
+      configuration = described_class.new(configuration_class).cast_value(color: "red", extra: "kept")
+
+      expect(configuration.color).to eq("red")
+      expect(configuration.completed_initialization).to be(true)
+      expect(configuration.unknown_attributes).to eq("extra" => "kept")
+    end
+
+    it "gives a custom initializer the unknown input keys" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attr_reader :late
+
+        def initialize(attributes = {})
+          singleton_class.attr_accessor(:late) if attributes.key?(:extra)
+          super
+        end
+      end
+
+      configuration = described_class.new(configuration_class).cast_value(extra: "ignored", late: "kept")
+
+      expect(configuration.late).to eq("kept")
+      expect(configuration.unknown_attributes).to eq("extra" => "ignored")
+    end
+
+    it "casts unknown keys when a model factory returns a subclass" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :name, :string
+      end
+      subclass = Class.new(configuration_class)
+      configuration_class.define_singleton_method(:new) do |attributes = {}|
+        Class.instance_method(:new).bind_call(subclass, attributes)
+      end
+
+      configuration = described_class.new(configuration_class).cast_value(name: "Alice", extra: "kept")
+
+      expect(configuration).to be_a(subclass)
+      expect(configuration.name).to eq("Alice")
+      expect(configuration.unknown_attributes).to eq("extra" => "kept")
+    end
+
+    it "retains multiple unknown keys when a custom initializer duplicates its input" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :name, :string
+
+        def initialize(attributes = {})
+          super(attributes.dup)
+        end
+      end
+
+      configuration = configuration_class.to_type.cast_value(extra_one: 1, extra_two: 2, name: "Alice")
+
+      expect(configuration.name).to eq("Alice")
+      expect(configuration.unknown_attributes).to eq("extra_one" => 1, "extra_two" => 2)
+    end
+
+    it "casts unknown keys when a model factory returns an unrelated class" do
+      target_class = Class.new do
+        include StoreModel::Model
+
+        attribute :color, :string
+      end
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :colour, :string
+      end
+      configuration_class.define_singleton_method(:new) do |attributes = {}|
+        attributes = attributes.dup
+        target_class.new(attributes.merge("color" => attributes.delete("colour")))
+      end
+
+      configuration = configuration_class.to_type.cast_value("colour" => "red", "extra" => 1)
+
+      expect(configuration).to be_a(target_class)
+      expect(configuration.color).to eq("red")
+      expect(configuration.unknown_attributes).to eq("extra" => 1)
+    end
+
+    it "keeps models built by a writer strict" do
+      stub_const("Node", Class.new do
+        include StoreModel::Model
+
+        attribute :name, :string
+
+        def label=(value)
+          Node.new(name: value, bogus: 1)
+        end
+      end)
+
+      expect { Node.to_type.cast_value(label: "mk") }
+        .to raise_error(ActiveModel::UnknownAttributeError, /bogus/)
+    end
+
+    it "assigns declared attributes whose writers are served by method_missing" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :name, :string
+        attribute_method_suffix "_label"
+      end
+
+      configuration = configuration_class.to_type.cast_value("name" => "old", "extra" => 1)
+
+      expect(configuration.name).to eq("old")
+      expect(configuration.unknown_attributes).to eq("extra" => 1)
+    end
+
+    context "when a custom initializer builds another model before super" do
+      let(:address_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :city, :string
+        end
+      end
+
+      def customer_class(address_attributes)
+        address_class = self.address_class
+        Class.new do
+          include StoreModel::Model
+
+          attribute :name, :string
+          attribute :address, address_class.to_type
+
+          define_method(:initialize) do |attributes = {}|
+            super({ address: address_class.new(address_attributes) }.merge(attributes))
+          end
+        end
+      end
+
+      it "keeps unknown keys on the model being cast" do
+        customer = customer_class(city: "n/a").to_type.cast_value(name: "a", extra: 1)
+
+        expect(customer.address.city).to eq("n/a")
+        expect(customer.unknown_attributes).to eq("extra" => 1)
+      end
+
+      it "keeps the other model strict" do
+        expect { customer_class(city: "n/a", bogus: 1).to_type.cast_value(name: "a") }
+          .to raise_error(ActiveModel::UnknownAttributeError, /bogus/)
       end
     end
   end

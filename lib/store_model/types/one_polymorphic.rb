@@ -31,7 +31,7 @@ module StoreModel
       # @param value [Object] a value to cast
       #
       # @return StoreModel::Model
-      def cast_value(value) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+      def cast_value(value) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
         return nil if value.nil?
         return nil if @union && value.respond_to?(:empty?) && value.empty?
 
@@ -44,8 +44,6 @@ module StoreModel
         else
           raise_cast_error(value)
         end
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(value, e)
       end
 
       # Casts a value from the ruby type to a type that the database knows how
@@ -95,15 +93,9 @@ module StoreModel
         return nil if decoded.nil?
         return nil if @union && decoded.respond_to?(:empty?) && decoded.empty?
 
-        model_instance(decoded)
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(decoded, e)
+        extract_model_klass(decoded).to_type.cast_value(decoded)
       end
       # rubocop:enable Style/RescueModifier
-
-      def model_instance(value)
-        extract_model_klass(value).new(value)
-      end
     end
   end
 end

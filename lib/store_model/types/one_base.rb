@@ -37,27 +37,8 @@ module StoreModel
       def decode_and_initialize(value)
         decoded = ActiveSupport::JSON.decode(value) rescue nil
         model_instance(decoded) unless decoded.nil?
-      rescue ActiveModel::UnknownAttributeError => e
-        handle_unknown_attribute(decoded, e)
       end
       # rubocop:enable Style/RescueModifier
-
-      def handle_unknown_attribute(value, exception)
-        attributes = unwrap_attributes(value.to_h)
-        key = unknown_attribute_key(attributes, exception.attribute)
-
-        cast_value(attributes.except(key)).tap do |configuration|
-          configuration.unknown_attributes[exception.attribute.to_s] = attributes[key]
-        end
-      end
-
-      def unwrap_attributes(value)
-        value.fetch(:attributes) { value.fetch("attributes", value) }
-      end
-
-      def unknown_attribute_key(attributes, attribute)
-        attributes.key?(attribute.to_s) ? attribute.to_s : attribute.to_sym
-      end
     end
   end
 end

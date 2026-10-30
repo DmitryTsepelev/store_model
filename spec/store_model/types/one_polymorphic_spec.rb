@@ -90,6 +90,52 @@ RSpec.describe StoreModel::Types::OnePolymorphic do
       end
     end
 
+    it "selects the polymorphic model from JSON while retaining unknown attributes" do
+      plain_class = Class.new do
+        include StoreModel::Model
+
+        attribute :kind, :string
+      end
+      colored_class = Class.new do
+        include StoreModel::Model
+
+        attribute :kind, :string
+        attribute :color, :string
+      end
+      type = StoreModel.one_of { |json| json["kind"] == "colored" ? colored_class : plain_class }.to_type
+
+      configuration = type.cast_value({ kind: "colored", color: "red", extra: "kept" }.to_json)
+
+      expect(configuration).to be_a(colored_class)
+      expect(configuration).to have_attributes(kind: "colored", color: "red")
+      expect(configuration.unknown_attributes).to eq("extra" => "kept")
+      expect(configuration.as_json).to include("extra" => "kept")
+    end
+
+    it "selects the same model from wrapped JSON and Hash values" do
+      plain_class = Class.new do
+        include StoreModel::Model
+
+        attribute :kind, :string
+      end
+      wrapped_class = Class.new do
+        include StoreModel::Model
+
+        attribute :kind, :string
+        attribute :color, :string
+      end
+      type = described_class.new(proc { |attributes| attributes.key?("attributes") ? wrapped_class : plain_class })
+      payload = { "attributes" => { "kind" => "colored", "color" => "red", "extra" => "kept" } }
+
+      from_hash = type.cast_value(payload)
+      from_json = type.cast_value(payload.to_json)
+
+      expect(from_hash).to be_a(wrapped_class)
+      expect(from_json).to be_a(wrapped_class)
+      expect(from_json).to have_attributes(kind: from_hash.kind, color: from_hash.color)
+      expect(from_json.unknown_attributes).to eq(from_hash.unknown_attributes)
+    end
+
     context "when instance of illegal class is passed" do
       let(:value) { 1 }
 

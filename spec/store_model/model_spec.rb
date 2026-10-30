@@ -33,6 +33,11 @@ RSpec.describe StoreModel::Model do
   end
 
   describe "#initialize" do
+    it "raises for an unknown attribute on direct construction" do
+      expect { Configuration.new(color: "red", unknown_attribute: "value") }
+        .to raise_error(ActiveModel::UnknownAttributeError, /unknown_attribute/)
+    end
+
     context "when symbolized hash is passed" do
       subject { Configuration.new(attributes) }
 
