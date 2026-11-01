@@ -12,6 +12,8 @@ module StoreModel
       # @param store_models [Array] an array or store_models that have been validated
       def call(attribute, base_errors, store_models)
         store_models.each_with_index do |store_model, index|
+          next if store_model.nil?
+
           store_model.errors.full_messages.each do |full_message|
             base_errors.add(attribute, :invalid, message: "[#{index}] #{full_message}")
           end

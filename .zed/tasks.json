@@ -1,0 +1,20 @@
+[
+  {
+    "label": "RSpec $ZED_RELATIVE_FILE:$ZED_ROW",
+    "command": "bundle",
+    "args": ["exec", "rspec", "$ZED_RELATIVE_FILE:$ZED_ROW"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "tags": ["ruby-test"],
+    "save": "all",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "RSpec file $ZED_RELATIVE_FILE",
+    "command": "bundle",
+    "args": ["exec", "rspec", "$ZED_RELATIVE_FILE"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "tags": ["ruby-test"],
+    "save": "all"
+  }
+]
