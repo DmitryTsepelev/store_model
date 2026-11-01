@@ -39,13 +39,13 @@ module ActiveModel
       end
 
       def call_array_strategy(record, attribute, value)
-        any_invalid = value.compact.select { |v| v.invalid?(record.validation_context) }.present?
+        any_invalid = value.select { |v| v&.invalid?(record.validation_context) }.present?
         array_strategy.call(attribute, record.errors, value) if any_invalid
         add_nil_element_error(record, attribute) if value.include?(nil)
       end
 
       def call_hash_strategy(record, attribute, value)
-        invalid_values = value.compact.select { |_k, v| v.invalid?(record.validation_context) }
+        invalid_values = value.select { |_k, v| v&.invalid?(record.validation_context) }
         hash_strategy.call(attribute, record.errors, invalid_values) if invalid_values.present?
         add_nil_element_error(record, attribute) if value.value?(nil)
       end
