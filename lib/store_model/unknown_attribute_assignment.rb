@@ -47,6 +47,16 @@ module StoreModel
       @collecting_unknown_attributes = nil
     end
 
+    protected
+
+    def collecting_unknown_attributes
+      previous = @collecting_unknown_attributes
+      @collecting_unknown_attributes = true
+      yield
+    ensure
+      @collecting_unknown_attributes = previous
+    end
+
     private
 
     # Checking for the writer up front avoids raising NoMethodError per unknown key,
