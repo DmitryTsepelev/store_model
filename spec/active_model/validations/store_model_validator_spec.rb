@@ -764,4 +764,147 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
       end
     end
   end
+
+  context "when a collection contains nil elements" do
+    shared_examples "nil element is invalid" do |attribute_name, full_message|
+      it { is_expected.to be_invalid }
+
+      it "marks the attribute invalid instead of raising" do
+        expect(subject.errors.messages).to eq(attribute_name => ["is invalid"])
+        expect(subject.errors.full_messages).to eq([full_message])
+        expect(subject.errors.of_kind?(attribute_name, :invalid)).to be true
+      end
+    end
+
+    context "with an array type" do
+      let(:custom_product_class) do
+        build_custom_product_class do
+          attribute :configurations, Configuration.to_array_type
+          validates :configurations, store_model: true
+        end
+      end
+
+      context "when the only element is nil" do
+        let(:attributes) { { configurations: [nil] } }
+
+        include_examples "nil element is invalid", :configurations, "Configurations is invalid"
+      end
+
+      context "when nil sits next to valid elements" do
+        let(:attributes) { { configurations: [Configuration.new(color: "red"), nil] } }
+
+        include_examples "nil element is invalid", :configurations, "Configurations is invalid"
+      end
+
+      context "when nil sits next to an invalid element" do
+        let(:attributes) { { configurations: [nil, Configuration.new] } }
+
+        include_examples "nil element is invalid", :configurations, "Configurations is invalid"
+
+        it "still validates the other elements" do
+          expect(subject.configurations.second.errors.messages).to eq(color: ["can't be blank"])
+        end
+      end
+
+      context "with merge_array_errors: true" do
+        let(:custom_product_class) do
+          build_custom_product_class do
+            attribute :configurations, Configuration.to_array_type
+            validates :configurations, store_model: { merge_array_errors: true }
+          end
+        end
+
+        context "when the only element is nil" do
+          let(:attributes) { { configurations: [nil] } }
+
+          include_examples "nil element is invalid", :configurations, "Configurations is invalid"
+        end
+
+        context "when nil sits next to an invalid element" do
+          let(:attributes) { { configurations: [nil, Configuration.new] } }
+
+          it "keeps the index of the invalid element" do
+            expect(subject.errors.messages).to eq(configurations: ["[1] Color can't be blank"])
+          end
+        end
+
+        context "when nil sits between invalid elements" do
+          let(:attributes) { { configurations: [Configuration.new, nil, Configuration.new] } }
+
+          it "validates every element and preserves their indexes" do
+            expect(subject.errors.messages).to eq(
+              configurations: ["[0] Color can't be blank", "[2] Color can't be blank"]
+            )
+          end
+        end
+      end
+    end
+
+    context "with a polymorphic array type" do
+      let(:custom_product_class) do
+        build_custom_product_class do
+          attribute :configurations, StoreModel.one_of { |_json| Configuration }.to_array_type
+          validates :configurations, store_model: true
+        end
+      end
+
+      let(:attributes) { { configurations: [nil] } }
+
+      include_examples "nil element is invalid", :configurations, "Configurations is invalid"
+    end
+
+    context "with a hash type" do
+      let(:custom_product_class) do
+        build_custom_product_class do
+          attribute :configurations, Configuration.to_hash_type
+          validates :configurations, store_model: true
+        end
+      end
+
+      context "when the only value is nil" do
+        let(:attributes) { { configurations: { "primary" => nil } } }
+
+        include_examples "nil element is invalid", :configurations, "Configurations is invalid"
+      end
+
+      context "when nil sits next to a valid value" do
+        let(:attributes) { { configurations: { "primary" => nil, "secondary" => Configuration.new(color: "red") } } }
+
+        include_examples "nil element is invalid", :configurations, "Configurations is invalid"
+      end
+
+      context "when nil sits next to an invalid value" do
+        let(:attributes) { { configurations: { "primary" => nil, "secondary" => Configuration.new } } }
+
+        include_examples "nil element is invalid", :configurations, "Configurations is invalid"
+
+        it "still validates the other values" do
+          expect(subject.configurations["secondary"].errors.messages).to eq(color: ["can't be blank"])
+        end
+      end
+
+      context "with merge_hash_errors: true" do
+        let(:custom_product_class) do
+          build_custom_product_class do
+            attribute :configurations, Configuration.to_hash_type
+            validates :configurations, store_model: { merge_hash_errors: true }
+          end
+        end
+
+        context "when the only value is nil" do
+          let(:attributes) { { configurations: { "primary" => nil } } }
+
+          include_examples "nil element is invalid", :configurations, "Configurations is invalid"
+        end
+
+        context "when nil sits next to an invalid value" do
+          let(:attributes) { { configurations: { "primary" => nil, "secondary" => Configuration.new } } }
+
+          it "reports the invalid value and skips the nil one" do
+            expect(subject.errors.messages).to eq(configurations: ["[secondary] Color can't be blank"])
+          end
+        end
+      end
+    end
+  end
 end
