@@ -6,6 +6,8 @@
 
 ## master
 
+## 4.6.2 (2026-11-07)
+
 - [PR #240](https://github.com/DmitryTsepelev/store_model/pull/240) Avoid repeated casts when stored models have unknown attributes ([@imacomber])
 - [PR #237](https://github.com/DmitryTsepelev/store_model/pull/237) Preserve the payload's key type when recovering from an unknown attribute ([@ClayShentrup])
 - [PR #235](https://github.com/DmitryTsepelev/store_model/pull/235) fix: pass `#as_json` options downstream to nested attributes ([@HoneyryderChuck])
