@@ -6,7 +6,7 @@
 
 ## master
 
-- [PR #247](https://github.com/DmitryTsepelev/store_model/pull/247) Handle nil elements in array and hash validation
+- [PR #247](https://github.com/DmitryTsepelev/store_model/pull/247) Handle nil elements in array and hash validation ([@JacobNWolf])
 
 ## 4.6.2 (2026-11-07)
 

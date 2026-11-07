@@ -2,6 +2,7 @@
 
 require "active_record"
 require "store_model/combine_errors_strategies"
+require "store_model/nil_element"
 
 module ActiveModel
   module Validations
@@ -39,15 +40,17 @@ module ActiveModel
       end
 
       def call_array_strategy(record, attribute, value)
-        any_invalid = value.select { |v| v&.invalid?(record.validation_context) }.present?
-        array_strategy.call(attribute, record.errors, value) if any_invalid
-        add_nil_element_error(record, attribute) if value.include?(nil)
+        store_models = value.map { |v| v || StoreModel::NilElement.new }
+        any_invalid = store_models.count { |v| v.invalid?(record.validation_context) }.positive?
+        array_strategy.call(attribute, record.errors, store_models) if any_invalid
       end
 
       def call_hash_strategy(record, attribute, value)
-        invalid_values = value.select { |_k, v| v&.invalid?(record.validation_context) }
+        invalid_values = value.each_with_object({}) do |(key, v), invalid|
+          store_model = v || StoreModel::NilElement.new
+          invalid[key] = store_model if store_model.invalid?(record.validation_context)
+        end
         hash_strategy.call(attribute, record.errors, invalid_values) if invalid_values.present?
-        add_nil_element_error(record, attribute) if value.value?(nil)
       end
 
       def strategy
@@ -60,10 +63,6 @@ module ActiveModel
 
       def hash_strategy
         @hash_strategy ||= StoreModel::CombineErrorsStrategies.configure_hash(options)
-      end
-
-      def add_nil_element_error(record, attribute)
-        record.errors.add(attribute, :invalid) unless record.errors.of_kind?(attribute, :invalid)
       end
     end
   end
