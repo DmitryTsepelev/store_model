@@ -65,7 +65,11 @@ module StoreModel
       # rubocop:disable Style/RescueModifier
       def decode_and_initialize(array_value)
         decoded = ActiveSupport::JSON.decode(array_value) rescue []
-        decoded.map { |attributes| cast_model_type_value(attributes) }
+        decoded.map do |attributes|
+          next nil if attributes.nil?
+
+          cast_model_type_value(attributes)
+        end
       end
       # rubocop:enable Style/RescueModifier
     end

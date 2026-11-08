@@ -93,6 +93,44 @@ RSpec.describe StoreModel::Types::ManyPolymorphic do
       it { is_expected.to be_nil }
     end
 
+    context "when Array contains nil" do
+      let(:type) { described_class.new(proc { |json| json[:version] == "v1" ? Configuration : nil }) }
+
+      context "when Array is passed" do
+        let(:value) { [nil, { version: "v1", color: "red" }] }
+
+        it "keeps nil without calling the model wrapper" do
+          expect(subject.first).to be_nil
+          expect(subject.second).to have_attributes(color: "red")
+        end
+      end
+
+      context "when String is passed" do
+        let(:value) { "[null]" }
+
+        it { is_expected.to eq([nil]) }
+      end
+
+      context "with a union type" do
+        let(:email_notification) do
+          Class.new do
+            include StoreModel::Model
+
+            discriminator_attribute :channel, value: "email"
+          end
+        end
+
+        let(:type) { StoreModel.union([email_notification], discriminator: "channel").to_array_type }
+
+        let(:value) { [nil, { channel: "email" }] }
+
+        it "keeps nil without calling the model wrapper" do
+          expect(subject.first).to be_nil
+          expect(subject.second).to be_a(email_notification)
+        end
+      end
+    end
+
     context "when instance of illegal class is passed" do
       let(:value) { {} }
 

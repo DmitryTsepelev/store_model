@@ -119,6 +119,8 @@ product.errors.full_messages
 #     "Configurations [secondary] Color can't be blank"]
 ```
 
+A `nil` value makes the hash invalid too. With `merge_hash_errors: true` it's reported as `[key] is invalid`. Custom strategies receive it as a `StoreModel::NilElement`, which responds to `errors` like any other model (see [Validations](validations.md)).
+
 ### Important Notes
 
 > **Heads up!** The attribute is not the same as an association. It's just a hash stored as JSON. `assign_attributes` (and similar) is going to _override_ the whole hash, not merge it with a previous value.

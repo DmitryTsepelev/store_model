@@ -71,6 +71,14 @@ puts product.valid? # => false
 puts product.errors.messages # => { color: ["[0] Color can't be blank"] }
 ```
 
+Arrays and hashes can contain `nil` elements, for example when they come from JSON with `null` values. A `nil` element makes the attribute invalid and is reported with an `is invalid` message at its index or key:
+
+```ruby
+product = Product.new(configurations: [nil, Configuration.new])
+puts product.valid? # => false
+puts product.errors.messages # => { configurations: ["[0] is invalid", "[1] Color can't be blank"] }
+```
+
 You can change the global behavior using `StoreModel.config`:
 
 ```ruby
@@ -106,6 +114,8 @@ class FhtagnArrayErrorStrategy
   end
 end
 ```
+
+Array strategies receive every element of the array, and hash strategies receive the invalid values keyed by their hash keys. A `nil` element is passed as a `StoreModel::NilElement` in its original position, so every element responds to `errors`. A `StoreModel::NilElement` is always invalid and has a single `is invalid` error on `:base`.
 
 You can provide its instance or snake-cased name when configuring global `merge_errors`:
 

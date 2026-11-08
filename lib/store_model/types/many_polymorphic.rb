@@ -30,6 +30,7 @@ module StoreModel
 
       def ensure_model_class(array)
         array.map do |object|
+          next object if object.nil?
           next object if implements_model?(object.class)
 
           cast_model_type_value(object)

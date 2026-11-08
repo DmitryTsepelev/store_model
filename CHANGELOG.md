@@ -6,6 +6,8 @@
 
 ## master
 
+- [PR #247](https://github.com/DmitryTsepelev/store_model/pull/247) Handle nil elements in array and hash validation ([@JacobNWolf])
+
 ## 4.6.2 (2026-11-07)
 
 - [PR #240](https://github.com/DmitryTsepelev/store_model/pull/240) Avoid repeated casts when stored models have unknown attributes ([@imacomber])
@@ -315,4 +317,4 @@
 [@HoneyryderChuck]: https://github.com/HoneyryderChuck
 [@ClayShentrup]: https://github.com/ClayShentrup
 [@imacomber]: https://github.com/imacomber
-
+[@JacobNWolf]: https://github.com/JacobNWolf
