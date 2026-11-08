@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["jruby-9.4.8.0", 3.2, 3.3, 3.4, 4.0]
+        ruby: ["jruby-9.4", 3.2, 3.3, 3.4, 4.0]
 
         gemfile: [
           "gemfiles/jruby.gemfile",
@@ -36,11 +36,11 @@ jobs:
           - false
 
         exclude:
-          - ruby: "jruby-9.4.8.0"
+          - ruby: "jruby-9.4"
             gemfile: gemfiles/rails_7_2.gemfile
-          - ruby: "jruby-9.4.8.0"
+          - ruby: "jruby-9.4"
             gemfile: gemfiles/rails_8_0.gemfile
-          - ruby: "jruby-9.4.8.0"
+          - ruby: "jruby-9.4"
             gemfile: gemfiles/rails_8_1.gemfile
 
           - ruby: "3.4"
