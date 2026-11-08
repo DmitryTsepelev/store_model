@@ -46,10 +46,8 @@ module ActiveModel
       end
 
       def call_hash_strategy(record, attribute, value)
-        invalid_values = value.each_with_object({}) do |(key, v), invalid|
-          store_model = v || StoreModel::NilElement.new
-          invalid[key] = store_model if store_model.invalid?(record.validation_context)
-        end
+        store_models = value.transform_values { |v| v || StoreModel::NilElement.new }
+        invalid_values = store_models.select { |_k, v| v.invalid?(record.validation_context) }
         hash_strategy.call(attribute, record.errors, invalid_values) if invalid_values.present?
       end
 

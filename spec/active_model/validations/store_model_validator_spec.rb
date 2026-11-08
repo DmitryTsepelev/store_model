@@ -626,6 +626,27 @@ RSpec.describe ActiveModel::Validations::StoreModelValidator do
           end
         end
       end
+
+      context "with a custom strategy and a hash with indifferent access" do
+        let(:custom_product_class) do
+          build_custom_product_class do
+            attribute :configurations, Configuration.to_hash_type
+            validates :configurations, store_model: {
+              merge_hash_errors: lambda { |attr, errors, store_models|
+                errors.add(attr, "primary #{store_models[:primary].errors.full_messages.to_sentence}")
+              }
+            }
+          end
+        end
+
+        let(:attributes) do
+          { configurations: ActiveSupport::HashWithIndifferentAccess.new("primary" => Configuration.new) }
+        end
+
+        it "passes the invalid values with indifferent access" do
+          expect(subject.errors.messages).to eq(configurations: ["primary Color can't be blank"])
+        end
+      end
     end
 
     context "with allow_nil: true" do
