@@ -6,6 +6,7 @@
 
 ## master
 
+- [PR #241](https://github.com/DmitryTsepelev/store_model/pull/241) Preserve unknown attributes when updating nested models in place ([@imacomber])
 - [PR #247](https://github.com/DmitryTsepelev/store_model/pull/247) Handle nil elements in array and hash validation ([@JacobNWolf])
 
 ## 4.6.2 (2026-11-07)
