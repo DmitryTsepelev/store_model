@@ -452,6 +452,54 @@ RSpec.describe StoreModel::NestedAttributes do
         subject.assign_attributes(color: "black", supplier_attributes: { address: "Second Street" })
         expect(subject.supplier.attributes).to eq("title" => "foo", "address" => "Second Street")
       end
+
+      it "keeps unknown keys when the type casts into an existing model" do
+        configuration = configuration_class.to_type.cast_value(
+          supplier: { title: "foo" }, supplier_attributes: { address: "Second Street", extra: 1 }
+        )
+
+        expect(configuration.supplier).to have_attributes(title: "foo", address: "Second Street")
+        expect(configuration.supplier.unknown_attributes).to eq("extra" => 1)
+      end
+
+      it "keeps unknown keys assigned to an existing model" do
+        supplier = subject.supplier
+
+        subject.assign_attributes(supplier_attributes: { address: "Second Street", extra: 1 })
+
+        expect(subject.supplier).to equal(supplier)
+        expect(supplier).to have_attributes(title: "foo", address: "Second Street")
+        expect(supplier.unknown_attributes).to eq("extra" => 1)
+        expect { supplier.assign_attributes(other: 2) }
+          .to raise_error(ActiveModel::UnknownAttributeError, /other/)
+      end
+
+      it "keeps unknown keys when an ActiveRecord parent updates an existing model" do
+        product_class = build_custom_product_class do
+          attribute :supplier, Supplier.to_type
+          accepts_nested_attributes_for :supplier, update_only: true
+        end
+        product = product_class.new(supplier_attributes: old_supplier_attributes)
+        supplier = product.supplier
+
+        product.assign_attributes(supplier_attributes: { address: "Second Street", extra: 1 })
+
+        expect(product.supplier).to equal(supplier)
+        expect(supplier).to have_attributes(title: "foo", address: "Second Street")
+        expect(supplier.unknown_attributes).to eq("extra" => 1)
+      end
+
+      it "keeps direct assignment strict after a nested writer raises" do
+        supplier = subject.supplier
+        def supplier.title=(_value)
+          raise ArgumentError, "invalid title"
+        end
+
+        expect { subject.assign_attributes(supplier_attributes: { title: "invalid" }) }
+          .to raise_error(ArgumentError, "invalid title")
+        expect { supplier.assign_attributes(extra: 1) }
+          .to raise_error(ActiveModel::UnknownAttributeError, /extra/)
+      end
     end
 
     context "global update_only config" do

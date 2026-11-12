@@ -82,7 +82,7 @@ module StoreModel
           define_method "#{attribute}_attributes=" do |*args, **kwargs|
             existing_model = send(attribute)
             if existing_model && options[:update_only]
-              existing_model.assign_attributes(*args, **kwargs)
+              existing_model.collect_unknown_attributes { existing_model.assign_attributes(*args, **kwargs) }
             else
               send("#{attribute}=", *args, **kwargs)
             end

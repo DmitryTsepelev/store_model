@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module StoreModel
-  # Keeps input keys without a writer in #unknown_attributes while a StoreModel
-  # type builds the model, instead of raising ActiveModel::UnknownAttributeError.
+  # Keeps input keys without a writer in #unknown_attributes during type casts
+  # and nested updates, instead of raising ActiveModel::UnknownAttributeError.
   module UnknownAttributeAssignment
     PENDING_KEY = :store_model_collect_unknown_attributes
     BUILDING_KEY = :store_model_building_with_unknown_attributes
@@ -45,6 +45,14 @@ module StoreModel
       super
     ensure
       @collecting_unknown_attributes = nil
+    end
+
+    def collect_unknown_attributes # :nodoc:
+      previous = @collecting_unknown_attributes
+      @collecting_unknown_attributes = true
+      yield
+    ensure
+      @collecting_unknown_attributes = previous
     end
 
     private
