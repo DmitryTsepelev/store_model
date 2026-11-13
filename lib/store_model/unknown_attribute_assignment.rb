@@ -57,19 +57,24 @@ module StoreModel
 
     private
 
-    # Checking for the writer up front avoids raising NoMethodError per unknown key,
-    # which goes through ActiveModel's method_missing and casts every attribute.
-    # Declared attributes can still be served by method_missing, for example after
-    # attribute_method_suffix undefines the generated writers.
+    # Declared attributes may have non-identifier names or writers served by method_missing.
     def _assign_attribute(key, value)
       return super unless @collecting_unknown_attributes
 
       setter = :"#{key}="
-      if respond_to_without_attributes?(setter) || has_attribute?(key)
+      if has_attribute?(key) || assignable_writer?(key, setter)
         public_send(setter, value)
       else
         unknown_attributes[key.to_s] = value
       end
+    end
+
+    def assignable_writer?(key, setter)
+      # Rails class_attribute writers are owned by the model, just like user writers.
+      key.match?(/\A[[:alpha:]_][[:alnum:]_]*\z/) &&
+        !%i[param_delimiter= normalized_attributes=].include?(setter) &&
+        respond_to_without_attributes?(setter) &&
+        (setter == :attributes= || method(setter).owner != StoreModel::Model)
     end
   end
 end
