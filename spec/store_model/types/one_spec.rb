@@ -189,6 +189,69 @@ RSpec.describe StoreModel::Types::One do
       end
     end
 
+    context "when stored keys match non-attribute writers" do
+      let(:configuration_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :color, :string
+        end
+      end
+      let(:type) { described_class.new(configuration_class) }
+
+      %w[parent serialize_unknown_attributes serialize_enums_using_as_json serialize_empty_attributes
+         param_delimiter normalized_attributes == = ! []].each do |key|
+        it "round trips #{key} without invoking its writer" do
+          payload = { "color" => "red", key => false, "extra" => 1 }
+          configuration = type.cast_value(payload)
+
+          expect(configuration.unknown_attributes).to eq(key => false, "extra" => 1)
+          expect(ActiveSupport::JSON.decode(type.serialize(configuration))).to eq(payload)
+        end
+      end
+
+      it "inventories public writers so new framework writers require review" do
+        writers = configuration_class.new.public_methods.map(&:to_s).select { |name| name.end_with?("=") }
+        expected = %w[!= == === []= attributes= color= parent=
+                      serialize_empty_attributes= serialize_enums_using_as_json= serialize_unknown_attributes=]
+        expected << "param_delimiter=" if ActiveModel.gem_version >= Gem::Version.new("7.1")
+        expected << "normalized_attributes=" if ActiveModel.gem_version >= Gem::Version.new("8.1")
+
+        expect(writers).to match_array(expected)
+      end
+
+      it "keeps direct construction's writer assignment" do
+        configuration = configuration_class.new(parent: "owner", serialize_unknown_attributes: false)
+
+        expect(configuration.parent).to eq("owner")
+        expect(configuration.serialize_unknown_attributes?).to be(false)
+      end
+
+      it "assigns wrapped attributes" do
+        configuration = type.cast_value("attributes" => { "color" => "red", "parent" => "kept" })
+
+        expect(configuration.color).to eq("red")
+        expect(configuration.unknown_attributes).to eq("parent" => "kept")
+      end
+
+      it "keeps user-defined Unicode writers" do
+        configuration_class.attr_accessor :名前
+        configuration = type.cast_value("名前" => "Alice")
+
+        expect(configuration.public_send(:名前)).to eq("Alice")
+        expect(configuration.unknown_attributes).to be_empty
+      end
+
+      it "assigns declared attributes with non-identifier names before filtering writers" do
+        configuration_class.attribute :"first-name", :string
+        configuration_class.attribute :parent, :string
+        configuration = type.cast_value("first-name" => "Alice", "parent" => "declared")
+
+        expect(configuration.attributes).to include("first-name" => "Alice", "parent" => "declared")
+        expect(configuration.unknown_attributes).to be_empty
+      end
+    end
+
     it "stores unknown symbol and string keys with their original values" do
       configuration = type.cast_value(color: "red", symbol_key: 1, "string_key" => { "nested" => true })
 
