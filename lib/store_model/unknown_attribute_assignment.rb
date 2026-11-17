@@ -45,19 +45,27 @@ module StoreModel
 
     # Falls back to the pending flag for factories that call Class#new directly.
     def initialize(attributes = {})
-      @collecting_unknown_attributes = Thread.current[BUILDING_KEY] || Thread.current[PENDING_KEY]
+      collecting = Thread.current[BUILDING_KEY] || Thread.current[PENDING_KEY]
       Thread.current[BUILDING_KEY] = Thread.current[PENDING_KEY] = nil
-      super
-    ensure
-      @collecting_unknown_attributes = nil
+      if collecting
+        collect_unknown_attributes { super }
+      else
+        super
+      end
     end
 
+    # Unknown keys join #unknown_attributes once every declared attribute is assigned,
+    # so writers see the unknown attributes the model had before the assignment.
     def collect_unknown_attributes # :nodoc:
-      previous = @collecting_unknown_attributes
+      previous_collecting = @collecting_unknown_attributes
+      previous_pending = @pending_unknown_attributes
       @collecting_unknown_attributes = true
+      @pending_unknown_attributes = {}
       yield
+      unknown_attributes.merge!(@pending_unknown_attributes)
     ensure
-      @collecting_unknown_attributes = previous
+      @collecting_unknown_attributes = previous_collecting
+      @pending_unknown_attributes = previous_pending
     end
 
     private
@@ -71,7 +79,7 @@ module StoreModel
                                 respond_to_without_attributes?(setter))
         public_send(setter, value)
       else
-        unknown_attributes[key.to_s] = value
+        @pending_unknown_attributes[key.to_s] = value
       end
     end
   end

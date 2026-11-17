@@ -368,6 +368,23 @@ RSpec.describe StoreModel::Types::One do
       expect(writes).to eq(%w[Alice Bob])
     end
 
+    it "adds unknown keys after the declared writers run" do
+      configuration_class = Class.new do
+        include StoreModel::Model
+
+        attribute :reset, :boolean
+
+        def reset=(value)
+          unknown_attributes.clear if value
+          super
+        end
+      end
+
+      configuration = described_class.new(configuration_class).cast_value(extra: "kept", reset: true)
+
+      expect(configuration.unknown_attributes).to eq("extra" => "kept")
+    end
+
     it "raises an unknown attribute error from inside a declared writer" do
       configuration_class = Class.new do
         include StoreModel::Model
