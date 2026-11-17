@@ -3,6 +3,7 @@
 require "store_model/ext/active_model/attributes"
 require "store_model/ext/active_record/base"
 require "store_model/ext/active_admin_compatibility"
+require "store_model/ext/store_attribute"
 
 module StoreModel # :nodoc:
   class Railtie < Rails::Railtie # :nodoc:
@@ -11,6 +12,7 @@ module StoreModel # :nodoc:
         if StoreModel.config.enable_parent_assignment
           ActiveModel::Attributes.prepend(Attributes)
           prepend(Base)
+          ActiveRecord::Type::TypedStore.prepend(TypedStoreParentAssignment) if defined?(ActiveRecord::Type::TypedStore)
         end
 
         if StoreModel.config.active_admin_compatibility
