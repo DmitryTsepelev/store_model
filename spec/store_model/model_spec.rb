@@ -724,6 +724,33 @@ RSpec.describe StoreModel::Model do
         include_examples "for hash type"
       end
     end
+
+    context "with a model declaring a parent attribute" do
+      subject { custom_parent_class.new(configuration: { parent: { name: "Acme Holdings" } }) }
+
+      let(:company_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :parent, Class.new {
+            include StoreModel::Model
+
+            attribute :name, :string
+          }.to_type
+        end
+      end
+
+      let(:custom_parent_class) do
+        company_type = company_class.to_type
+        build_custom_product_class do
+          attribute :configuration, company_type
+        end
+      end
+
+      it "keeps the declared attribute value" do
+        expect(subject.configuration.parent.name).to eq("Acme Holdings")
+      end
+    end
   end
 
   shared_examples "comparing two instances" do
