@@ -413,6 +413,34 @@ RSpec.describe StoreModel::Model do
         end
       end
 
+      context "when an attribute holds arrays of models" do
+        let(:option_aware_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :color, :string
+
+            def as_json(options = {})
+              super.tap { |json| json["extra"] = true if options&.dig(:include_extra) }
+            end
+          end
+        end
+
+        let(:model_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :grid, ActiveModel::Type::Value.new
+          end
+        end
+
+        let(:instance) { model_class.new(grid: [[option_aware_class.new(color: "red")]]) }
+
+        it "passes custom options to the nested models" do
+          expect(instance.as_json(include_extra: true)).to eq("grid" => [[{ "color" => "red", "extra" => true }]])
+        end
+      end
+
       context "when a nested attribute has a custom type" do
         let(:model_class) do
           Class.new do
