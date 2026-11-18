@@ -18,9 +18,7 @@ module StoreModel
       base.include StoreModel::NestedAttributes
       base.include ActiveModel::Validations::Callbacks
 
-      if ActiveModel::VERSION::MAJOR >= 8 && ActiveModel::VERSION::MINOR >= 1
-        base.include ActiveModel::Attributes::Normalization
-      end
+      base.include ActiveModel::Attributes::Normalization if defined?(ActiveModel::Attributes::Normalization)
 
       base.extend StoreModel::Enum
       base.extend StoreModel::TypeBuilders

@@ -189,6 +189,124 @@ RSpec.describe StoreModel::Types::One do
       end
     end
 
+    context "when stored keys match non-attribute writers" do
+      let(:configuration_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :color, :string
+        end
+      end
+      let(:type) { described_class.new(configuration_class) }
+
+      %w[parent serialize_unknown_attributes serialize_enums_using_as_json serialize_empty_attributes
+         param_delimiter normalized_attributes == = ! []].each do |key|
+        it "round trips #{key} without invoking its writer" do
+          payload = { "color" => "red", key => false, "extra" => 1 }
+          configuration = type.cast_value(payload)
+
+          expect(configuration.unknown_attributes).to eq(key => false, "extra" => 1)
+          expect(ActiveSupport::JSON.decode(type.serialize(configuration))).to eq(payload)
+        end
+      end
+
+      it "keeps direct construction's writer assignment" do
+        configuration = configuration_class.new(parent: "owner", serialize_unknown_attributes: false)
+
+        expect(configuration.parent).to eq("owner")
+        expect(configuration.serialize_unknown_attributes?).to be(false)
+      end
+
+      it "assigns wrapped attributes" do
+        configuration = type.cast_value("attributes" => { "color" => "red", "parent" => "kept" })
+
+        expect(configuration.color).to eq("red")
+        expect(configuration.unknown_attributes).to eq("parent" => "kept")
+      end
+
+      ["名前", "done✓", "cafe\u0301"].each do |key|
+        it "keeps the user-defined #{key} writer" do
+          configuration_class.attr_accessor key
+          configuration = type.cast_value(key => "Alice")
+
+          expect(configuration.public_send(key)).to eq("Alice")
+          expect(configuration.unknown_attributes).to be_empty
+        end
+      end
+
+      it "casts models with an attribute named method and a custom writer" do
+        configuration_class.attribute :method, :string
+        configuration_class.attr_accessor :title
+        configuration = type.cast_value("color" => "red", "parent" => "kept", "title" => "Alice")
+
+        expect(configuration.color).to eq("red")
+        expect(configuration.title).to eq("Alice")
+        expect(configuration.unknown_attributes).to eq("parent" => "kept")
+      end
+
+      it "stores Integer and nil keys as unknown string keys" do
+        configuration = type.cast_value(1 => "integer", nil => "nil", "color" => "red")
+
+        expect(configuration.color).to eq("red")
+        expect(configuration.unknown_attributes).to eq("1" => "integer", "" => "nil")
+      end
+
+      [nil, false, "stored", 123, []].each do |value|
+        it "round trips a non-hash attributes value of #{value.inspect}" do
+          payload = { "color" => "red", "attributes" => value }
+          configuration = type.cast_value(payload)
+
+          expect(configuration.color).to eq("red")
+          expect(configuration.unknown_attributes).to eq("attributes" => value)
+          expect(ActiveSupport::JSON.decode(type.serialize(configuration))).to eq(payload)
+        end
+      end
+
+      it "preserves framework keys when a model overrides their writers" do
+        configuration_class.class_eval do
+          def parent=(value)
+            super("overridden #{value}")
+          end
+        end
+        configuration = type.cast_value("parent" => "kept")
+
+        expect(configuration.parent).to be_nil
+        expect(configuration.unknown_attributes).to eq("parent" => "kept")
+      end
+
+      it "preserves framework keys when an extension overrides their writers" do
+        configuration_class.prepend(Module.new do
+          def parent=(value)
+            super("overridden #{value}")
+          end
+        end)
+        configuration = type.cast_value("parent" => "kept")
+
+        expect(configuration.parent).to be_nil
+        expect(configuration.unknown_attributes).to eq("parent" => "kept")
+      end
+
+      it "allows models to define their own assignable_writer? predicate" do
+        configuration_class.class_eval do
+          def assignable_writer?(attribute)
+            attribute == :color
+          end
+        end
+        configuration = type.cast_value("extra" => "kept")
+
+        expect(configuration.unknown_attributes).to eq("extra" => "kept")
+      end
+
+      it "assigns declared attributes with non-identifier names before filtering writers" do
+        configuration_class.attribute :"first-name", :string
+        configuration_class.attribute :parent, :string
+        configuration = type.cast_value("first-name" => "Alice", "parent" => "declared")
+
+        expect(configuration.attributes).to include("first-name" => "Alice", "parent" => "declared")
+        expect(configuration.unknown_attributes).to be_empty
+      end
+    end
+
     it "stores unknown symbol and string keys with their original values" do
       configuration = type.cast_value(color: "red", symbol_key: 1, "string_key" => { "nested" => true })
 

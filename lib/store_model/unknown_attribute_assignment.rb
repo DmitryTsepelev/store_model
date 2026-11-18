@@ -7,6 +7,11 @@ module StoreModel
     PENDING_KEY = :store_model_collect_unknown_attributes
     BUILDING_KEY = :store_model_building_with_unknown_attributes
 
+    def self.framework_writers
+      @framework_writers ||= (Class.new { include StoreModel::Model }.public_instance_methods.grep(/=\z/) -
+        [:attributes=]).freeze
+    end
+
     # Only the next StoreModel instance built inside the block collects unknown
     # keys, so models built by its writers or a custom initializer stay strict.
     def self.collect
@@ -57,15 +62,13 @@ module StoreModel
 
     private
 
-    # Checking for the writer up front avoids raising NoMethodError per unknown key,
-    # which goes through ActiveModel's method_missing and casts every attribute.
-    # Declared attributes can still be served by method_missing, for example after
-    # attribute_method_suffix undefines the generated writers.
     def _assign_attribute(key, value)
       return super unless @collecting_unknown_attributes
 
       setter = :"#{key}="
-      if respond_to_without_attributes?(setter) || has_attribute?(key)
+      if has_attribute?(key) || (!UnknownAttributeAssignment.framework_writers.include?(setter) &&
+                                (setter != :attributes= || value.respond_to?(:each_pair)) &&
+                                respond_to_without_attributes?(setter))
         public_send(setter, value)
       else
         unknown_attributes[key.to_s] = value

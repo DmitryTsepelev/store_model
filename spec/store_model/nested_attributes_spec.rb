@@ -474,6 +474,15 @@ RSpec.describe StoreModel::NestedAttributes do
           .to raise_error(ActiveModel::UnknownAttributeError, /other/)
       end
 
+      it "preserves keys matching framework writers when updating an existing model" do
+        supplier = subject.supplier
+        subject.assign_attributes(supplier_attributes: { parent: "stored", serialize_unknown_attributes: false })
+
+        expect(subject.supplier).to equal(supplier)
+        expect(supplier.unknown_attributes).to eq("parent" => "stored", "serialize_unknown_attributes" => false)
+        expect(supplier.serialize_unknown_attributes?).to be(true)
+      end
+
       it "keeps unknown keys when an ActiveRecord parent updates an existing model" do
         product_class = build_custom_product_class do
           attribute :supplier, Supplier.to_type
