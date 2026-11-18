@@ -413,6 +413,121 @@ RSpec.describe StoreModel::Model do
         end
       end
 
+      context "when nested models read options with a default" do
+        let(:option_reading_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :color, :string
+
+            def as_json(options = {})
+              super.tap { |json| json["extra"] = true if options[:include_extra] }
+            end
+          end
+        end
+
+        let(:model_class) do
+          nested = option_reading_class
+
+          Class.new do
+            include StoreModel::Model
+
+            attribute :one, nested.to_type
+            attribute :many, nested.to_array_type
+            attribute :hashed, nested.to_hash_type
+          end
+        end
+
+        let(:instance) do
+          model_class.new(one: { color: "red" }, many: [{ color: "red" }], hashed: { "primary" => { color: "red" } })
+        end
+
+        it "calls their #as_json without arguments when no options are given" do
+          expect(instance.as_json).to eq(
+            "one" => { "color" => "red" },
+            "many" => [{ "color" => "red" }],
+            "hashed" => { "primary" => { "color" => "red" } }
+          )
+        end
+      end
+
+      context "when nested models modify the options they receive" do
+        let(:option_consuming_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :color, :string
+
+            def as_json(options = {})
+              include_extra = options.delete(:include_extra)
+              super.tap { |json| json["extra"] = true if include_extra }
+            end
+          end
+        end
+
+        let(:model_class) do
+          nested = option_consuming_class
+
+          Class.new do
+            include StoreModel::Model
+
+            attribute :first, nested.to_type
+            attribute :second, nested.to_type
+            attribute :hashed, nested.to_hash_type
+          end
+        end
+
+        let(:instance) do
+          model_class.new(
+            first: { color: "red" },
+            second: { color: "blue" },
+            hashed: { "a" => { color: "green" }, "b" => { color: "white" } }
+          )
+        end
+
+        it "gives each nested model its own copy of the options" do
+          options = { include_extra: true }
+
+          expect(instance.as_json(options)).to eq(
+            "first" => { "color" => "red", "extra" => true },
+            "second" => { "color" => "blue", "extra" => true },
+            "hashed" => {
+              "a" => { "color" => "green", "extra" => true },
+              "b" => { "color" => "white", "extra" => true }
+            }
+          )
+          expect(options).to eq(include_extra: true)
+        end
+      end
+
+      context "when an attribute holds arrays of models" do
+        let(:option_aware_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :color, :string
+
+            def as_json(options = {})
+              super.tap { |json| json["extra"] = true if options&.dig(:include_extra) }
+            end
+          end
+        end
+
+        let(:model_class) do
+          Class.new do
+            include StoreModel::Model
+
+            attribute :grid, ActiveModel::Type::Value.new
+          end
+        end
+
+        let(:instance) { model_class.new(grid: [[option_aware_class.new(color: "red")]]) }
+
+        it "passes custom options to the nested models" do
+          expect(instance.as_json(include_extra: true)).to eq("grid" => [[{ "color" => "red", "extra" => true }]])
+        end
+      end
+
       context "when a nested attribute has a custom type" do
         let(:model_class) do
           Class.new do

@@ -296,7 +296,7 @@ module StoreModel
     def serialized_attribute(attr, options)
       case attr.value
       when StoreModel::Model
-        attr.value.as_json(options)
+        serialize_nested_model(attr.value, options)
       when Array
         serialize_array_attribute(attr.value, options)
       when Hash # attribute :smth, json
@@ -307,7 +307,7 @@ module StoreModel
     end
 
     def serialize_array_attribute(array, options)
-      return array.as_json unless array.any? && array.all? { |value| value.is_a?(StoreModel::Model) }
+      return array unless array.any? && array.all? { |value| value.is_a?(StoreModel::Model) }
 
       array.as_json(options)
     end
@@ -315,7 +315,11 @@ module StoreModel
     def serialize_hash_attribute(hash, options)
       return hash unless hash.any? && hash.values.all? { |value| value.nil? || value.is_a?(StoreModel::Model) }
 
-      hash.transform_values { |value| value&.as_json(options) }
+      hash.transform_values { |value| value && serialize_nested_model(value, options) }
+    end
+
+    def serialize_nested_model(model, options)
+      options ? model.as_json(options.dup) : model.as_json
     end
 
     def assign_serialization_options(attr, serialize_unknown_attributes, serialize_enums_using_as_json, serialize_empty_attributes) # rubocop:disable Layout/LineLength
