@@ -6,6 +6,7 @@
 
 ## master
 
+- [PR #255](https://github.com/DmitryTsepelev/store_model/pull/255) Skip parent assignment for models declaring a parent attribute ([@HoneyryderChuck])
 - [PR #254](https://github.com/DmitryTsepelev/store_model/pull/254) Add unknown attributes after declared writers run during casts ([@HoneyryderChuck])
 - [PR #251](https://github.com/DmitryTsepelev/store_model/pull/251) Assign parents to models written through store_attribute accessors ([@HoneyryderChuck])
 - [PR #252](https://github.com/DmitryTsepelev/store_model/pull/252) Pass as_json options to models nested in arrays of non-models ([@HoneyryderChuck])
