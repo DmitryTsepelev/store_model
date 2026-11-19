@@ -24,3 +24,5 @@ This behavior is achieved via Active Record extensions and it can be disabled gl
 # config/initializers/store_model.rb
 StoreModel.config.enable_parent_assignment = false
 ```
+
+A quirk to be aware of: if there's an attribute called `parent`, then parent assignment will be ignored. You should avoid using `parent` for attributes therefore.
