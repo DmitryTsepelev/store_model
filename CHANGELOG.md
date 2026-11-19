@@ -6,6 +6,9 @@
 
 ## master
 
+- [PR #254](https://github.com/DmitryTsepelev/store_model/pull/254) Add unknown attributes after declared writers run during casts ([@HoneyryderChuck])
+- [PR #251](https://github.com/DmitryTsepelev/store_model/pull/251) Assign parents to models written through store_attribute accessors ([@HoneyryderChuck])
+- [PR #252](https://github.com/DmitryTsepelev/store_model/pull/252) Pass as_json options to models nested in arrays of non-models ([@HoneyryderChuck])
 - [PR #250](https://github.com/DmitryTsepelev/store_model/pull/250) Preserve stored keys matching framework writers during casts ([@imacomber])
 - [PR #241](https://github.com/DmitryTsepelev/store_model/pull/241) Preserve unknown attributes when updating nested models in place ([@imacomber])
 - [PR #247](https://github.com/DmitryTsepelev/store_model/pull/247) Handle nil elements in array and hash validation ([@JacobNWolf])
