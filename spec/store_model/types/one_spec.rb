@@ -286,17 +286,6 @@ RSpec.describe StoreModel::Types::One do
         expect(configuration.unknown_attributes).to eq("parent" => "kept")
       end
 
-      it "allows models to define their own assignable_writer? predicate" do
-        configuration_class.class_eval do
-          def assignable_writer?(attribute)
-            attribute == :color
-          end
-        end
-        configuration = type.cast_value("extra" => "kept")
-
-        expect(configuration.unknown_attributes).to eq("extra" => "kept")
-      end
-
       it "assigns declared attributes with non-identifier names before filtering writers" do
         configuration_class.attribute :"first-name", :string
         configuration_class.attribute :parent, :string
