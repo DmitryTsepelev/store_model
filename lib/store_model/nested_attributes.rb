@@ -143,7 +143,8 @@ module StoreModel
 
       case callback
       when Symbol
-        method(callback).arity.zero? ? send(callback) : send(callback, attributes)
+        reject_method = ::Kernel.instance_method(:method).bind_call(self, callback)
+        reject_method.arity.zero? ? send(callback) : send(callback, attributes)
       when Proc
         callback.call(attributes)
       end

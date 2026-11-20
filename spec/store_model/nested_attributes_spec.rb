@@ -403,6 +403,16 @@ RSpec.describe StoreModel::NestedAttributes do
           have_attributes(present_supplier)
         )
       end
+
+      context "when the model declares a method attribute" do
+        before { configuration_class.attribute :method, :string }
+
+        it "rejects any attributes hash that returns true from the method" do
+          expect(subject.suppliers).to contain_exactly(
+            have_attributes(present_supplier)
+          )
+        end
+      end
     end
 
     context "when reject_if is :all_blank" do
