@@ -10,9 +10,9 @@ module StoreModel
       when StoreModel::Model
         attribute.parent = self unless attribute.frozen? || declares_parent_attribute?(attribute)
       when Array
-        attribute.each(&method(:assign_parent_to_store_model_relation))
+        attribute.each { |item| assign_parent_to_store_model_relation(item) }
       when Hash
-        attribute.each_value(&method(:assign_parent_to_store_model_relation))
+        attribute.each_value { |item| assign_parent_to_store_model_relation(item) }
       end
     end
 

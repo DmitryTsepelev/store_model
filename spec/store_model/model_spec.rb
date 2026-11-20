@@ -751,6 +751,27 @@ RSpec.describe StoreModel::Model do
         expect(subject.configuration.parent.name).to eq("Acme Holdings")
       end
     end
+
+    context "with an owner declaring a method attribute" do
+      subject { custom_parent_class.new(method: "manual", configuration: [{}], settings: { foo: {} }) }
+
+      let(:custom_parent_class) do
+        Class.new do
+          include StoreModel::Model
+
+          attribute :method, :string
+          attribute :configuration, Configuration.to_array_type
+          attribute :settings, Configuration.to_hash_type
+        end
+      end
+
+      it "assigns itself as parent of array and hash elements" do
+        expected_parent = StoreModel.config.enable_parent_assignment ? subject : nil
+
+        expect(subject.configuration[0].parent).to eq(expected_parent)
+        expect(subject.settings[:foo].parent).to eq(expected_parent)
+      end
+    end
   end
 
   shared_examples "comparing two instances" do
