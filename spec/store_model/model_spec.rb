@@ -772,6 +772,52 @@ RSpec.describe StoreModel::Model do
         expect(subject.settings[:foo].parent).to eq(expected_parent)
       end
     end
+
+    context "with a model nested inside a plain hash" do
+      subject { custom_parent_class.new(data: { "outer" => { "inner" => configuration } }) }
+
+      let(:custom_parent_class) do
+        build_custom_product_class do
+          attribute :data, ActiveModel::Type::Value.new
+        end
+      end
+
+      it "leaves its parent unassigned" do
+        subject.data
+
+        expect(configuration.parent).to be_nil
+      end
+    end
+
+    context "with an array mixing models and plain data" do
+      subject { custom_parent_class.new(data: [configuration, { "a" => 1 }]) }
+
+      let(:custom_parent_class) do
+        build_custom_product_class do
+          attribute :data, ActiveModel::Type::Value.new
+        end
+      end
+
+      it "assigns the parent to the models only" do
+        subject.data
+
+        expect(configuration.parent).to eq(StoreModel.config.enable_parent_assignment ? subject : nil)
+      end
+    end
+
+    context "with an array starting with nil" do
+      subject { custom_parent_class.new(list: [nil, { color: "red" }]) }
+
+      let(:custom_parent_class) do
+        build_custom_product_class do
+          attribute :list, Configuration.to_array_type
+        end
+      end
+
+      it "assigns the parent to the models after the nil" do
+        expect(subject.list[1].parent).to eq(StoreModel.config.enable_parent_assignment ? subject : nil)
+      end
+    end
   end
 
   shared_examples "comparing two instances" do

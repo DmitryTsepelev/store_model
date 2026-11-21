@@ -28,4 +28,13 @@ RSpec.describe StoreModel::TypedStoreParentAssignment do
       expect(configuration.parent).to eq(expected_parent)
     end
   end
+
+  describe "read" do
+    it "assigns the record as parent of each array element after a reload" do
+      record = custom_product_class.find(custom_product_class.create!(nested_list: [{ color: "red" }]).id)
+      expected_parent = StoreModel.config.enable_parent_assignment ? record : nil
+
+      expect(record.nested_list.first.parent).to eq(expected_parent)
+    end
+  end
 end
